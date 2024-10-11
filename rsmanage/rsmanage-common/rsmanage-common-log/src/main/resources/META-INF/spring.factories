@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+    com.ruisen.rsmanage.common.log.init.ApplicationLoggerInitializer

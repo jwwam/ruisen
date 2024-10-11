@@ -1,0 +1,3 @@
+com.ruisen.rsmanage.common.feign.RsmanageFeignAutoConfiguration
+com.ruisen.rsmanage.common.feign.sentinel.SentinelAutoConfiguration
+com.ruisen.rsmanage.common.feign.sentinel.handle.GlobalBizExceptionHandler

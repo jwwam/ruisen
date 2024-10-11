@@ -1,0 +1,7 @@
+com.ruisen.rsmanage.common.security.service.RsmanageUserDetailsServiceImpl
+com.ruisen.rsmanage.common.security.service.RsmanageAppUserDetailsServiceImpl
+com.ruisen.rsmanage.common.security.service.RsmanageRedisOAuth2AuthorizationService
+com.ruisen.rsmanage.common.security.service.RsmanageRedisOAuth2AuthorizationConsentService
+com.ruisen.rsmanage.common.security.component.RsmanageSecurityInnerAspect
+com.ruisen.rsmanage.common.security.component.RsmanageSecurityMessageSourceConfiguration
+com.ruisen.rsmanage.common.security.service.RsmanageRemoteRegisteredClientRepository

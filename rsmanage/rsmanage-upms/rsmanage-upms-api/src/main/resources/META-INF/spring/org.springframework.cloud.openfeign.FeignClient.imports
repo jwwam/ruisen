@@ -1,0 +1,6 @@
+com.ruisen.rsmanage.admin.api.feign.RemoteClientDetailsService
+com.ruisen.rsmanage.admin.api.feign.RemoteDictService
+com.ruisen.rsmanage.admin.api.feign.RemoteLogService
+com.ruisen.rsmanage.admin.api.feign.RemoteParamService
+com.ruisen.rsmanage.admin.api.feign.RemoteTokenService
+com.ruisen.rsmanage.admin.api.feign.RemoteUserService

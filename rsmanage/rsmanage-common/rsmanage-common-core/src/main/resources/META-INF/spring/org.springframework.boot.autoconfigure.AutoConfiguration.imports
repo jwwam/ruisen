@@ -1,0 +1,6 @@
+com.ruisen.rsmanage.common.core.config.TaskExecutorConfiguration
+com.ruisen.rsmanage.common.core.config.JacksonConfiguration
+com.ruisen.rsmanage.common.core.config.RedisTemplateConfiguration
+com.ruisen.rsmanage.common.core.config.RestTemplateConfiguration
+com.ruisen.rsmanage.common.core.util.SpringContextHolder
+com.ruisen.rsmanage.common.core.config.WebMvcConfiguration
