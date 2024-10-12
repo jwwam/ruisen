@@ -1,0 +1,1 @@
+package com.ruisen.rsmanage.customer.feign;
