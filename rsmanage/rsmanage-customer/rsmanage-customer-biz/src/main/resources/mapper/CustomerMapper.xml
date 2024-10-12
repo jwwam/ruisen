@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruisen.rsmanage.customer.mapper.CustomerMapper">
+
+  <resultMap id="customerMap" type="com.ruisen.rsmanage.customer.entity.CustomerEntity">
+        <id property="customerId" column="customer_id"/>
+        <result property="name" column="name"/>
+        <result property="linkman" column="linkman"/>
+        <result property="email" column="email"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="salesRepId" column="sales_rep_id"/>
+        <result property="createdAt" column="created_at"/>
+  </resultMap>
+</mapper>

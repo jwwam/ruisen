@@ -1,13 +1,11 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-            http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.ruisen</groupId>
         <artifactId>rsmanage-customer</artifactId>
-        <version>3.8.1</version>
+		<version>${revision}</version>
     </parent>
 
     <artifactId>rsmanage-customer-biz</artifactId>
@@ -17,12 +15,11 @@
 
 
     <dependencies>
-        <!--必备: 依赖api模块-->
-        <dependency>
-            <groupId>com.ruisen</groupId>
-            <artifactId>rsmanage-customer-api</artifactId>
-            <version>3.8.1</version>
-        </dependency>
+		<!--必备: 依赖api模块-->
+		<dependency>
+			<groupId>com.ruisen</groupId>
+			<artifactId>rsmanage-customer-api</artifactId>
+		</dependency>
         <!--选配: orm 模块-->
         <dependency>
             <groupId>com.baomidou</groupId>

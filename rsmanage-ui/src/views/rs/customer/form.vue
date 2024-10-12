@@ -1,0 +1,151 @@
+<template>
+    <el-dialog :title="form.customerId ? '编辑' : '新增'" v-model="visible"
+      :close-on-click-modal="false" draggable>
+      <el-form ref="dataFormRef" :model="form" :rules="dataRules" formDialogRef label-width="90px" v-loading="loading">
+       <el-row :gutter="24">
+    <el-col :span="12" class="mb20">
+      <el-form-item label="客户名称" prop="name">
+        <el-input v-model="form.name" placeholder="请输入客户名称"/>
+      </el-form-item>
+      </el-col>
+
+    <el-col :span="12" class="mb20">
+      <el-form-item label="联系人" prop="linkman">
+        <el-input v-model="form.linkman" placeholder="请输入联系人"/>
+      </el-form-item>
+      </el-col>
+
+    <el-col :span="12" class="mb20">
+      <el-form-item label="客户电子邮件" prop="email">
+        <el-input v-model="form.email" placeholder="请输入客户电子邮件"/>
+      </el-form-item>
+      </el-col>
+
+    <el-col :span="12" class="mb20">
+      <el-form-item label="客户电话号码" prop="phoneNumber">
+        <el-input v-model="form.phoneNumber" placeholder="请输入客户电话号码"/>
+      </el-form-item>
+      </el-col>
+
+    <el-col :span="12" class="mb20">
+      <el-form-item label="对应的我方商务人员ID" prop="salesRepId">
+        <el-select v-model="form.salesRepId" placeholder="请选择对应的我方商务人员ID">
+          <el-option
+            v-for="user in users"
+            :key="user.userId"
+            :label="user.username"
+            :value="user.userId"
+          />
+        </el-select>
+      </el-form-item>
+    </el-col>
+
+			</el-row>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="visible = false">取 消</el-button>
+          <el-button type="primary" @click="onSubmit" :disabled="loading">确 认</el-button>
+        </span>
+      </template>
+    </el-dialog>
+</template>
+
+<script setup lang="ts" name="CustomerDialog">
+import { useDict } from '/@/hooks/dict';
+import { useMessage } from "/@/hooks/message";
+import { getObj, addObj, putObj, validateExist } from '/@/api/rs/customer'
+import { rule } from '/@/utils/validate';
+import { pageList } from '/@/api/admin/user';
+const emit = defineEmits(['refresh']);
+
+// 定义变量内容
+const dataFormRef = ref();
+const visible = ref(false)
+const loading = ref(false)
+// 定义字典
+
+// 提交表单数据
+const form = reactive({
+		customerId:'',
+	  name: '',
+	  linkman: '',
+	  email: '',
+	  phoneNumber: '',
+	  salesRepId: '',
+});
+
+// 定义校验规则
+const dataRules = ref({
+    name: [{required: true, message: '客户名称不能为空', trigger: 'blur'}],
+    email: [{required: true, message: '客户电子邮件不能为空', trigger: 'blur'}, { validator: rule.email, trigger: 'blur' }],
+    phoneNumber: [{ validator: rule.letterAndNumber, trigger: 'blur' }],
+})
+
+// 打开弹窗
+const openDialog = (id: string) => {
+  visible.value = true
+  form.customerId = ''
+
+  // 重置表单数据
+	nextTick(() => {
+		dataFormRef.value?.resetFields();
+	});
+
+  // 获取customer信息
+  if (id) {
+    form.customerId = id
+    getCustomerData(id)
+  }
+};
+
+// 提交
+const onSubmit = async () => {
+	const valid = await dataFormRef.value.validate().catch(() => {});
+	if (!valid) return false;
+
+	try {
+    loading.value = true;
+		form.customerId ? await putObj(form) : await addObj(form);
+		useMessage().success(form.customerId ? '修改成功' : '添加成功');
+		visible.value = false;
+		emit('refresh');
+	} catch (err: any) {
+		useMessage().error(err.msg);
+	} finally {
+    loading.value = false;
+  }
+};
+
+
+// 初始化表单数据
+const getCustomerData = (id: string) => {
+  // 获取数据
+  loading.value = true
+  getObj({customerId: id}).then((res: any) => {
+    Object.assign(form, res.data[0])
+  }).finally(() => {
+    loading.value = false
+  })
+};
+
+// 暴露变量
+defineExpose({
+  openDialog
+});
+
+const users = ref([]);
+
+const fetchUsers = async () => {
+  try {
+    const response = await pageList();
+    users.value = response.data.records; // 假设返回的数据结构中用户列表在`records`字段中
+  } catch (error) {
+    console.error('Failed to fetch users:', error);
+  }
+};
+
+onMounted(() => {
+  fetchUsers();
+});
+</script>

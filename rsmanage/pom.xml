@@ -112,6 +112,7 @@
         <module>rsmanage-upms</module>
         <module>rsmanage-common</module>
         <module>rsmanage-visual</module>
+        <module>rsmanage-customer</module>
     </modules>
 
     <dependencyManagement>
