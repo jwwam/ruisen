@@ -60,13 +60,13 @@
 							$t('sysrole.permissionTip')
 						}}</el-button>
 
-						<el-tooltip :content="$t('sysrole.deleteDisabledTip')" :disabled="scope.row.roleId !== '1'" placement="top">
+						<el-tooltip :content="$t('sysrole.deleteDisabledTip')" :disabled="scope.row.roleId !== '1' && scope.row.roleId !== '3'" placement="top">
 							<span style="margin-left: 12px">
 								<el-button
 									text
 									type="primary"
 									icon="delete"
-									:disabled="scope.row.roleId === '1'"
+									:disabled="scope.row.roleId === '1' || scope.row.roleId === '3'"
 									v-auth="'sys_role_del'"
 									@click="handleDelete([scope.row.roleId])"
 									>{{ $t('common.delBtn') }}

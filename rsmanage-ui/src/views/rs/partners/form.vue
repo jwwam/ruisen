@@ -16,8 +16,8 @@
       </el-col>
 
     <el-col :span="12" class="mb20">
-      <el-form-item label="在达成某个条件时我方的分成比例(百分比)" prop="revenueShare">
-        <el-input-number :min="1" :max="1000" v-model="form.revenueShare" placeholder="请输入在达成某个条件时我方的分成比例(百分比)"></el-input-number>
+      <el-form-item label="分成比例" prop="revenueShare">
+        <el-input-number :min="1" :max="1000" v-model="form.revenueShare" placeholder="请输入分成比例"></el-input-number>
       </el-form-item>
     </el-col>
 

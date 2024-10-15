@@ -54,6 +54,13 @@ export default function () {
 			}
 		});
 	};
+	// 百分比格式化（添加%符号）
+	const percentFormatWithSymbol = (value: string | number) => {
+		if (value === null || value === undefined || value === '') {
+			return '-';
+		}
+		return `${value}%`;
+	};
 	return {
 		percentFormat,
 		dateFormatYMD,
@@ -62,5 +69,6 @@ export default function () {
 		scaleFormat,
 		scale2Format,
 		copyText,
+		percentFormatWithSymbol,
 	};
 }

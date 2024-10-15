@@ -11,13 +11,13 @@ import java.time.LocalDateTime;
  * 客户信息表
  *
  * @author rsmanage
- * @date 2024-10-12 19:36:35
+ * @date 2024-10-16 01:26:37
  */
 @Data
 @TableName("rs_customers")
 @EqualsAndHashCode(callSuper = true)
 @Schema(description = "客户信息表")
-public class CustomerEntity extends Model<CustomerEntity> {
+public class CustomersEntity extends Model<CustomersEntity> {
 
 
 	/**
@@ -52,10 +52,10 @@ public class CustomerEntity extends Model<CustomerEntity> {
     private String phoneNumber;
 
 	/**
-	* 对应的我方商务人员ID
+	* 商务id
 	*/
-    @Schema(description="对应的我方商务人员ID")
-    private long salesRepId;
+    @Schema(description="商务id")
+    private Long salesRepId;
 
 	/**
 	* 记录创建时间

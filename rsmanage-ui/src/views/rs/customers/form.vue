@@ -28,8 +28,8 @@
       </el-col>
 
     <el-col :span="12" class="mb20">
-      <el-form-item label="对应的我方商务人员ID" prop="salesRepId">
-        <el-select v-model="form.salesRepId" placeholder="请选择对应的我方商务人员ID">
+      <el-form-item label="我方商务人员" prop="salesRepId">
+        <el-select v-model="form.salesRepId" placeholder="请选择我方商务人员">
           <el-option
             v-for="user in users"
             :key="user.userId"
@@ -51,10 +51,10 @@
     </el-dialog>
 </template>
 
-<script setup lang="ts" name="CustomerDialog">
+<script setup lang="ts" name="CustomersDialog">
 import { useDict } from '/@/hooks/dict';
 import { useMessage } from "/@/hooks/message";
-import { getObj, addObj, putObj, validateExist } from '/@/api/rs/customer'
+import { getObj, addObj, putObj, validateExist } from '/@/api/rs/customers'
 import { rule } from '/@/utils/validate';
 import { pageList } from '/@/api/admin/user';
 const emit = defineEmits(['refresh']);
@@ -78,8 +78,8 @@ const form = reactive({
 // 定义校验规则
 const dataRules = ref({
     name: [{required: true, message: '客户名称不能为空', trigger: 'blur'}],
-    email: [{required: true, message: '客户电子邮件不能为空', trigger: 'blur'}, { validator: rule.email, trigger: 'blur' }],
-    phoneNumber: [{ validator: rule.letterAndNumber, trigger: 'blur' }],
+    email: [{ validator: rule.email, trigger: 'blur' }],
+    salesRepId: [{required: true, message: '商务id不能为空', trigger: 'blur'}],
 })
 
 // 打开弹窗
@@ -92,10 +92,10 @@ const openDialog = (id: string) => {
 		dataFormRef.value?.resetFields();
 	});
 
-  // 获取customer信息
+  // 获取customers信息
   if (id) {
     form.customerId = id
-    getCustomerData(id)
+    getCustomersData(id)
   }
 };
 
@@ -119,7 +119,7 @@ const onSubmit = async () => {
 
 
 // 初始化表单数据
-const getCustomerData = (id: string) => {
+const getCustomersData = (id: string) => {
   // 获取数据
   loading.value = true
   getObj({customerId: id}).then((res: any) => {

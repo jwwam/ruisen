@@ -7,7 +7,7 @@ import request from "/@/utils/request"
  */
 export function fetchList(query?: Object) {
   return request({
-    url: '/rs/customer/page',
+    url: '/rs/customers/page',
     method: 'get',
     params: query
   })
@@ -20,7 +20,7 @@ export function fetchList(query?: Object) {
  */
 export function addObj(obj?: Object) {
   return request({
-    url: '/rs/customer',
+    url: '/rs/customers',
     method: 'post',
     data: obj
   })
@@ -33,7 +33,7 @@ export function addObj(obj?: Object) {
  */
 export function getObj(obj?: Object) {
   return request({
-    url: '/rs/customer/details',
+    url: '/rs/customers/details',
     method: 'get',
     params: obj
   })
@@ -46,7 +46,7 @@ export function getObj(obj?: Object) {
  */
 export function delObjs(ids?: Object) {
   return request({
-    url: '/rs/customer',
+    url: '/rs/customers',
     method: 'delete',
     data: ids
   })
@@ -59,7 +59,7 @@ export function delObjs(ids?: Object) {
  */
 export function putObj(obj?: Object) {
   return request({
-    url: '/rs/customer',
+    url: '/rs/customers',
     method: 'put',
     data: obj
   })

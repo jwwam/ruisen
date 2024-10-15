@@ -9,8 +9,8 @@
       <el-form-item label="合作伙伴标识" prop="partnerCode" >
         <el-input placeholder="请输入合作伙伴标识" v-model="state.queryForm.partnerCode" />
       </el-form-item>
-      <el-form-item label="在达成某个条件时我方的分成比例(百分比)" prop="revenueShare" >
-        <el-input placeholder="请输入在达成某个条件时我方的分成比例(百分比)" v-model="state.queryForm.revenueShare" />
+      <el-form-item label="请输入分成比例" prop="revenueShare" >
+        <el-input placeholder="请输入分成比例" v-model="state.queryForm.revenueShare" />
       </el-form-item>
       <el-form-item label="合作开始时间" prop="startDate">
       <el-date-picker type="date" placeholder="请输入合作开始时间" v-model="state.queryForm.startDate"></el-date-picker>
@@ -55,7 +55,11 @@
         <el-table-column type="index" label="#" width="40" />
           <el-table-column prop="partnerName" label="合作伙伴名称"  show-overflow-tooltip/>
           <el-table-column prop="partnerCode" label="合作伙伴标识"  show-overflow-tooltip/>
-          <el-table-column prop="revenueShare" label="在达成某个条件时我方的分成比例(百分比)" sortable="custom" show-overflow-tooltip/>
+          <el-table-column prop="revenueShare" label="分成比例%" sortable="custom" show-overflow-tooltip>
+            <template #default="scope">
+              {{ scope.row.revenueShare }}%
+            </template>
+          </el-table-column>
           <el-table-column prop="startDate" label="合作开始时间"  show-overflow-tooltip/>
           <el-table-column prop="endDate" label="合作结束时间"  show-overflow-tooltip/>
           <el-table-column prop="validDays" label="分成有效天数"  show-overflow-tooltip/>
@@ -90,7 +94,6 @@ import { BasicTableProps, useTable } from "/@/hooks/table";
 import { fetchList, delObjs } from "/@/api/rs/partners";
 import { useMessage, useMessageBox } from "/@/hooks/message";
 import { useDict } from '/@/hooks/dict';
-
 // 引入组件
 const FormDialog = defineAsyncComponent(() => import('./form.vue'));
 // 定义查询字典
@@ -157,3 +160,4 @@ const handleDelete = async (ids: string[]) => {
   }
 };
 </script>
+
