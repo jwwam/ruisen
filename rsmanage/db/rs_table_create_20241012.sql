@@ -6,7 +6,7 @@ CREATE TABLE rs_customers (
                                              linkman VARCHAR(50) NOT NULL COMMENT '联系人',
                                              email VARCHAR(100) NOT NULL UNIQUE COMMENT '客户电子邮件',
                                              phone_number VARCHAR(15) COMMENT '客户电话号码',
-                                             sales_rep_id BIGINT(50) COMMENT '对应的我方商务人员ID',
+                                             sales_rep_id INT COMMENT '对应的我方商务人员ID',
                                              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '记录创建时间'
           ) COMMENT='客户信息表';
 
