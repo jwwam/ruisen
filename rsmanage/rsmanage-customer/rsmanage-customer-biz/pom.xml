@@ -19,6 +19,7 @@
 		<dependency>
 			<groupId>com.ruisen</groupId>
 			<artifactId>rsmanage-customer-api</artifactId>
+			<version>${revision}</version>
 		</dependency>
         <!--选配: orm 模块-->
         <dependency>

@@ -100,12 +100,12 @@
 								<el-button v-auth="'sys_user_edit'" icon="edit-pen" text type="primary" @click="userDialogRef.openDialog(scope.row.userId)">
 									{{ $t('common.editBtn') }}
 								</el-button>
-								<el-tooltip :content="$t('sysuser.deleteDisabledTip')" :disabled="scope.row.userId !== '1'" placement="top">
+								<el-tooltip :content="$t('sysuser.deleteDisabledTip')" :disabled="scope.row.userId !== '2' && scope.row.userId !== '1'" placement="top">
 									<span style="margin-left: 12px">
 										<el-button
 											icon="delete"
 											v-auth="'sys_user_del'"
-											:disabled="scope.row.username === 'admin'"
+											:disabled="scope.row.username === 'sadmin' || scope.row.username === 'admin'"
 											text
 											type="primary"
 											@click="handleDelete([scope.row.userId])"
