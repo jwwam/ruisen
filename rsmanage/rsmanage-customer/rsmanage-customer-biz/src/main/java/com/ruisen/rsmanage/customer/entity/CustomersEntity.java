@@ -55,7 +55,7 @@ public class CustomersEntity extends Model<CustomersEntity> {
 	* 商务id
 	*/
     @Schema(description="商务id")
-    private Long salesRepId;
+    private String salesRepId;
 
 	/**
 	* 记录创建时间

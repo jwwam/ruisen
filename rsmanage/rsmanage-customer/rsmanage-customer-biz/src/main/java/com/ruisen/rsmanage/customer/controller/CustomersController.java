@@ -56,7 +56,7 @@ public class CustomersController {
 		wrapper.like(StrUtil.isNotBlank(customers.getLinkman()),CustomersEntity::getLinkman,customers.getLinkman());
 		wrapper.eq(StrUtil.isNotBlank(customers.getEmail()),CustomersEntity::getEmail,customers.getEmail());
 		wrapper.eq(StrUtil.isNotBlank(customers.getPhoneNumber()),CustomersEntity::getPhoneNumber,customers.getPhoneNumber());
-		wrapper.eq(Objects.nonNull(customers.getSalesRepId()),CustomersEntity::getSalesRepId,customers.getSalesRepId());
+		wrapper.eq(StrUtil.isNotBlank(customers.getSalesRepId()),CustomersEntity::getSalesRepId,customers.getSalesRepId());
         return R.ok(customersService.page(page, wrapper));
     }
 
