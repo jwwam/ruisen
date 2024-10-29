@@ -4,42 +4,90 @@
       <el-form ref="dataFormRef" :model="form" :rules="dataRules" formDialogRef label-width="90px" v-loading="loading">
        <el-row :gutter="24">
     <el-col :span="12" class="mb20">
-      <el-form-item label="合作伙伴名称" prop="partnerName">
+      <el-form-item label="合作伙伴名称" prop="partnerName" class="no-wrap-label">
         <el-input v-model="form.partnerName" placeholder="请输入合作伙伴名称"/>
       </el-form-item>
       </el-col>
 
     <el-col :span="12" class="mb20">
-      <el-form-item label="合作伙伴标识" prop="partnerCode">
+      <el-form-item label="合作伙伴标识" prop="partnerCode" class="no-wrap-label">
         <el-input v-model="form.partnerCode" placeholder="请输入合作伙伴标识"/>
       </el-form-item>
       </el-col>
 
     <el-col :span="12" class="mb20">
-      <el-form-item label="分成比例" prop="revenueShare">
-        <el-input-number :min="1" :max="1000" v-model="form.revenueShare" placeholder="请输入分成比例"></el-input-number>
-      </el-form-item>
-    </el-col>
-
-    <el-col :span="12" class="mb20">
-      <el-form-item label="合作开始时间" prop="startDate">
+      <el-form-item label="合作开始时间" prop="startDate" class="no-wrap-label">
       <el-date-picker type="date" placeholder="请选择合作开始时间" v-model="form.startDate" :value-format="dateStr"></el-date-picker>
       </el-form-item>
       </el-col>
 
     <el-col :span="12" class="mb20">
-      <el-form-item label="合作结束时间" prop="endDate">
+      <el-form-item label="合作结束时间" prop="endDate" class="no-wrap-label">
       <el-date-picker type="date" placeholder="请选择合作结束时间" v-model="form.endDate" :value-format="dateStr"></el-date-picker>
       </el-form-item>
       </el-col>
 
     <el-col :span="12" class="mb20">
-      <el-form-item label="分成有效天数" prop="validDays">
+      <el-form-item label="分成有效天数" prop="validDays" class="no-wrap-label">
         <el-input-number :min="1" :max="1000" v-model="form.validDays" placeholder="请输入分成有效天数"></el-input-number>
       </el-form-item>
     </el-col>
 
+    <el-col :span="12" class="mb20">
+      <el-form-item label="分成比例" prop="revenueShare" class="no-wrap-label">
+        <el-input-number :min="1" :max="1000" v-model="form.revenueShare" placeholder="请输入分成比例"></el-input-number>
+      </el-form-item>
+    </el-col>
+
 			</el-row>
+
+        <div class="revenue-shares-section">
+          <div class="section-header">
+            <h3>分成比例</h3>
+          </div>
+
+          <div v-for="(item, index) in form.revenueShares" :key="index" class="share-item">
+            <div class="share-item-header">
+              <h4>分成比例{{ index + 1 }}</h4>
+              <el-button type="danger" link @click="removeRevenueShare(index)">
+                <el-icon><Delete /></el-icon>删除
+              </el-button>
+            </div>
+            <el-row :gutter="24">
+              <el-col :span="12" class="mb20">
+                <el-form-item :label="'名称'" :prop="'revenueShares.' + index + '.name'" class="no-wrap-label">
+                  <el-input v-model="item.name" placeholder="请输入名称"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12" class="mb20">
+                <el-form-item :label="'分成比例'" :prop="'revenueShares.' + index + '.share'" class="no-wrap-label">
+                  <el-input-number v-model="item.share" :min="1" :max="100" placeholder="请输入分成比例"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12" class="mb20">
+                <el-form-item :label="'有效天数'" :prop="'revenueShares.' + index + '.valid_days'" class="no-wrap-label">
+                  <el-input-number v-model="item.valid_days" :min="1" placeholder="请输入有效天数"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12" class="mb20">
+                <el-form-item :label="'是否启用'" :prop="'revenueShares.' + index + '.is_active'" class="no-wrap-label">
+                  <el-switch v-model="item.is_active" @change="(val) => handleActiveChange(val, index)"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24" class="mb20">
+                <el-form-item :label="'描述'" :prop="'revenueShares.' + index + '.description'" class="no-wrap-label">
+                  <el-input v-model="item.description" placeholder="请输入描述"/>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
+
+          <div class="add-button-container">
+            <el-button type="primary" link @click="addRevenueShare">
+              <el-icon><Plus /></el-icon>添加分成比例
+            </el-button>
+          </div>
+        </div>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -55,6 +103,7 @@ import { useDict } from '/@/hooks/dict';
 import { useMessage } from "/@/hooks/message";
 import { getObj, addObj, putObj, validateExist } from '/@/api/rs/partners'
 import { rule } from '/@/utils/validate';
+import { Plus, Delete } from '@element-plus/icons-vue'
 const emit = defineEmits(['refresh']);
 
 // 定义变量内容
@@ -72,6 +121,7 @@ const form = reactive({
 	  startDate: '',
 	  endDate: '',
 		validDays: 0,
+	  revenueShares: [] as any[],
 });
 
 // 定义校验规则
@@ -98,25 +148,6 @@ const openDialog = (id: string) => {
   }
 };
 
-// 提交
-const onSubmit = async () => {
-	const valid = await dataFormRef.value.validate().catch(() => {});
-	if (!valid) return false;
-
-	try {
-    loading.value = true;
-		form.partnerId ? await putObj(form) : await addObj(form);
-		useMessage().success(form.partnerId ? '修改成功' : '添加成功');
-		visible.value = false;
-		emit('refresh');
-	} catch (err: any) {
-		useMessage().error(err.msg);
-	} finally {
-    loading.value = false;
-  }
-};
-
-
 // 初始化表单数据
 const getPartnersData = (id: string) => {
   // 获取数据
@@ -128,8 +159,126 @@ const getPartnersData = (id: string) => {
   })
 };
 
+// 添加分成比例
+const addRevenueShare = () => {
+  form.revenueShares.push({
+    share_id: '',
+    partner_id: form.partnerId,
+    name: '',
+    share: 0,
+    description: '',
+    valid_days: 0,
+    is_active: false,
+    sort_order: form.revenueShares.length + 1
+  });
+};
+
+// 删除分成比例
+const removeRevenueShare = (index: number) => {
+  form.revenueShares.splice(index, 1);
+};
+
+// 提交分成比例数据
+const submitRevenueShares = async () => {
+  console.log('分成比例数据：', form.revenueShares);
+  // TODO: 这里添加提交分成比例的API调用
+};
+
+// 修改提交方法
+const onSubmit = async () => {
+  const valid = await dataFormRef.value.validate().catch(() => {});
+  if (!valid) return false;
+
+  try {
+    loading.value = true;
+    // 先保存主表数据
+    form.partnerId ? await putObj(form) : await addObj(form);
+    // 再保存分成比例数据
+    await submitRevenueShares();
+    
+    useMessage().success(form.partnerId ? '修改成功' : '添加成功');
+    visible.value = false;
+    emit('refresh');
+  } catch (err: any) {
+    useMessage().error(err.msg);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// 处理启用状态变更
+const handleActiveChange = (val: boolean, currentIndex: number) => {
+  if (val) {
+    // 如果当前开关被打开，关闭其他所有开关
+    form.revenueShares.forEach((item, index) => {
+      if (index !== currentIndex) {
+        item.is_active = false;
+      }
+    });
+  }
+};
+
 // 暴露变量
 defineExpose({
   openDialog
 });
 </script>
+
+<style scoped>
+:deep(.no-wrap-label) .el-form-item__label {
+  white-space: nowrap;
+}
+
+.revenue-shares-section {
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-weight: 500;
+}
+
+.share-item {
+  padding: 20px;
+  border: 1px solid #e4e7ed;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.share-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.share-item-header h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #606266;
+}
+
+.add-button-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.add-button-container .el-button {
+  padding: 12px 20px;
+}
+
+.mb20 {
+  margin-bottom: 20px;
+}
+</style>

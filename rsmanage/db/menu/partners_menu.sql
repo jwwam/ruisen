@@ -1,5 +1,5 @@
 -- 该脚本不要直接执行， 注意维护菜单的父节点ID 默认 父节点-1 , 
-
+use rsmanage;
 -- 菜单SQL
 insert into sys_menu ( menu_id,parent_id, path, permission, menu_type, icon, del_flag, create_time, sort_order, update_time, name)
 values (1728998448158, '-1', '/rs/partners/index', '', '0', 'icon-bangzhushouji', '0', null , '8', null , '合作伙伴信息表管理');
