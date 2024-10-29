@@ -55,7 +55,12 @@
           <el-table-column prop="validDays" label="有效天数"  show-overflow-tooltip/>
           <el-table-column prop="isActive" label="是否启用" show-overflow-tooltip>
       <template #default="scope">
-                <dict-tag :options="yes_no_type" :value="scope.row.isActive"></dict-tag>
+                <el-button 
+                  :type="scope.row.isActive ? 'success' : 'danger'" 
+                  disabled
+                >
+                  {{ scope.row.isActive ? '启用' : '禁用' }}
+                </el-button>
             </template>
           </el-table-column>
           <el-table-column prop="sortOrder" label="排序顺序" sortable="custom" show-overflow-tooltip/>

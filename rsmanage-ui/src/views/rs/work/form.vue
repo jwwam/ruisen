@@ -4,8 +4,8 @@
       <el-form ref="dataFormRef" :model="form" :rules="dataRules" formDialogRef label-width="90px" v-loading="loading">
        <el-row :gutter="24">
     <el-col :span="12" class="mb20">
-      <el-form-item label="提交人ID" prop="submitterId">
-        <el-input v-model="form.submitterId" placeholder="请输入提交人ID"/>
+      <el-form-item label="提交人" prop="submitterName">
+        <el-input v-model="form.submitterName" :placeholder="currentUserName" disabled/>
       </el-form-item>
       </el-col>
 
@@ -31,12 +31,11 @@
 
     <el-col :span="12" class="mb20">
       <el-form-item label="处理人ID" prop="assignees">
-            <el-checkbox-group v-model="form.assignees">
-                <el-checkbox label="启用" name="type"></el-checkbox>
-                <el-checkbox label="禁用" name="type"></el-checkbox>
-            </el-checkbox-group>
-        </el-form-item>
-      </el-col>
+        <el-select v-model="form.assignees" multiple placeholder="请选择处理人ID">
+          <el-option v-for="user in users" :key="user.userId" :label="user.username" :value="user.userId"></el-option>
+        </el-select>
+      </el-form-item>
+    </el-col>
 
     <el-col :span="12" class="mb20">
   <el-form-item label="附件路径列表，JSON格式" prop="attachments">
@@ -60,6 +59,9 @@ import { useDict } from '/@/hooks/dict';
 import { useMessage } from "/@/hooks/message";
 import { getObj, addObj, putObj, validateExist } from '/@/api/rs/work'
 import { rule } from '/@/utils/validate';
+import { pageList } from '/@/api/admin/user';
+import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
+
 const emit = defineEmits(['refresh']);
 
 // 定义变量内容
@@ -73,6 +75,7 @@ const { work_status } = useDict('work_status')
 const form = reactive({
 		workId:'',
 	  submitterId: '',
+	  submitterName: '', // 添加提交人名称字段
 	  title: '',
 	  content: '',
 	  status: '',
@@ -90,25 +93,37 @@ const dataRules = ref({
 
 // 打开弹窗
 const openDialog = (id: string) => {
-  visible.value = true
-  form.workId = ''
+  visible.value = true;
+  form.workId = '';
+  form.submitterId = currentUserId; // 设置提交人ID
 
   // 重置表单数据
-	nextTick(() => {
-		dataFormRef.value?.resetFields();
-	});
+  nextTick(() => {
+    dataFormRef.value?.resetFields();
+  });
 
   // 获取work信息
   if (id) {
-    form.workId = id
-    getWorkData(id)
+    form.workId = id;
+    getWorkData(id);
   }
 };
-
 // 提交
 const onSubmit = async () => {
 	const valid = await dataFormRef.value.validate().catch(() => {});
 	if (!valid) return false;
+
+  // 检查attachments字段的值
+  if (form.attachments === '') {
+    form.attachments = null;
+  } else {
+    try {
+      form.attachments = JSON.parse(form.attachments);
+    } catch (e) {
+      useMessage().error('附件路径列表格式不正确');
+      return false;
+    }
+  }
 
 	try {
     loading.value = true;
@@ -138,5 +153,29 @@ const getWorkData = (id: string) => {
 // 暴露变量
 defineExpose({
   openDialog
+});
+
+// 获取当前用户信息
+const currentUserName = ref('');
+const fetchCurrentUser = () => {
+  const data = useUserInfo().userInfos;
+  currentUserName.value = data.user.name;
+  form.submitterName = currentUserName.value;
+};
+
+const users = ref([]);
+
+const fetchUsers = async () => {
+	try {
+		const response = await pageList();
+		users.value = response.data.records; // 假设返回的数据结构中用户列表在`records`字段中
+	} catch (error) {
+		console.error('Failed to fetch users:', error);
+	}
+};
+
+onMounted(() => {
+	fetchUsers();
+  fetchCurrentUser(); // 获取当前用户信息
 });
 </script>
