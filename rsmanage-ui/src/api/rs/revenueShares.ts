@@ -97,4 +97,28 @@ export function validateExist(rule: any, value: any, callback: any, isEdit: bool
   });
 }
 
+/**
+ * 批量保存对象。
+ * @param {Object[]} [objList] - 要批量保存的对象列表。
+ * @returns {Promise} 请求的 Promise 对象。
+ */
+export function batchSave(objList?: Object[]) {
+  return request({
+    url: '/rs/revenueShares/batchSave',
+    method: 'post',
+    data: objList
+  })
+}
 
+/**
+ * 批量更新对象。
+ * @param {Object[]} [objList] - 要批量更新的对象列表。
+ * @returns {Promise} 请求的 Promise 对象。
+ */
+export function batchUpdate(objList?: Object[]) {
+  return request({
+    url: '/rs/revenueShares/batchUpdate',
+    method: 'put',
+    data: objList
+  })
+}

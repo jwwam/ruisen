@@ -135,4 +135,30 @@ public class RevenueSharesController {
     public R importExcel(@RequestExcel List<RevenueSharesEntity> revenueSharesList, BindingResult bindingResult) {
         return R.ok(revenueSharesService.saveBatch(revenueSharesList));
     }
+
+    /**
+     * 批量保存分成比例表
+     * @param revenueSharesList 分成比例表集合
+     * @return R
+     */
+    @Operation(summary = "批量保存分成比例表", description = "批量保存分成比例表")
+    @SysLog("批量保存分成比例表")
+    @PostMapping("/batchSave")
+    @HasPermission("rs_revenueShares_add")
+    public R saveBatch(@RequestBody List<RevenueSharesEntity> revenueSharesList) {
+        return R.ok(revenueSharesService.saveBatch(revenueSharesList));
+    }
+
+    /**
+     * 批量更新分成比例表
+     * @param revenueSharesList 分成比例表集合
+     * @return R
+     */
+    @Operation(summary = "批量更新分成比例表", description = "批量更新分成比例表")
+    @SysLog("批量更新分成比例表")
+    @PutMapping("/batchUpdate")
+    @HasPermission("rs_revenueShares_edit")
+    public R updateBatch(@RequestBody List<RevenueSharesEntity> revenueSharesList) {
+        return R.ok(revenueSharesService.updateBatchById(revenueSharesList));
+    }
 }

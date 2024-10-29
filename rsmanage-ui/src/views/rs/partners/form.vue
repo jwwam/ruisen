@@ -49,7 +49,7 @@
           <div v-for="(item, index) in form.revenueShares" :key="index" class="share-item">
             <div class="share-item-header">
               <h4>分成比例{{ index + 1 }}</h4>
-              <el-button type="danger" link @click="removeRevenueShare(index)">
+              <el-button type="danger" link @click="removeRevenueShare(item.shareId)">
                 <el-icon><Delete /></el-icon>删除
               </el-button>
             </div>
@@ -65,13 +65,13 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12" class="mb20">
-                <el-form-item :label="'有效天数'" :prop="'revenueShares.' + index + '.valid_days'" class="no-wrap-label">
-                  <el-input-number v-model="item.valid_days" :min="1" placeholder="请输入有效天数"/>
+                <el-form-item :label="'有效天数'" :prop="'revenueShares.' + index + '.validDays'" class="no-wrap-label">
+                  <el-input-number v-model="item.validDays" :min="1" placeholder="请输入有效天数"/>
                 </el-form-item>
               </el-col>
               <el-col :span="12" class="mb20">
-                <el-form-item :label="'是否启用'" :prop="'revenueShares.' + index + '.is_active'" class="no-wrap-label">
-                  <el-switch v-model="item.is_active" @change="(val) => handleActiveChange(val, index)"/>
+                <el-form-item :label="'是否启用'" :prop="'revenueShares.' + index + '.isActive'" class="no-wrap-label">
+                  <el-switch v-model="item.isActive" @change="(val) => handleActiveChange(val, index)"/>
                 </el-form-item>
               </el-col>
               <el-col :span="24" class="mb20">
@@ -104,6 +104,7 @@ import { useMessage } from "/@/hooks/message";
 import { getObj, addObj, putObj, validateExist } from '/@/api/rs/partners'
 import { rule } from '/@/utils/validate';
 import { Plus, Delete } from '@element-plus/icons-vue'
+import { batchSave, delObjs, batchUpdate } from '/@/api/rs/revenueShares';
 const emit = defineEmits(['refresh']);
 
 // 定义变量内容
@@ -155,33 +156,63 @@ const getPartnersData = (id: string) => {
   getObj({partnerId: id}).then((res: any) => {
     Object.assign(form, res.data[0])
   }).finally(() => {
-    loading.value = false
-  })
+    loading.value = false;
+  });
 };
 
 // 添加分成比例
 const addRevenueShare = () => {
   form.revenueShares.push({
-    share_id: '',
-    partner_id: form.partnerId,
+    shareId: '',
+    partnerId: form.partnerId,
     name: '',
     share: 0,
     description: '',
-    valid_days: 0,
-    is_active: false,
-    sort_order: form.revenueShares.length + 1
+    validDays: 0,
+    isActive: false,
+    sortOrder: form.revenueShares.length + 1
   });
 };
 
 // 删除分成比例
-const removeRevenueShare = (index: number) => {
-  form.revenueShares.splice(index, 1);
+const removeRevenueShare = async (shareId: string) => {
+  console.log('删除分成比例：', shareId);
+  if (shareId) {
+    try {
+      await delObjs([shareId]);
+      useMessage().success('分成比例删除成功');
+    } catch (error: any) {
+      useMessage().error('分成比例删除失败: ' + error.message);
+      return;
+    }
+  }
+  form.revenueShares = form.revenueShares.filter((item: any) => item.shareId !== shareId);
 };
 
 // 提交分成比例数据
 const submitRevenueShares = async () => {
-  console.log('分成比例数据：', form.revenueShares);
-  // TODO: 这里添加提交分成比例的API调用
+  try {
+    if (form.revenueShares.length > 0) {
+      const toUpdate = form.revenueShares.filter(item => item.shareId);
+      const toAdd = form.revenueShares.filter(item => !item.shareId);
+
+      if (toUpdate.length > 0) {
+        // 如果存在需要更新的分成比例
+        // console.log('更新分成比例：', toUpdate);
+        await batchUpdate(toUpdate.map(item => ({ ...item, partnerId: form.partnerId })));
+      }
+
+      if (toAdd.length > 0) {
+        // 如果存在需要新增的分成比例
+        //console.log('新增分成比例：', toAdd);
+        await batchSave(toAdd.map(item => ({ ...item, partnerId: form.partnerId })));
+      }
+
+      useMessage().success('分成比例保存成功');
+    }
+  } catch (error: any) {
+    useMessage().error('分成比例保存失败: ' + error.message);
+  }
 };
 
 // 修改提交方法
@@ -194,7 +225,7 @@ const onSubmit = async () => {
     // 先保存主表数据
     form.partnerId ? await putObj(form) : await addObj(form);
     // 再保存分成比例数据
-    await submitRevenueShares();
+    await submitRevenueShares(form.partnerId);
     
     useMessage().success(form.partnerId ? '修改成功' : '添加成功');
     visible.value = false;
@@ -212,7 +243,7 @@ const handleActiveChange = (val: boolean, currentIndex: number) => {
     // 如果当前开关被打开，关闭其他所有开关
     form.revenueShares.forEach((item, index) => {
       if (index !== currentIndex) {
-        item.is_active = false;
+        item.isActive = false;
       }
     });
   }

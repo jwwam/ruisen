@@ -11,6 +11,7 @@ import com.ruisen.rsmanage.common.log.annotation.SysLog;
 import com.pig4cloud.plugin.excel.annotation.ResponseExcel;
 import com.pig4cloud.plugin.excel.annotation.RequestExcel;
 import com.ruisen.rsmanage.customer.entity.PartnersEntity;
+import com.ruisen.rsmanage.customer.entity.RevenueSharesEntity;
 import com.ruisen.rsmanage.customer.service.PartnersService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -71,7 +72,12 @@ public class PartnersController {
     @GetMapping("/details" )
     @HasPermission("rs_partners_view")
     public R getDetails(@ParameterObject PartnersEntity partners) {
-        return R.ok(partnersService.list(Wrappers.query(partners)));
+        List<PartnersEntity> partnersList = partnersService.list(Wrappers.query(partners));
+        for (PartnersEntity partner : partnersList) {
+            List<RevenueSharesEntity> revenueShares = partnersService.getRevenueSharesByPartnerId(partner.getPartnerId());
+            partner.setRevenueShares(revenueShares);
+        }
+        return R.ok(partnersList);
     }
 
     /**

@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 合作伙伴信息表
@@ -70,4 +71,7 @@ public class PartnersEntity extends Model<PartnersEntity> {
 	*/
     @Schema(description="记录创建时间")
     private LocalDateTime createdAt;
+
+	@TableField(exist = false)
+    private List<RevenueSharesEntity> revenueShares;
 }
