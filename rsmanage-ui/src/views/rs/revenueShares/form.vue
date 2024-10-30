@@ -88,18 +88,18 @@ const dataRules = ref({
 
 // 打开弹窗
 const openDialog = (id: string) => {
-  visible.value = true
-  form.shareId = ''
+  visible.value = true;
+  form.shareId = '';
 
   // 重置表单数据
-	nextTick(() => {
-		dataFormRef.value?.resetFields();
-	});
+  nextTick(() => {
+    dataFormRef.value?.resetFields();
+  });
 
   // 获取revenueShares信息
   if (id) {
-    form.shareId = id
-    getRevenueSharesData(id)
+    form.shareId = id;
+    getRevenueSharesData(id);
   }
 };
 

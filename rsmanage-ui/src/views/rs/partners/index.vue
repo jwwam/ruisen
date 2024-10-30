@@ -55,9 +55,17 @@
         <el-table-column type="index" label="#" width="40" />
           <el-table-column prop="partnerName" label="合作伙伴名称"  show-overflow-tooltip/>
           <el-table-column prop="partnerCode" label="合作伙伴标识"  show-overflow-tooltip/>
-          <el-table-column prop="revenueShare" label="分成比例%" sortable="custom" show-overflow-tooltip>
+          <el-table-column prop="revenueShare" label="分成比例" sortable="custom" show-overflow-tooltip>
             <template #default="scope">
-              {{ scope.row.revenueShare }}%
+              <el-button 
+                icon="view" 
+                text 
+                type="primary" 
+                v-auth="'rs_partners_view'"
+                @click="openViewDialog(scope.row.partnerId)"
+              >
+                查看
+              </el-button>
             </template>
           </el-table-column>
           <el-table-column prop="startDate" label="合作开始时间"  show-overflow-tooltip/>
@@ -86,6 +94,8 @@
       temp-url="/admin/sys-file/local/file/partners.xlsx"
 			@refreshDataList="getDataList"
 		/>
+    <!-- 查看分成比例 -->
+    <view-dialog ref="viewDialogRef" @refresh="getDataList(false)"/>
   </div>
 </template>
 
@@ -96,11 +106,14 @@ import { useMessage, useMessageBox } from "/@/hooks/message";
 import { useDict } from '/@/hooks/dict';
 // 引入组件
 const FormDialog = defineAsyncComponent(() => import('./form.vue'));
+const ViewDialog = defineAsyncComponent(() => import('./viewSharesForm.vue'));
 // 定义查询字典
 
 // 定义变量内容
-const formDialogRef = ref()
+const formDialogRef = ref();
 const excelUploadRef = ref();
+const viewDialogRef = ref();
+
 // 搜索变量
 const queryRef = ref()
 const showSearch = ref(true)
@@ -159,5 +172,11 @@ const handleDelete = async (ids: string[]) => {
     useMessage().error(err.msg);
   }
 };
+
+// 打开查看对话框的方法
+const openViewDialog = (partnerId: string) => {
+  viewDialogRef.value.openDialog(partnerId);
+};
+
 </script>
 

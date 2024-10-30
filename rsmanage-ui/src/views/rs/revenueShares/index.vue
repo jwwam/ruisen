@@ -50,7 +50,11 @@
         <el-table-column type="index" label="#" width="40" />
           <el-table-column prop="partnerId" label="合作伙伴ID"  show-overflow-tooltip/>
           <el-table-column prop="name" label="分成比例名称"  show-overflow-tooltip/>
-          <el-table-column prop="share" label="分成比例"  show-overflow-tooltip/>
+          <el-table-column prop="share" label="分成比例" show-overflow-tooltip>
+            <template #default="scope">
+              {{ scope.row.share }}%
+            </template>
+          </el-table-column>
           <el-table-column prop="description" label="分成比例描述"  show-overflow-tooltip/>
           <el-table-column prop="validDays" label="有效天数"  show-overflow-tooltip/>
           <el-table-column prop="isActive" label="是否启用" show-overflow-tooltip>
