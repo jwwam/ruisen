@@ -4,19 +4,19 @@
 			<el-row v-show="showSearch">
 				<el-form :model="state.queryForm" ref="queryRef" :inline="true" @keyup.enter="getDataList">
 					<el-form-item label="客户名称" prop="name">
-						<el-input placeholder="请输入客户名称" v-model="state.queryForm.name" />
+						<el-input placeholder="" v-model="state.queryForm.name" />
 					</el-form-item>
 					<el-form-item label="联系人" prop="linkman">
-						<el-input placeholder="请输入联系人" v-model="state.queryForm.linkman" />
+						<el-input placeholder="" v-model="state.queryForm.linkman" />
 					</el-form-item>
 					<el-form-item label="客户电子邮件" prop="email">
-						<el-input placeholder="请输入客户电子邮件" v-model="state.queryForm.email" />
+						<el-input placeholder="" v-model="state.queryForm.email" />
 					</el-form-item>
 					<el-form-item label="客户电话号码" prop="phoneNumber">
-						<el-input placeholder="请输入客户电话号码" v-model="state.queryForm.phoneNumber" />
+						<el-input placeholder="" v-model="state.queryForm.phoneNumber" />
 					</el-form-item>
 					<el-form-item label="我方商务id" prop="salesRepId">
-						<el-select v-model="state.queryForm.salesRepId" placeholder="请选择我方商务id">
+						<el-select v-model="state.queryForm.salesRepId" placeholder="">
 							<el-option v-for="user in users.filter((user) => user.isAdmin !== '0')" :key="user.userId" :label="user.name" :value="user.name" />
 						</el-select>
 					</el-form-item>
@@ -59,7 +59,7 @@
 				<el-table-column prop="linkman" label="联系人" show-overflow-tooltip />
 				<el-table-column prop="email" label="客户电子邮件" show-overflow-tooltip />
 				<el-table-column prop="phoneNumber" label="客户电话号码" show-overflow-tooltip />
-				<el-table-column prop="salesRepId" label="我方商务id" show-overflow-tooltip />
+				<el-table-column prop="salesRepId" label="我方商务人员" show-overflow-tooltip />
 				<el-table-column prop="companyName" label="客户主体" show-overflow-tooltip />
 				<el-table-column prop="financeContact" label="财务联系人" show-overflow-tooltip />
 				<el-table-column prop="financeContactUser" label="财务人员" show-overflow-tooltip />

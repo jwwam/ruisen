@@ -64,18 +64,18 @@ public class CustomersEntity extends Model<CustomersEntity> {
     private LocalDateTime createdAt;
 
 	@Schema(description="客户主题（公司名称）")
-	private LocalDateTime companyName;
+	private String companyName;
 
 	@Schema(description="对方公司财务联系人")
-	private LocalDateTime financeContact;
+	private String financeContact;
 
 	@Schema(description="对方公司财务人员")
+	private String financeContactUser;
 
-	private LocalDateTime financeContactUser;
 	@Schema(description="对应的财务人员邮箱")
+	private String financeEmail;
 
-	private LocalDateTime financeEmail;
 	@Schema(description="财务人员电话")
-	private LocalDateTime financePhone;
+	private String financePhone;
 
 }
