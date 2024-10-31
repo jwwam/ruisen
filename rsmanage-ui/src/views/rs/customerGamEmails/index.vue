@@ -59,9 +59,9 @@
 				<el-table-column prop="networkCode" label="NetworkCode" show-overflow-tooltip />
 				<!-- <el-table-column prop="createdAt" label="记录创建时间" sortable="custom" show-overflow-tooltip /> -->
 				<el-table-column prop="partnerCode" label="合作伙伴标识" show-overflow-tooltip />
-				<el-table-column prop="adsTxtContent" label="ads文件内容" show-overflow-tooltip />
 				<el-table-column prop="name" label="用户名" show-overflow-tooltip />
 				<el-table-column prop="password" label="密码" show-overflow-tooltip />
+				<el-table-column prop="adsTxtContent" label="ads文件内容" show-overflow-tooltip />
 				<el-table-column label="操作" width="150">
 					<template #default="scope">
 						<el-button icon="edit-pen" text type="primary" v-auth="'rs_customerGamEmails_edit'" @click="formDialogRef.openDialog(scope.row.emailId)"

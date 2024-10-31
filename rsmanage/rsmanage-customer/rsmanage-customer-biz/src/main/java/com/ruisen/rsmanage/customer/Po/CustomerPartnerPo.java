@@ -10,7 +10,11 @@ import java.time.LocalDateTime;
 
 @Data
 public class CustomerPartnerPo {
-
+	/**
+	 * 合作关系唯一标识
+	 */
+	@Schema(description="合作关系唯一标识")
+	private Integer relationId;
 	/**
 	 * 客户ID
 	 */

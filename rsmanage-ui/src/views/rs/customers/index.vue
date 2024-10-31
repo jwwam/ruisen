@@ -15,7 +15,7 @@
 					<el-form-item label="客户电话号码" prop="phoneNumber">
 						<el-input placeholder="" v-model="state.queryForm.phoneNumber" />
 					</el-form-item>
-					<el-form-item label="我方商务id" prop="salesRepId">
+					<el-form-item label="我方商务" prop="salesRepId">
 						<el-select v-model="state.queryForm.salesRepId" placeholder="">
 							<el-option v-for="user in users.filter((user) => user.isAdmin !== '0')" :key="user.userId" :label="user.name" :value="user.name" />
 						</el-select>

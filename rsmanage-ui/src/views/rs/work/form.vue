@@ -83,7 +83,7 @@ interface Users {
 // 提交表单数据
 const form = reactive({
 	workId: '',
-	submitterId: '',
+	submitterId: 0,
 	submitterName: '', // 添加提交人名称字段
 	title: '',
 	content: '',
@@ -104,7 +104,7 @@ const dataRules = ref({
 const openDialog = (id: string) => {
 	visible.value = true;
 	form.workId = '';
-	form.submitterId = currentUserId.value; // 设置提交人ID
+	// form.submitterId = currentUserId.value; // 设置提交人ID
 
 	// 重置表单数据
 	nextTick(() => {
@@ -172,6 +172,7 @@ const fetchCurrentUser = () => {
 	const data = useUserInfo().userInfos;
 	currentUserName.value = data.user.name;
 	form.submitterName = currentUserName.value;
+	form.submitterId = data.user.userId;
 };
 
 const users = ref<Users[]>([]);
