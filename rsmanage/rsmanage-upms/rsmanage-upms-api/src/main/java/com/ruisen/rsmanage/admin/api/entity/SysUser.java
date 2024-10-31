@@ -175,4 +175,11 @@ public class SysUser implements Serializable {
 	@Schema(description = "邮箱")
 	private String email;
 
+	/**
+	 * 管理员标记，0管理员，1非管理员
+	 */
+	@Schema(description = "管理员标记")
+	private String isAdmin;
+
+
 }

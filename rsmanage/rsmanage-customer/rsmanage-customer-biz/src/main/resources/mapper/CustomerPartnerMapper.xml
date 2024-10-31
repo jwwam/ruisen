@@ -14,4 +14,25 @@
         <result property="createdAt" column="created_at"/>
         <result property="url" column="url"/>
   </resultMap>
+	<select id="qry" resultType="com.ruisen.rsmanage.customer.Po.CustomerPartnerPo">
+		select cp.* ,cu.name as customerName from rs_customer_partner_relations cp
+		left join rs_customers cu on cp.customer_id = cu.customer_id
+		<where>
+			1 = 1
+			<if test="customerId != null and customerId != ''">
+				AND cp.customer_id = #{customerId}
+			</if>
+			<if test="partnerCode != null and partnerCode != ''">
+				AND cp.partner_code = #{partnerCode}
+			</if>
+			<if test="partnerAccount!= null and partnerAccount!= ''">
+				AND cp.partner_account = #{partnerAccount}
+			</if>
+			<if test="customerName!= null and customerName!= ''">
+				AND cu.name = #{customerName}
+			</if>
+		</where>
+
+		order by created_at DESC
+	</select>
 </mapper>

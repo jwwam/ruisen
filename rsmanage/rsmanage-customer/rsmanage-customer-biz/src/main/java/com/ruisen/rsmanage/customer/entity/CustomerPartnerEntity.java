@@ -75,4 +75,10 @@ public class CustomerPartnerEntity extends Model<CustomerPartnerEntity> {
 	*/
     @Schema(description="客户在合作伙伴平台的地址")
     private String url;
+
+	/**
+	 * 客户姓名
+	 */
+	@TableField(exist = false)
+	private String customerName;
 }

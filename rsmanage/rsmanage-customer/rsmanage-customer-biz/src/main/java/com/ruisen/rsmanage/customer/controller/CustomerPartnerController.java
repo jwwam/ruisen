@@ -22,8 +22,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import utils.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -57,7 +60,33 @@ public class CustomerPartnerController {
 		wrapper.like(StrUtil.isNotBlank(customerPartner.getPartnerAccount()),CustomerPartnerEntity::getPartnerAccount,customerPartner.getPartnerAccount());
         return R.ok(customerPartnerService.page(page, wrapper));
     }
+	/**
+	 * 分页查询
+	 * @param page 分页对象
+	 * @param customerPartner 客户与合作伙伴的合作关系表
+	 * @return
+	 */
+	@Operation(summary = "分页查询" , description = "分页查询" )
+	@GetMapping("/newPage" )
+	@HasPermission("rs_customerPartner_view")
+	public R getNewCustomerPartnerPage(@ParameterObject Page page, @ParameterObject CustomerPartnerEntity customerPartner) {
+		int curPage = (int) page.getCurrent();
+		int pageSize = (int) page.getSize();
+		String customerId = StringUtils.stringUtils(customerPartner.getCustomerId());
+		String customerName = StringUtils.stringUtils(customerPartner.getCustomerName());
+		String PartnerCode = StringUtils.stringUtils(customerPartner.getPartnerCode());
+		String PartnerAccount = StringUtils.stringUtils(customerPartner.getPartnerAccount());
+		Map<String,Object> param = new HashMap<>();
+		param.put("curPage",curPage);
+		param.put("pageSize",pageSize);
+		param.put("customerId",customerId);
+		param.put("customerName",customerName);
+		param.put("PartnerCode",PartnerCode);
+		param.put("PartnerAccount",PartnerAccount);
 
+		return R.ok(customerPartnerService.qry(param));
+
+	}
 
     /**
      * 通过条件查询客户与合作伙伴的合作关系表

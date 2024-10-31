@@ -15,22 +15,47 @@
 				</el-col>
 
 				<el-col :span="12" class="mb20">
-					<el-form-item label="客户电子邮件" prop="email">
+					<el-form-item label="客户邮箱" prop="email">
 						<el-input v-model="form.email" placeholder="请输入客户电子邮件" />
 					</el-form-item>
 				</el-col>
 
 				<el-col :span="12" class="mb20">
-					<el-form-item label="客户电话号码" prop="phoneNumber">
+					<el-form-item label="客户电话" prop="phoneNumber">
 						<el-input v-model="form.phoneNumber" placeholder="请输入客户电话号码" />
 					</el-form-item>
 				</el-col>
 
 				<el-col :span="12" class="mb20">
-					<el-form-item label="我方商务人员" prop="salesRepId">
+					<el-form-item label="我方商务" prop="salesRepId">
 						<el-select v-model="form.salesRepId" placeholder="请选择我方商务人员">
-							<el-option v-for="user in users" :key="user.userId" :label="user.username" :value="user.username" />
+							<el-option v-for="user in users.filter((user) => user.isAdmin !== '0')" :key="user.userId" :label="user.name" :value="user.name" />
 						</el-select>
+					</el-form-item>
+				</el-col>
+				<el-col :span="12" class="mb20">
+					<el-form-item label="客户主体" prop="companyName">
+						<el-input v-model="form.companyName" placeholder="请输入客户主体（公司名称）" />
+					</el-form-item>
+				</el-col>
+				<el-col :span="12" class="mb20">
+					<el-form-item label="财务联系人" prop="financeContact">
+						<el-input v-model="form.financeContact" placeholder="请输入客户财务联系人" />
+					</el-form-item>
+				</el-col>
+				<el-col :span="12" class="mb20">
+					<el-form-item label="财务人员" prop="financeContactUser">
+						<el-input v-model="form.financeContactUser" placeholder="请输入客户财务人员" />
+					</el-form-item>
+				</el-col>
+				<el-col :span="12" class="mb20">
+					<el-form-item label="财务邮箱" prop="financeEmail">
+						<el-input v-model="form.financeEmail" placeholder="请输入客户财务人员邮箱" />
+					</el-form-item>
+				</el-col>
+				<el-col :span="12" class="mb20">
+					<el-form-item label="财务电话" prop="financePhone">
+						<el-input v-model="form.financePhone" placeholder="请输入客户财务人员电话" />
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -56,8 +81,13 @@ const emit = defineEmits(['refresh']);
 const dataFormRef = ref();
 const visible = ref(false);
 const loading = ref(false);
-// 定义字典
 
+// 定义对象的类型
+interface Users {
+	isAdmin: string;
+	userId: string;
+	name: string;
+}
 // 提交表单数据
 const form = reactive({
 	customerId: '',
@@ -66,6 +96,11 @@ const form = reactive({
 	email: '',
 	phoneNumber: '',
 	salesRepId: '',
+	companyName: '',
+	financeContact: '',
+	financeContactUser: '',
+	financeEmail: '',
+	financePhone: '',
 });
 
 // 定义校验规则
@@ -128,7 +163,7 @@ defineExpose({
 	openDialog,
 });
 
-const users = ref([]);
+const users = ref<Users[]>([]);
 
 const fetchUsers = async () => {
 	try {

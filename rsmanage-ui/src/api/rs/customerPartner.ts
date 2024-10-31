@@ -1,4 +1,4 @@
-import request from "/@/utils/request"
+import request from '/@/utils/request';
 
 /**
  * 根据分页查询参数获取列表数据。
@@ -6,24 +6,35 @@ import request from "/@/utils/request"
  * @returns {Promise} 请求的 Promise 分页对象。
  */
 export function fetchList(query?: Object) {
-  return request({
-    url: '/rs/customerPartner/page',
-    method: 'get',
-    params: query
-  })
+	return request({
+		url: '/rs/customerPartner/page',
+		method: 'get',
+		params: query,
+	});
 }
-
+/**
+ * 根据分页查询参数获取新的列表数据。
+ * @param {Object} [query] - 查询参数。
+ * @returns {Promise} 请求的 Promise 分页对象。
+ */
+export function fetchNewList(query?: Object) {
+	return request({
+		url: '/rs/customerPartner/newPage',
+		method: 'get',
+		params: query,
+	});
+}
 /**
  * 添加一个新对象。
  * @param {Object} [obj] - 要添加的对象。
  * @returns {Promise} 请求的 Promise 对象 （true/false）。
  */
 export function addObj(obj?: Object) {
-  return request({
-    url: '/rs/customerPartner',
-    method: 'post',
-    data: obj
-  })
+	return request({
+		url: '/rs/customerPartner',
+		method: 'post',
+		data: obj,
+	});
 }
 
 /**
@@ -32,11 +43,11 @@ export function addObj(obj?: Object) {
  * @returns {Promise} 请求的 Promise 对象数组。
  */
 export function getObj(obj?: Object) {
-  return request({
-    url: '/rs/customerPartner/details',
-    method: 'get',
-    params: obj
-  })
+	return request({
+		url: '/rs/customerPartner/details',
+		method: 'get',
+		params: obj,
+	});
 }
 
 /**
@@ -45,11 +56,11 @@ export function getObj(obj?: Object) {
  * @returns {Promise} 请求的 Promise 对象。
  */
 export function delObjs(ids?: Object) {
-  return request({
-    url: '/rs/customerPartner',
-    method: 'delete',
-    data: ids
-  })
+	return request({
+		url: '/rs/customerPartner',
+		method: 'delete',
+		data: ids,
+	});
 }
 
 /**
@@ -58,11 +69,11 @@ export function delObjs(ids?: Object) {
  * @returns {Promise} 请求的 Promise 对象。
  */
 export function putObj(obj?: Object) {
-  return request({
-    url: '/rs/customerPartner',
-    method: 'put',
-    data: obj
-  })
+	return request({
+		url: '/rs/customerPartner',
+		method: 'put',
+		data: obj,
+	});
 }
 
 /**
@@ -71,7 +82,7 @@ export function putObj(obj?: Object) {
  * @param {*} value - 要验证的值。
  * @param {Function} callback - 验证完成后的回调函数。
  * @param {boolean} isEdit - 当前操作是否为编辑。
- * 
+ *
  * 示例用法：
  * 字段名: [
  *   {
@@ -82,19 +93,18 @@ export function putObj(obj?: Object) {
  *   },
  * ]
  */
+
 export function validateExist(rule: any, value: any, callback: any, isEdit: boolean) {
-  if (isEdit) {
-    return callback();
-  }
+	if (isEdit) {
+		return callback();
+	}
 
-  getObj({ [rule.field]: value }).then((response) => {
-    const result = response.data;
-    if (result !== null && result.length > 0) {
-      callback(new Error('数据已经存在'));
-    } else {
-      callback();
-    }
-  });
+	getObj({ [rule.field]: value }).then((response) => {
+		const result = response.data;
+		if (result !== null && result.length > 0) {
+			callback(new Error('数据已经存在'));
+		} else {
+			callback();
+		}
+	});
 }
-
-

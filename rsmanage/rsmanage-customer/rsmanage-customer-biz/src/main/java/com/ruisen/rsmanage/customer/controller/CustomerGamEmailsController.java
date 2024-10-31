@@ -11,6 +11,7 @@ import com.ruisen.rsmanage.common.log.annotation.SysLog;
 import com.pig4cloud.plugin.excel.annotation.ResponseExcel;
 import com.pig4cloud.plugin.excel.annotation.RequestExcel;
 import com.ruisen.rsmanage.customer.entity.CustomerGamEmailsEntity;
+import com.ruisen.rsmanage.customer.entity.CustomerPartnerEntity;
 import com.ruisen.rsmanage.customer.service.CustomerGamEmailsService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,8 +23,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import utils.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -60,7 +64,34 @@ public class CustomerGamEmailsController {
         return R.ok(customerGamEmailsService.page(page, wrapper));
     }
 
+	/**
+	 * 分页查询
+	 * @param page 分页对象
+	 * @param customerGamEmails 客户与合作伙伴的合作关系表
+	 * @return
+	 */
+	@Operation(summary = "分页查询" , description = "分页查询" )
+	@GetMapping("/newPage" )
+	@HasPermission("rs_customerGamEmails_view")
+	public R getNewCustomerPartnerPage(@ParameterObject Page page, @ParameterObject CustomerGamEmailsEntity customerGamEmails) {
+		int curPage = (int) page.getCurrent();
+		int pageSize = (int) page.getSize();
+//		String customerId = StringUtils.stringUtils(customerGamEmails.getCustomerId());
+		String email = StringUtils.stringUtils(customerGamEmails.getEmail());
+		String networkCode = StringUtils.stringUtils(customerGamEmails.getNetworkCode());
+		String partnerCode = StringUtils.stringUtils(customerGamEmails.getPartnerCode());
+		String customerName = StringUtils.stringUtils(customerGamEmails.getCustomerName());
+		Map<String,Object> param = new HashMap<>();
+		param.put("curPage",curPage);
+		param.put("pageSize",pageSize);
+//		param.put("customerId",customerId);
+		param.put("email",email);
+		param.put("customerName",customerName);
+		param.put("networkCode",networkCode);
+		param.put("partnerCode",partnerCode);
+		return R.ok(customerGamEmailsService.qry(param));
 
+	}
     /**
      * 通过条件查询客户GAM邮箱管理表
      * @param customerGamEmails 查询条件

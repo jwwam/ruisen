@@ -1,10 +1,13 @@
-package com.ruisen.rsmanage.customer.entity;
+package com.ruisen.rsmanage.customer.Po;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
 import java.time.LocalDateTime;
 
 /**
@@ -14,18 +17,7 @@ import java.time.LocalDateTime;
  * @date 2024-10-29 16:33:25
  */
 @Data
-@TableName("rs_customer_gam_emails")
-@EqualsAndHashCode(callSuper = true)
-@Schema(description = "客户GAM邮箱管理表")
-public class CustomerGamEmailsEntity extends Model<CustomerGamEmailsEntity> {
-
-
-	/**
-	* 邮箱记录唯一标识
-	*/
-    @TableId(type = IdType.ASSIGN_ID)
-    @Schema(description="邮箱记录唯一标识")
-    private Integer emailId;
+public class CustomerGamEmailsPo {
 
 	/**
 	* 客户ID
@@ -78,6 +70,8 @@ public class CustomerGamEmailsEntity extends Model<CustomerGamEmailsEntity> {
 	/**
 	 * 客户姓名
 	 */
-	@TableField(exist = false)
+	@Schema(description="客户姓名")
 	private String customerName;
+
+
 }

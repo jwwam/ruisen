@@ -14,4 +14,24 @@
         <result property="name" column="name"/>
         <result property="password" column="password"/>
   </resultMap>
+	<select id="qry" resultType="com.ruisen.rsmanage.customer.Po.CustomerGamEmailsPo">
+		select cg.* ,cu.name as customerName from rs_customer_gam_emails cg
+		left join rs_customers cu on cg.customer_id = cu.customer_id
+		<where>
+			1 = 1
+			<if test="email != null and email != ''">
+				AND cg.email = #{email}
+			</if>
+			<if test="networkCode != null and networkCode != ''">
+				AND cg.network_code = #{networkCode}
+			</if>
+			<if test="partnerCode!= null and partnerCode!= ''">
+				AND cp.partner_code = #{partnerCode}
+			</if>
+			<if test="customerName!= null and customerName!= ''">
+				AND cu.name = #{customerName}
+			</if>
+		</where>
+		order by created_at DESC
+	</select>
 </mapper>

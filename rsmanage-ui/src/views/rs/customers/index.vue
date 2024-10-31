@@ -17,7 +17,7 @@
 					</el-form-item>
 					<el-form-item label="我方商务id" prop="salesRepId">
 						<el-select v-model="state.queryForm.salesRepId" placeholder="请选择我方商务id">
-							<el-option v-for="user in users" :key="user.userId" :label="user.username" :value="user.username" />
+							<el-option v-for="user in users.filter((user) => user.isAdmin !== '0')" :key="user.userId" :label="user.name" :value="user.name" />
 						</el-select>
 					</el-form-item>
 					<el-form-item>
@@ -45,8 +45,9 @@
 			</el-row>
 			<el-table
 				:data="state.dataList"
+				:scroll="{ x: 1000 }"
 				v-loading="state.loading"
-				border
+				size="small"
 				:cell-style="tableStyle.cellStyle"
 				:header-cell-style="tableStyle.headerCellStyle"
 				@selection-change="selectionChangHandle"
@@ -59,7 +60,11 @@
 				<el-table-column prop="email" label="客户电子邮件" show-overflow-tooltip />
 				<el-table-column prop="phoneNumber" label="客户电话号码" show-overflow-tooltip />
 				<el-table-column prop="salesRepId" label="我方商务id" show-overflow-tooltip />
-				<el-table-column prop="createdAt" label="记录创建时间" sortable="custom" show-overflow-tooltip />
+				<el-table-column prop="companyName" label="客户主体" show-overflow-tooltip />
+				<el-table-column prop="financeContact" label="财务联系人" show-overflow-tooltip />
+				<el-table-column prop="financeContactUser" label="财务人员" show-overflow-tooltip />
+				<el-table-column prop="financeEmail" label="财务人员邮箱" show-overflow-tooltip />
+				<el-table-column prop="financePhone" label="财务人员电话" show-overflow-tooltip />
 				<el-table-column label="操作" width="150">
 					<template #default="scope">
 						<el-button icon="edit-pen" text type="primary" v-auth="'rs_customers_edit'" @click="formDialogRef.openDialog(scope.row.customerId)"
@@ -96,7 +101,12 @@ import { pageList } from '/@/api/admin/user';
 // 引入组件
 const FormDialog = defineAsyncComponent(() => import('./form.vue'));
 // 定义查询字典
-
+// 定义对象的类型
+interface Users {
+	isAdmin: string;
+	userId: string;
+	name: string;
+}
 // 定义变量内容
 const formDialogRef = ref();
 const excelUploadRef = ref();
@@ -151,12 +161,13 @@ const handleDelete = async (ids: string[]) => {
 		useMessage().error(err.msg);
 	}
 };
-const users = ref([]);
+const users = ref<Users[]>([]);
 
 const fetchUsers = async () => {
 	try {
 		const response = await pageList();
 		users.value = response.data.records; // 假设返回的数据结构中用户列表在`records`字段中
+		console.info('1111', users.value);
 	} catch (error) {
 		console.error('Failed to fetch users:', error);
 	}
