@@ -113,7 +113,7 @@ const multiple = ref(true);
 const state: BasicTableProps = reactive<BasicTableProps>({
 	queryForm: {},
 	dataList: [], // 用于存储获取到的数据
-	pageList: fetchNewList,
+	// pageList: fetchNewList,
 });
 
 //  table hook

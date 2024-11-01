@@ -108,7 +108,7 @@ const multiple = ref(true);
 const state: BasicTableProps = reactive<BasicTableProps>({
 	queryForm: {},
 	dataList: [], // 用于存储获取到的数据
-	pageList: fetchNewList,
+	// pageList: fetchNewList,
 });
 
 //  table hook
@@ -169,7 +169,7 @@ const loadData = async () => {
 		state.loading = false;
 	}
 };
-// 在组件挂载时获取数据
+//在组件挂载时获取数据
 onMounted(() => {
 	loadData();
 });
