@@ -40,6 +40,12 @@ public class RevenueSharesEntity extends Model<RevenueSharesEntity> {
     private String name;
 
 	/**
+	* 上游分成比例
+	*/
+    @Schema(description="上游分成比例")
+    private BigDecimal higherShare;
+
+	/**
 	* 分成比例
 	*/
     @Schema(description="分成比例")

@@ -55,8 +55,8 @@
             </div>
             <el-row :gutter="24">
               <el-col :span="12" class="mb20">
-                <el-form-item :label="'名称'" :prop="'revenueShares.' + index + '.name'" class="no-wrap-label">
-                  <el-input v-model="item.name" placeholder="请输入名称"/>
+                <el-form-item :label="'上游分成比例'" :prop="'revenueShares.' + index + '.higherShare'" class="no-wrap-label">
+                  <el-input v-model="item.name" placeholder="请输入上游分成比例"/>
                 </el-form-item>
               </el-col>
               <el-col :span="12" class="mb20">
@@ -64,7 +64,7 @@
                   <el-input-number v-model="item.share" :min="1" :max="100" placeholder="请输入分成比例"/>
                 </el-form-item>
               </el-col>
-              <el-col :span="12" class="mb20">
+              <!-- <el-col :span="12" class="mb20">
                 <el-form-item :label="'有效天数'" :prop="'revenueShares.' + index + '.validDays'" class="no-wrap-label">
                   <el-input-number v-model="item.validDays" :min="1" placeholder="请输入有效天数"/>
                 </el-form-item>
@@ -78,7 +78,7 @@
                 <el-form-item :label="'描述'" :prop="'revenueShares.' + index + '.description'" class="no-wrap-label">
                   <el-input v-model="item.description" placeholder="请输入描述"/>
                 </el-form-item>
-              </el-col>
+              </el-col> -->
             </el-row>
           </div>
 
