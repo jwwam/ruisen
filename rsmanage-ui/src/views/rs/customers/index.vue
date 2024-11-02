@@ -16,8 +16,8 @@
 						<el-input placeholder="" v-model="state.queryForm.phoneNumber" />
 					</el-form-item>
 					<el-form-item label="我方商务" prop="salesRepId">
-						<el-select v-model="state.queryForm.salesRepId" placeholder="">
-							<el-option v-for="user in users.filter((user) => user.isAdmin !== '0')" :key="user.userId" :label="user.name" :value="user.name" />
+						<el-select v-model="state.queryForm.salesRepId" placeholder="" filterable>
+							<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.name" />
 						</el-select>
 					</el-form-item>
 					<el-form-item>
@@ -61,7 +61,6 @@
 				<el-table-column prop="phoneNumber" label="客户电话号码" show-overflow-tooltip />
 				<el-table-column prop="salesRepId" label="我方商务人员" show-overflow-tooltip />
 				<el-table-column prop="companyName" label="客户主体" show-overflow-tooltip />
-				<el-table-column prop="financeContact" label="财务联系人" show-overflow-tooltip />
 				<el-table-column prop="financeContactUser" label="财务人员" show-overflow-tooltip />
 				<el-table-column prop="financeEmail" label="财务人员邮箱" show-overflow-tooltip />
 				<el-table-column prop="financePhone" label="财务人员电话" show-overflow-tooltip />
@@ -96,7 +95,7 @@ import { BasicTableProps, useTable } from '/@/hooks/table';
 import { fetchList, delObjs } from '/@/api/rs/customers';
 import { useMessage, useMessageBox } from '/@/hooks/message';
 import { useDict } from '/@/hooks/dict';
-import { pageList } from '/@/api/admin/user';
+import { pageRoleList } from '/@/api/admin/user';
 
 // 引入组件
 const FormDialog = defineAsyncComponent(() => import('./form.vue'));
@@ -165,9 +164,8 @@ const users = ref<Users[]>([]);
 
 const fetchUsers = async () => {
 	try {
-		const response = await pageList();
+		const response = await pageRoleList();
 		users.value = response.data.records; // 假设返回的数据结构中用户列表在`records`字段中
-		console.info('1111', users.value);
 	} catch (error) {
 		console.error('Failed to fetch users:', error);
 	}

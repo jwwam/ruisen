@@ -7,7 +7,13 @@
 						<el-input v-model="form.name" placeholder="请输入客户名称" />
 					</el-form-item>
 				</el-col>
-
+				<el-col :span="12" class="mb20">
+					<el-form-item label="我方商务" prop="salesRepId">
+						<el-select v-model="form.salesRepId" placeholder="请选择我方商务人员" filterable>
+							<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.name" />
+						</el-select>
+					</el-form-item>
+				</el-col>
 				<el-col :span="12" class="mb20">
 					<el-form-item label="联系人" prop="linkman">
 						<el-input v-model="form.linkman" placeholder="请输入联系人" />
@@ -27,20 +33,8 @@
 				</el-col>
 
 				<el-col :span="12" class="mb20">
-					<el-form-item label="我方商务" prop="salesRepId">
-						<el-select v-model="form.salesRepId" placeholder="请选择我方商务人员">
-							<el-option v-for="user in users.filter((user) => user.isAdmin !== '0')" :key="user.userId" :label="user.name" :value="user.name" />
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="12" class="mb20">
 					<el-form-item label="客户主体" prop="companyName">
-						<el-input v-model="form.companyName" placeholder="请输入客户主体（公司名称）" />
-					</el-form-item>
-				</el-col>
-				<el-col :span="12" class="mb20">
-					<el-form-item label="财务联系人" prop="financeContact">
-						<el-input v-model="form.financeContact" placeholder="请输入客户财务联系人" />
+						<el-input v-model="form.companyName" placeholder="请输入公司名称" />
 					</el-form-item>
 				</el-col>
 				<el-col :span="12" class="mb20">
@@ -74,7 +68,7 @@ import { useDict } from '/@/hooks/dict';
 import { useMessage } from '/@/hooks/message';
 import { getObj, addObj, putObj, validateExist } from '/@/api/rs/customers';
 import { rule } from '/@/utils/validate';
-import { pageList } from '/@/api/admin/user';
+import { pageRoleList } from '/@/api/admin/user';
 const emit = defineEmits(['refresh']);
 
 // 定义变量内容
@@ -97,7 +91,6 @@ const form = reactive({
 	phoneNumber: '',
 	salesRepId: '',
 	companyName: '',
-	financeContact: '',
 	financeContactUser: '',
 	financeEmail: '',
 	financePhone: '',
@@ -167,7 +160,7 @@ const users = ref<Users[]>([]);
 
 const fetchUsers = async () => {
 	try {
-		const response = await pageList();
+		const response = await pageRoleList();
 		users.value = response.data.records; // 假设返回的数据结构中用户列表在`records`字段中
 	} catch (error) {
 		console.error('Failed to fetch users:', error);

@@ -163,6 +163,18 @@ public class SysUserController {
 	}
 
 	/**
+	 * 查询用户信息（不含管理员信息）
+	 * @param page 参数集
+	 * @param userDTO 查询参数列表
+	 * @return 用户集合
+	 */
+	@GetMapping("/pageRole")
+	public R getUserRolePage(@ParameterObject Page page,@ParameterObject UserDTO userDTO) {
+		return R.ok(userService.getUsersNoAdminPage(page, userDTO));
+	}
+
+
+	/**
 	 * 修改个人信息
 	 * @param userDto userDto
 	 * @return success/false

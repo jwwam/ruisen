@@ -170,6 +170,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	}
 
 	/**
+	 * 分页查询用户信息（不含管理员信息）
+	 * @param page 分页对象
+	 * @param userDTO 参数列表
+	 * @return
+	 */
+	@Override
+	public IPage getUsersNoAdminPage(Page page,UserDTO userDTO) {
+		return baseMapper.getUsersNoAdminPage(page,userDTO);
+	}
+	/**
 	 * 通过ID查询用户信息
 	 * @param id 用户ID
 	 * @return 用户信息

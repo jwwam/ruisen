@@ -8,6 +8,15 @@ export const pageList = (params?: Object) => {
 	});
 };
 
+//用户列表（过滤管理员）
+export const pageRoleList = (params?: Object) => {
+	return request({
+		url: '/admin/user/pageRole',
+		method: 'get',
+		params,
+	});
+};
+
 export const addObj = (obj: Object) => {
 	return request({
 		url: '/admin/user',
