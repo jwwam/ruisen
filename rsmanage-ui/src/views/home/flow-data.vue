@@ -31,7 +31,7 @@ export default {
 					</span>
 				</div>
 			</div>
-			<router-link to="/flow/task/pending">
+			<router-link to="/rs/work/pending">
 				<div class="flex flex-col justify-center w-auto ml-4 h-50">
 					<p class="text-sm font-medium text-gray-600 font-dm">{{ $t('home.pendingTask') }}</p>
 					<h4 class="text-xl font-bold text-navy-700 dark:text-white">✍️ {{ state.pendingNum }}</h4>
@@ -60,7 +60,7 @@ export default {
 					</span>
 				</div>
 			</div>
-			<router-link to="/flow/task/cc">
+			<router-link to="/rs/work/copy">
 				<div class="flex flex-col justify-center w-auto ml-4 h-50">
 					<p class="text-sm font-medium text-gray-600 font-dm">{{ $t('home.copyTask') }}</p>
 					<h4 class="text-xl font-bold text-navy-700 dark:text-white">🔖 {{ state.copyNum }}</h4>
