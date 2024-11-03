@@ -41,7 +41,6 @@
         <result column="nickname" property="nickname"/>
         <result column="name" property="name"/>
         <result column="email" property="email"/>
-		<result column="is_admin" property="isAdmin"/>
         <collection property="roleList" ofType="com.ruisen.rsmanage.admin.api.entity.SysRole"
                     select="com.ruisen.rsmanage.admin.mapper.SysRoleMapper.listRolesByUserId" column="user_id">
         </collection>
@@ -135,7 +134,6 @@
         u.nickname,
         u.name,
         u.email,
-        U.is_admin,
         d.name dept_name
         FROM
         sys_user u
