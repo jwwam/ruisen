@@ -1,10 +1,10 @@
 <template>
 	<el-dialog :title="form.emailId ? '编辑' : '新增'" v-model="visible" :close-on-click-modal="false" draggable>
-		<el-form ref="dataFormRef" :model="form" :rules="dataRules" formDialogRef label-width="110px" v-loading="loading">
+		<el-form ref="dataFormRef" :model="form" :rules="dataRules" formDialogRef label-width="100px" v-loading="loading">
 			<el-row :gutter="24">
 				<el-col :span="12" class="mb20">
 					<el-form-item label="客户姓名" prop="customerId">
-						<el-select v-model="form.customerId" placeholder="">
+						<el-select v-model="form.customerId" placeholder="" filterable>
 							<el-option v-for="customer in customers" :key="customer.customerId" :label="customer.name" :value="customer.customerId" />
 						</el-select>
 					</el-form-item>
@@ -24,27 +24,9 @@
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="合作伙伴标识" prop="partnerCode">
-						<el-select v-model="form.partnerCode" placeholder="请选择合作伙伴标识">
+						<el-select v-model="form.partnerCode" placeholder="请选择合作伙伴标识" filterable>
 							<el-option v-for="partner in partners" :key="partner.partnerId" :label="partner.partnerCode" :value="partner.partnerCode" />
 						</el-select>
-					</el-form-item>
-				</el-col>
-
-				<el-col :span="12" class="mb20">
-					<el-form-item label="ads文件内容" prop="adsTxtContent">
-						<upload-file v-model="form.adsTxtContent"></upload-file>
-					</el-form-item>
-				</el-col>
-
-				<el-col :span="12" class="mb20">
-					<el-form-item label="用户名" prop="name">
-						<el-input v-model="form.name" placeholder="请输入用户名" />
-					</el-form-item>
-				</el-col>
-
-				<el-col :span="12" class="mb20">
-					<el-form-item label="密码" prop="password">
-						<el-input v-model="form.password" placeholder="请输入密码" />
 					</el-form-item>
 				</el-col>
 			</el-row>

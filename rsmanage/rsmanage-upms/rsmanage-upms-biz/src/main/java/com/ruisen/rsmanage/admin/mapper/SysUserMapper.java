@@ -57,6 +57,7 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 	 */
 	IPage<UserVO> getUserVosPage(Page page, @Param("query") UserDTO userDTO);
 
+	IPage<UserVO>   getUsersNoAdminPage(Page page,@Param("query") UserDTO userDTO);
 	/**
 	 * 通过ID查询用户信息
 	 * @param id 用户ID
