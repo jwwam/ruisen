@@ -63,8 +63,8 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 						workPo.setAssignees(assigneesStr);
 					}
 					//抄送人
-					if(workPo.getCc() != null && !workPo.getCc().isEmpty()){
-						String ccStr = workPo.getCc();
+					if(workPo.getCopy() != null && !workPo.getCopy().isEmpty()){
+						String ccStr = workPo.getCopy();
 						String[] idArray = ccStr.split(",");
 						// 存储用户名称
 						List<String> nameList = new ArrayList<>();
@@ -77,7 +77,7 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 							}
 						}
 						ccStr = String.join(",", nameList);
-						workPo.setCc(ccStr);
+						workPo.setCopy(ccStr);
 					}
 					if(workPo.getAttachments() != null && !workPo.getAttachments().isEmpty()) {
 						List<SysFile> allAttachments = new ArrayList<>();

@@ -81,7 +81,7 @@ public class WorkEntity extends Model<WorkEntity> {
 	private Integer partnerId;
 
 	@Schema(description = "抄送人")
-	private String cc;
+	private String copy;
 
 	@Schema(description = "工单分类")
 	private String category;
