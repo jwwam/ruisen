@@ -13,6 +13,7 @@ import com.pig4cloud.plugin.excel.annotation.RequestExcel;
 import com.ruisen.rsmanage.customer.entity.PartnersEntity;
 import com.ruisen.rsmanage.customer.entity.RevenueSharesEntity;
 import com.ruisen.rsmanage.customer.service.PartnersService;
+import com.ruisen.rsmanage.customer.service.RevenueSharesService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import com.ruisen.rsmanage.common.security.annotation.HasPermission;
@@ -41,6 +42,7 @@ import java.util.Objects;
 public class PartnersController {
 
     private final  PartnersService partnersService;
+    private final  RevenueSharesService revenueSharesService;
 
     /**
      * 分页查询
@@ -59,6 +61,7 @@ public class PartnersController {
 		wrapper.eq(Objects.nonNull(partners.getStartDate()),PartnersEntity::getStartDate,partners.getStartDate());
 		wrapper.eq(Objects.nonNull(partners.getEndDate()),PartnersEntity::getEndDate,partners.getEndDate());
 		wrapper.eq(Objects.nonNull(partners.getValidDays()),PartnersEntity::getValidDays,partners.getValidDays());
+		wrapper.eq(Objects.nonNull(partners.getValidMonths()),PartnersEntity::getValidMonths,partners.getValidMonths());
         return R.ok(partnersService.page(page, wrapper));
     }
 
@@ -90,7 +93,12 @@ public class PartnersController {
     @PostMapping
     @HasPermission("rs_partners_add")
     public R save(@RequestBody PartnersEntity partners) {
-        return R.ok(partnersService.save(partners));
+		boolean res = partnersService.save(partners);
+        for (RevenueSharesEntity revenueShare : partners.getRevenueShares()) {
+            revenueShare.setPartnerId(partners.getPartnerId());
+        }
+        revenueSharesService.saveBatch(partners.getRevenueShares());
+        return R.ok(res);
     }
 
     /**
@@ -116,6 +124,9 @@ public class PartnersController {
     @DeleteMapping
     @HasPermission("rs_partners_del")
     public R removeById(@RequestBody Integer[] ids) {
+        // 先删除对应的分成比例
+        revenueSharesService.remove(Wrappers.<RevenueSharesEntity>lambdaQuery()
+            .in(RevenueSharesEntity::getPartnerId, ids));
         return R.ok(partnersService.removeBatchByIds(CollUtil.toList(ids)));
     }
 

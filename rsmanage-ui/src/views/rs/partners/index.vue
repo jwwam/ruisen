@@ -9,17 +9,23 @@
       <el-form-item label="合作伙伴标识" prop="partnerCode" >
         <el-input placeholder="请输入合作伙伴标识" v-model="state.queryForm.partnerCode" />
       </el-form-item>
-      <el-form-item label="请输入分成比例" prop="revenueShare" >
+      <!-- <el-form-item label="请输入分成比例" prop="revenueShare" >
         <el-input placeholder="请输入分成比例" v-model="state.queryForm.revenueShare" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="合作开始时间" prop="startDate">
       <el-date-picker type="date" placeholder="请输入合作开始时间" v-model="state.queryForm.startDate"></el-date-picker>
       </el-form-item>
       <el-form-item label="合作结束时间" prop="endDate">
       <el-date-picker type="date" placeholder="请输入合作结束时间" v-model="state.queryForm.endDate"></el-date-picker>
       </el-form-item>
-      <el-form-item label="分成有效天数" prop="validDays" >
+      <!-- <el-form-item label="分成有效天数" prop="validDays" >
         <el-input placeholder="请输入分成有效天数" v-model="state.queryForm.validDays" />
+      </el-form-item> -->
+      <el-form-item label="分成有效月数" prop="validMonths">
+        <el-select v-model="state.queryForm.validMonths" placeholder="请选择分成有效月数" filterable allow-create>
+          <el-option v-for="month in 12" :key="month" :label="month + '个月'" :value="month"/>
+          <el-option label="无限制" value="9999"/>
+        </el-select>
       </el-form-item>
           <el-form-item>
             <el-button icon="search" type="primary" @click="getDataList">
@@ -70,7 +76,13 @@
           </el-table-column>
           <el-table-column prop="startDate" label="合作开始时间"  show-overflow-tooltip/>
           <el-table-column prop="endDate" label="合作结束时间"  show-overflow-tooltip/>
-          <el-table-column prop="validDays" label="分成有效天数"  show-overflow-tooltip/>
+          <!-- <el-table-column prop="validDays" label="分成有效天数"  show-overflow-tooltip/> -->
+          <el-table-column prop="validMonths" label="分成有效月数" show-overflow-tooltip>
+            <template #default="scope">
+              <span v-if="scope.row.validMonths === 9999">无限制</span>
+              <span v-else>{{ scope.row.validMonths }}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="createdAt" label="记录创建时间" sortable="custom" show-overflow-tooltip/>
         <el-table-column label="操作" width="150">
           <template #default="scope">

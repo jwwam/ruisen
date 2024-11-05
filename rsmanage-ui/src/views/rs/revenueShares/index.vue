@@ -50,6 +50,11 @@
         <el-table-column type="index" label="#" width="40" />
           <el-table-column prop="partnerId" label="合作伙伴ID"  show-overflow-tooltip/>
           <el-table-column prop="name" label="分成比例名称"  show-overflow-tooltip/>
+          <el-table-column prop="higherShare" label="上游分成比例" show-overflow-tooltip>
+            <template #default="scope">
+              {{ scope.row.higherShare }}%
+            </template>
+          </el-table-column>
           <el-table-column prop="share" label="分成比例" show-overflow-tooltip>
             <template #default="scope">
               {{ scope.row.share }}%
