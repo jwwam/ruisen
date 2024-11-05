@@ -183,7 +183,8 @@ const uploadedSuccessfully = () => {
 };
 
 const handleRemove = (file: any) => {
-	fileList.value = fileList.value.filter((f) => !(f === file.url));
+	fileList.value = fileList.value.filter((f) => f.url !== file.url);
+	uploadList.value = uploadList.value.filter((f) => f.url !== file.url);
 	emit('change', listToString(fileList.value));
 	emit('update:modelValue', listToString(fileList.value));
 };
