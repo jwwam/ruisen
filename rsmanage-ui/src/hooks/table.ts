@@ -32,7 +32,7 @@ export interface BasicTableProps {
 	// props属性对象，类型为any
 	props?: any;
 	// 合并行列，类型为函数
-	spanMethod?: Function
+	spanMethod?: Function;
 }
 
 /**
@@ -61,7 +61,20 @@ export interface Pagination {
 }
 
 export function useTable(options?: BasicTableProps) {
-	const defaultOptions: { createdIsNeed: boolean; pagination: Pagination; queryForm: {}; loading: boolean; dataListSelections: any[]; ascs: any[]; props: { item: string; totalCount: string }; selectObjs: any[]; descs: any[]; dataListLoading: boolean; dataList: any[]; isPage: boolean } = {
+	const defaultOptions: {
+		createdIsNeed: boolean;
+		pagination: Pagination;
+		queryForm: {};
+		loading: boolean;
+		dataListSelections: any[];
+		ascs: any[];
+		props: { item: string; totalCount: string };
+		selectObjs: any[];
+		descs: any[];
+		dataListLoading: boolean;
+		dataList: any[];
+		isPage: boolean;
+	} = {
 		// 列表数据是否正在加载中，默认为false
 		dataListLoading: false,
 		// 是否需要自动请求创建接口来获取表格数据，默认为true
@@ -126,8 +139,8 @@ export function useTable(options?: BasicTableProps) {
 				state.loading = true;
 				// 参数排除空字段
 				for (let key in state.queryForm) {
-					if (state.queryForm[key] === "" || state.queryForm[key] === null) {
-						delete state.queryForm[key]
+					if (state.queryForm[key] === '' || state.queryForm[key] === null) {
+						delete state.queryForm[key];
 					}
 				}
 				// 调用state.pageList方法发起分页查询
@@ -142,8 +155,8 @@ export function useTable(options?: BasicTableProps) {
 				// 设置表格展示的数据数组
 				state.dataList = state.isPage ? res.data[state.props.item] : res.data;
 				// 处理合并
-				if (state.spanMethod){
-					state.spanMethod()
+				if (state.spanMethod) {
+					state.spanMethod();
 				}
 				// 设置分页信息中的总数据条数
 				state.pagination!.total = state.isPage ? res.data[state.props.totalCount] : 0;

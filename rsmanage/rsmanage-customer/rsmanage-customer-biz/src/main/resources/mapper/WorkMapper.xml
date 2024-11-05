@@ -14,4 +14,39 @@
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
   </resultMap>
+	<select id="qry" resultType="com.ruisen.rsmanage.customer.Po.WorkPo">
+	select w.* ,cu.name as customerName,p.partner_code as partnerCode,u.name as submitterName
+	from rs_work_form w left join rs_customers cu on w.customer_id = cu.customer_id
+	left join rs_partners p on w.partner_id = p.partner_id
+	left join sys_user u on w.submitter_id = u.user_id
+	<where>
+		1 = 1
+		<if test="customerId != null and customerId != ''">
+			AND w.customer_id = #{customerId}
+		</if>
+		<if test="category != null and category != ''">
+			AND w.category LIKE CONCAT('%', #{category}, '%')
+		</if>
+		<if test="status!= null and status!= ''">
+			AND w.status = #{status}
+		</if>
+		<if test="assignees!= null and assignees!= ''">
+			AND w.assignees = #{assignees}
+		</if>
+	</where>
+	order by created_at DESC
+	</select>
+
+	<!-- 通过用户ID查询用户名称 -->
+	<select id="getUserNameById" resultType="String">
+		SELECT NAME
+		FROM sys_user
+		WHERE user_id = #{userId}
+	</select>
+
+	<!-- 通过用户ID查询用户名称 -->
+	<select id="getFileDetail" resultType="com.ruisen.rsmanage.admin.api.entity.SysFile">
+		SELECT * FROM sys_file where file_name = #{fileName}
+	</select>
+
 </mapper>

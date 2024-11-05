@@ -59,10 +59,10 @@
 </template>
 
 <script setup lang="ts" name="upload-file">
-import {useMessage} from '/@/hooks/message';
-import {Session} from '/@/utils/storage';
+import { useMessage } from '/@/hooks/message';
+import { Session } from '/@/utils/storage';
 import other from '/@/utils/other';
-import {useI18n} from 'vue-i18n';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
 	modelValue: [String, Array],
@@ -98,12 +98,12 @@ const props = defineProps({
 	},
 	data: {
 		type: Object,
-    default:{}
+		default: {},
 	},
-  dir: {
-    type: String,
-    default: ''
-  },
+	dir: {
+		type: String,
+		default: '',
+	},
 	autoUpload: {
 		type: Boolean,
 		default: true,
@@ -128,7 +128,7 @@ const headers = computed(() => {
 
 // 请求参数处理
 const formData = computed(() => {
-  return Object.assign(props.data,{dir: props.dir});
+	return Object.assign(props.data, { dir: props.dir });
 });
 
 // 上传前校检格式和大小
@@ -158,6 +158,7 @@ const handleBeforeUpload = (file: File) => {
 // 上传成功回调
 function handleUploadSuccess(res: any, file: any) {
 	if (res.code === 0) {
+		console.log('111111111111', res);
 		uploadList.value.push({ name: file.name, url: res.data.url });
 		uploadedSuccessfully();
 	} else {
@@ -172,6 +173,8 @@ function handleUploadSuccess(res: any, file: any) {
 const uploadedSuccessfully = () => {
 	if (number.value > 0 && uploadList.value.length === number.value) {
 		fileList.value = fileList.value.filter((f) => f.url !== undefined).concat(uploadList.value);
+		console.log('fileList.value', fileList.value);
+		console.log('uploadList.value', uploadList.value);
 		uploadList.value = [];
 		number.value = 0;
 		emit('change', listToString(fileList.value));

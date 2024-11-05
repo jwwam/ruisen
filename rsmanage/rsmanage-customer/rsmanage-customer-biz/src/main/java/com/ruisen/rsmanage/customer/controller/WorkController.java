@@ -22,8 +22,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import utils.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -59,8 +62,35 @@ public class WorkController {
         return R.ok(workService.page(page, wrapper));
     }
 
+	/**
+	 * 分页查询
+	 * @param page 分页对象
+	 * @param work 工单表
+	 * @return
+	 */
+	@Operation(summary = "分页查询" , description = "分页查询" )
+	@GetMapping("/workPage" )
+	@HasPermission("rs_work_view")
+	public R getNewWorkPage(@ParameterObject Page page, @ParameterObject WorkEntity work) {
+		int curPage = (int) page.getCurrent();
+		int pageSize = (int) page.getSize();
+		String customerId = StringUtils.stringUtils(work.getSubmitterId());
+		String category = StringUtils.stringUtils(work.getCategory());
+		String status = StringUtils.stringUtils(work.getStatus());
+		String assignees = StringUtils.stringUtils(work.getAssignees());
+		Map<String,Object> param = new HashMap<>();
+		param.put("curPage",curPage);
+		param.put("pageSize",pageSize);
+		param.put("customerId",customerId);
+		param.put("category",category);
+		param.put("status",status);
+		param.put("assignees",assignees);
+		return R.ok(workService.qry(param));
+	}
 
-    /**
+
+
+	/**
      * 通过条件查询工单表
      * @param work 查询条件
      * @return R  对象列表

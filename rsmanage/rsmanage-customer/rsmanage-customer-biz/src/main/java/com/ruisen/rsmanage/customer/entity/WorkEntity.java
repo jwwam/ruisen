@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 工单表
@@ -18,8 +19,6 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Schema(description = "工单表")
 public class WorkEntity extends Model<WorkEntity> {
-
-
 	/**
 	* 工单唯一标识
 	*/
@@ -55,7 +54,7 @@ public class WorkEntity extends Model<WorkEntity> {
 	* 处理人ID
 	*/
     @Schema(description="处理人ID")
-    private String[] assignees;
+    private String assignees;
 
 	/**
 	* 附件路径列表，JSON格式
@@ -74,4 +73,22 @@ public class WorkEntity extends Model<WorkEntity> {
 	*/
     @Schema(description="更新时间")
     private LocalDateTime updatedAt;
+
+	@Schema(description = "客户ID")
+	private Integer customerId;
+
+	@Schema(description = "合作伙伴ID")
+	private Integer partnerId;
+
+	@Schema(description = "抄送人")
+	private String cc;
+
+	@Schema(description = "工单分类")
+	private String category;
+
+	@Schema(description = "优先级")
+	private String priority;
+
+	@Schema(description = "截止日期")
+	private String deadline;
 }
