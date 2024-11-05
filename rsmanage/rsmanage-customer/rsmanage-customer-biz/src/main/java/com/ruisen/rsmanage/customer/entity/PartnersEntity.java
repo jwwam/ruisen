@@ -67,6 +67,12 @@ public class PartnersEntity extends Model<PartnersEntity> {
     private Integer validDays;
 
 	/**
+	* 分成有效月数
+	*/
+    @Schema(description="分成有效月数")
+    private Integer validMonths;
+
+	/**
 	* 记录创建时间
 	*/
     @Schema(description="记录创建时间")

@@ -8,6 +8,7 @@
         <result property="partnerId" column="partner_id"/>
         <result property="name" column="name"/>
         <result property="share" column="share"/>
+        <result property="higherShare" column="higher_share"/>
         <result property="description" column="description"/>
         <result property="validDays" column="valid_days"/>
         <result property="isActive" column="is_active"/>

@@ -26,18 +26,20 @@
       <el-date-picker type="date" placeholder="请选择合作结束时间" v-model="form.endDate" :value-format="dateStr"></el-date-picker>
       </el-form-item>
       </el-col>
-
     <el-col :span="12" class="mb20">
-      <el-form-item label="分成有效天数" prop="validDays" class="no-wrap-label">
-        <el-input-number :min="1" :max="1000" v-model="form.validDays" placeholder="请输入分成有效天数"></el-input-number>
+      <el-form-item label="分成有效月数" prop="validMonths" class="no-wrap-label">
+        <el-select v-model="form.validMonths" placeholder="请选择分成有效月数" filterable allow-create default-first-option>
+          <el-option v-for="month in 12" :key="month" :label="month + '个月'" :value="month"/>
+          <el-option label="无限制" value="9999"/>
+        </el-select>
       </el-form-item>
     </el-col>
 
-    <el-col :span="12" class="mb20">
+    <!-- <el-col :span="12" class="mb20">
       <el-form-item label="分成比例" prop="revenueShare" class="no-wrap-label">
         <el-input-number :min="1" :max="1000" v-model="form.revenueShare" placeholder="请输入分成比例"></el-input-number>
       </el-form-item>
-    </el-col>
+    </el-col> -->
 
 			</el-row>
 
@@ -56,7 +58,7 @@
             <el-row :gutter="24">
               <el-col :span="12" class="mb20">
                 <el-form-item :label="'上游分成比例'" :prop="'revenueShares.' + index + '.higherShare'" class="no-wrap-label">
-                  <el-input v-model="item.name" placeholder="请输入上游分成比例"/>
+                  <el-input-number v-model="item.higherShare" :min="1" :max="100" placeholder="请输入上游分成比例"/>
                 </el-form-item>
               </el-col>
               <el-col :span="12" class="mb20">
@@ -122,6 +124,7 @@ const form = reactive({
 	  startDate: '',
 	  endDate: '',
 		validDays: 0,
+		validMonths: 0,
 	  revenueShares: [] as any[],
 });
 
@@ -134,19 +137,18 @@ const dataRules = ref({
 
 // 打开弹窗
 const openDialog = (id: string) => {
-  visible.value = true
-  form.partnerId = ''
-
-  // 重置表单数据
-	nextTick(() => {
-		dataFormRef.value?.resetFields();
-	});
-
-  // 获取partners信息
-  if (id) {
-    form.partnerId = id
-    getPartnersData(id)
-  }
+    visible.value = true;
+    form.partnerId = '';
+    // 重置表单数据
+    nextTick(() => {
+        dataFormRef.value?.resetFields();
+        form.revenueShares = []; // 清空分成比例数据
+    });
+        // 获取partners信息
+    if (id) {
+      form.partnerId = id;
+      getPartnersData(id);
+    }
 };
 
 // 初始化表单数据
@@ -176,7 +178,7 @@ const addRevenueShare = () => {
 
 // 删除分成比例
 const removeRevenueShare = async (shareId: string) => {
-  console.log('删除分成比例：', shareId);
+  // console.log('删除分成比例：', shareId);
   if (shareId) {
     try {
       await delObjs([shareId]);
@@ -207,7 +209,7 @@ const submitRevenueShares = async () => {
         //console.log('新增分成比例：', toAdd);
         await batchSave(toAdd.map(item => ({ ...item, partnerId: form.partnerId })));
       }
-
+      
       useMessage().success('分成比例保存成功');
     }
   } catch (error: any) {
@@ -225,7 +227,7 @@ const onSubmit = async () => {
     // 先保存主表数据
     form.partnerId ? await putObj(form) : await addObj(form);
     // 再保存分成比例数据
-    await submitRevenueShares(form.partnerId);
+    await submitRevenueShares();
     
     useMessage().success(form.partnerId ? '修改成功' : '添加成功');
     visible.value = false;
