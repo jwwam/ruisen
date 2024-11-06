@@ -9,3 +9,7 @@ ADD COLUMN priority VARCHAR(255) NOT NULL COMMENT '优先级',
 ADD COLUMN deadline VARCHAR(10) NOT NULL COMMENT '截止日期';
 
 ALTER TABLE rs_work_form MODIFY COLUMN attachments VARCHAR(1000) COMMENT '附件路径，多个用逗号分隔';
+
+
+ALTER TABLE rs_contracts
+    ADD COLUMN file_url varchar(255) null COMMENT '合同文件';
