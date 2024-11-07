@@ -20,9 +20,6 @@ importers:
       '@wangeditor/editor-for-vue':
         specifier: 5.1.12
         version: 5.1.12(@wangeditor/editor@5.1.23)(vue@3.5.8(typescript@5.6.3))
-      autoprefixer:
-        specifier: 10.4.20
-        version: 10.4.20(postcss@8.4.47)
       axios:
         specifier: 1.7.7
         version: 1.7.7
@@ -56,9 +53,6 @@ importers:
       pinia:
         specifier: 2.2.2
         version: 2.2.2(typescript@5.6.3)(vue@3.5.8(typescript@5.6.3))
-      postcss:
-        specifier: 8.4.47
-        version: 8.4.47
       qs:
         specifier: 6.13.0
         version: 6.13.0
@@ -74,9 +68,6 @@ importers:
       splitpanes:
         specifier: 3.1.5
         version: 3.1.5
-      tailwindcss:
-        specifier: 3.4.12
-        version: 3.4.12
       vue:
         specifier: 3.5.8
         version: 3.5.8(typescript@5.6.3)
@@ -120,6 +111,9 @@ importers:
       '@vue/compiler-sfc':
         specifier: ^3.4.3
         version: 3.5.11
+      autoprefixer:
+        specifier: 10.4.20
+        version: 10.4.20(postcss@8.4.47)
       consola:
         specifier: ^3.0.0
         version: 3.2.3
@@ -135,12 +129,18 @@ importers:
       pinia-plugin-persist:
         specifier: ^1.0.0
         version: 1.0.0(pinia@2.2.2(typescript@5.6.3)(vue@3.5.8(typescript@5.6.3)))(vue@3.5.8(typescript@5.6.3))
+      postcss:
+        specifier: 8.4.47
+        version: 8.4.47
       prettier:
         specifier: 3.3.3
         version: 3.3.3
       sass:
         specifier: ^1.58.3
         version: 1.79.5
+      tailwindcss:
+        specifier: 3.4.12
+        version: 3.4.12
       terser:
         specifier: ^5.31.1
         version: 5.34.1
