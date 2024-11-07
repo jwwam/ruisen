@@ -36,9 +36,9 @@ public class WorkPo {
 	private String content;
 
 	/**
-	 * 工单状态，0:待处理, 1:处理中, 2:已处理
+	 * 工单状态，0:待处理, 1:处理中, 2:已处理, 3:已终止
 	 */
-	@Schema(description="工单状态，0:待处理, 1:处理中, 2:已处理")
+	@Schema(description="工单状态，0:待处理, 1:处理中, 2:已处理,3:已终止")
 	private Integer status;
 
 	/**
@@ -95,5 +95,11 @@ public class WorkPo {
 
 	@Schema(description="提交人")
 	private String submitterName;
+
+	@Schema(description = "处理时间")
+	private LocalDateTime handleTime;
+
+	@Schema(description = "处理意见")
+	private String handleOpinion;
 
 }

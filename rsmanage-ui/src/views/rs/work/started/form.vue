@@ -20,20 +20,20 @@
 							</el-select>
 						</template>
 						<template v-else>
-							<el-input v-model="form.category" placeholder="请输入自定义分类" @input="updateTitle" :disabled="readonly"/>
+							<el-input v-model="form.category" placeholder="请输入自定义分类" @input="updateTitle" :disabled="readonly" />
 						</template>
 					</el-form-item>
 				</el-col>
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="工单名称" prop="title">
-						<el-input v-model="form.title" placeholder="请输入工单标题" :disabled="readonly" />
+						<el-input v-model="form.title" placeholder="请输入工单标题" :disabled="readonly || !form.workId" />
 					</el-form-item>
 				</el-col>
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="工单状态" prop="status">
-						<el-input v-model="form.status" disabled />
+						<el-input v-model="statusText" disabled />
 					</el-form-item>
 				</el-col>
 
@@ -47,9 +47,14 @@
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="抄送人" prop="copy">
-						<el-select v-model="form.copy" multiple placeholder="请选择抄送人" filterable :disabled="readonly">
-							<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
-						</el-select>
+						<template v-if="readonly">
+							<el-input v-model="copyDisplayText" disabled />
+						</template>
+						<template v-else>
+							<el-select v-model="form.copy" multiple placeholder="请选择抄送人" filterable :disabled="readonly">
+								<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
+							</el-select>
+						</template>
 					</el-form-item>
 				</el-col>
 
@@ -90,7 +95,12 @@
 				</el-col>
 				<el-col :span="24" class="mb20">
 					<el-form-item label="附件上传" prop="attachments">
-						<upload-file v-model="form.attachments" :disabled="readonly"></upload-file>
+						<upload-file v-model="form.attachments" :disabled="readonly" :showDelete="!readonly" :showUpload="!readonly"></upload-file>
+					</el-form-item>
+				</el-col>
+				<el-col :span="24" class="mb20" v-if="Number(form.status) === 2">
+					<el-form-item label="处理意见" prop="handleOpinion">
+						<el-input v-model="form.handleOpinion" type="textarea" :rows="4" disabled></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -153,6 +163,7 @@ const form = reactive({
 	priority: '',
 	attachments: '',
 	customCategory: '',
+	handleOpinion: '',
 });
 
 // 定义校验规则
@@ -171,10 +182,16 @@ const openDialog = (id: string, isReadonly: boolean = false) => {
 	visible.value = true;
 	form.workId = '';
 	readonly.value = isReadonly; // 设置只读状态
+	isCustomCategory.value = false; // 重置自定义分类状态
+	form.category = ''; // 重置分类选择
 
 	// 重置表单数据
 	nextTick(() => {
 		dataFormRef.value?.resetFields();
+		// 获取当前用户信息（仅在新增时）
+		if (!id) {
+			fetchCurrentUser();
+		}
 	});
 
 	// 获取work信息
@@ -232,7 +249,8 @@ const getWorkData = (id: string) => {
 	loading.value = true;
 	getObj({ workId: id })
 		.then((res: any) => {
-			Object.assign(form, res.data[0]);
+			const workData = res.data[0];
+			Object.assign(form, workData);
 			// 检查是否为自定义分类
 			isCustomCategory.value = !['数据缺失', '日报管理', '站点审核', '新通道邀请'].includes(form.category);
 		})
@@ -252,8 +270,11 @@ const currentUserName = ref('');
 const fetchCurrentUser = () => {
 	const data = useUserInfo().userInfos;
 	currentUserName.value = data.user.name;
-	form.submitterName = currentUserName.value;
-	form.submitterId = data.user.userId;
+	// 只在新增时设置提交人信息
+	if (!form.workId) {
+		form.submitterName = currentUserName.value;
+		form.submitterId = data.user.userId;
+	}
 };
 
 const users = ref<Users[]>([]);
@@ -316,7 +337,7 @@ const readonly = ref(false);
 
 // 暴露方法
 defineExpose({
-	openDialog
+	openDialog,
 });
 
 // 添加计算属性来动态显示对话框标题
@@ -325,5 +346,26 @@ const getDialogTitle = computed(() => {
 		return '查看';
 	}
 	return form.workId ? '编辑' : '新增';
+});
+
+// 添加状态映射计算属性
+const statusText = computed(() => {
+	const statusMap: { [key: number]: string } = {
+		0: '待处理',
+		1: '处理中',
+		2: '已处理',
+		3: '已终止',
+	};
+	return statusMap[form.status] || form.status;
+});
+
+const copyDisplayText = computed(() => {
+	if (!form.copy) return '';
+	// 如果 copy 是字符串（后端返回的逗号分隔的 ID），先转换成数组
+	const copyIds = typeof form.copy === 'string' ? form.copy.split(',') : form.copy;
+	return copyIds
+		.map((id) => users.value.find((user) => user.userId === id)?.name || id)
+		.filter(Boolean)
+		.join(', ');
 });
 </script>

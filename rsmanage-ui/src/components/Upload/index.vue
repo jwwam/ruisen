@@ -10,20 +10,23 @@
 			:headers="headers"
 			:limit="limit"
 			:on-error="handleUploadError"
-			:on-remove="handleRemove"
+			:on-remove="showDelete ? handleRemove : undefined"
 			:on-preview="handlePreview"
 			:data="formData"
 			:auto-upload="autoUpload"
 			:on-success="handleUploadSuccess"
 			class="upload-file-uploader"
+			:disabled="disabled"
 			drag
 			multiple
 		>
-			<i class="el-icon-upload"></i>
-			<div class="el-upload__text">
-				{{ $t('excel.operationNotice') }}
-				<em>{{ $t('excel.clickUpload') }}</em>
-			</div>
+			<template v-if="showUpload && !disabled">
+				<i class="el-icon-upload"></i>
+				<div class="el-upload__text">
+					{{ $t('excel.operationNotice') }}
+					<em>{{ $t('excel.clickUpload') }}</em>
+				</div>
+			</template>
 			<template #tip>
 				<div class="el-upload__tip" v-if="props.isShowTip">
 					{{ $t('excel.pleaseUpload') }}
@@ -47,13 +50,14 @@
 			:limit="limit"
 			:auto-upload="autoUpload"
 			:on-error="handleUploadError"
-			:on-remove="handleRemove"
+			:on-remove="showDelete ? handleRemove : undefined"
 			:data="formData"
 			:on-success="handleUploadSuccess"
 			class="upload-file-uploader"
+			:disabled="disabled"
 			multiple
 		>
-			<el-button type="primary" link>{{ $t('excel.clickUpload') }}</el-button>
+			<el-button v-if="showUpload && !disabled" type="primary" link>{{ $t('excel.clickUpload') }}</el-button>
 		</el-upload>
 	</div>
 </template>
@@ -105,6 +109,18 @@ const props = defineProps({
 		default: '',
 	},
 	autoUpload: {
+		type: Boolean,
+		default: true,
+	},
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
+	showDelete: {
+		type: Boolean,
+		default: true,
+	},
+	showUpload: {
 		type: Boolean,
 		default: true,
 	},
