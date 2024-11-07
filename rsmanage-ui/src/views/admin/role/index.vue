@@ -96,7 +96,7 @@
 
 <script setup lang="ts" name="systemRole">
 import { BasicTableProps, useTable } from '/@/hooks/table';
-import { pageList, delObj } from '/@/api/admin/role';
+import { pageList, delObj, pageWhithoutSadmin } from '/@/api/admin/role';
 import { useMessage, useMessageBox } from '/@/hooks/message';
 import { useI18n } from 'vue-i18n';
 
@@ -120,7 +120,7 @@ const state: BasicTableProps = reactive<BasicTableProps>({
 	queryForm: {
 		roleName: '',
 	},
-	pageList: pageList, // H
+	pageList: pageWhithoutSadmin, // H
 	descs: ['create_time'],
 });
 

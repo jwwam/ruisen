@@ -8,9 +8,25 @@ export const list = (params?: Object) => {
 	});
 };
 
+export const listWhithoutSadmin = (params?: Object) => {
+	return request({
+		url: '/admin/role/listWhithoutSadmin',
+		method: 'get',
+		params,
+	});
+};
+
 export const pageList = (params?: Object) => {
 	return request({
 		url: '/admin/role/page',
+		method: 'get',
+		params,
+	});
+};
+
+export const pageWhithoutSadmin = (params?: Object) => {
+	return request({
+		url: '/admin/role/pageWhithoutSadmin',
 		method: 'get',
 		params,
 	});

@@ -127,6 +127,15 @@ public class SysRoleController {
 	}
 
 	/**
+	 * 获取角色列表
+	 * @return 角色列表
+	 */
+	@GetMapping("/listWhithoutSadmin")
+	public R listRolesWhithoutSadmin() {
+		return R.ok(sysRoleService.list(Wrappers.<SysRole>lambdaQuery().notLike(SysRole::getRoleCode, "SUPER_ADMIN")));
+	}
+
+	/**
 	 * 分页查询角色信息
 	 * @param page 分页对象
 	 * @param role 查询条件
@@ -136,6 +145,19 @@ public class SysRoleController {
 	public R getRolePage(Page page, SysRole role) {
 		return R.ok(sysRoleService.page(page, Wrappers.<SysRole>lambdaQuery()
 			.like(StrUtil.isNotBlank(role.getRoleName()), SysRole::getRoleName, role.getRoleName())));
+	}
+
+	/**
+	 * 分页查询角色信息
+	 * @param page 分页对象
+	 * @param role 查询条件
+	 * @return 分页对象
+	 */
+	@GetMapping("/pageWhithoutSadmin")
+	public R getRolePageWhithoutSadmin(Page page, SysRole role) {
+		return R.ok(sysRoleService.page(page, Wrappers.<SysRole>lambdaQuery()
+				.like(StrUtil.isNotBlank(role.getRoleName()), SysRole::getRoleName, role.getRoleName())
+				.notLike(SysRole::getRoleCode, "SUPER_ADMIN")));
 	}
 
 	/**

@@ -134,7 +134,7 @@
 </template>
 
 <script lang="ts" name="systemUser" setup>
-import { delObj, pageList, putObj } from '/@/api/admin/user';
+import { delObj, pageRoleList, putObj } from '/@/api/admin/user';
 import { deptTree } from '/@/api/admin/dept';
 import { BasicTableProps, useTable } from '/@/hooks/table';
 import { useMessage, useMessageBox } from '/@/hooks/message';
@@ -164,7 +164,7 @@ const state: BasicTableProps = reactive<BasicTableProps>({
 		username: '',
 		phone: '',
 	},
-	pageList: pageList,
+	pageList: pageRoleList,
 });
 const { getDataList, currentChangeHandle, sizeChangeHandle, downBlobFile, tableStyle } = useTable(state);
 

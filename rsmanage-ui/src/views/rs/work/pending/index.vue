@@ -107,7 +107,7 @@
 							  fill="#d81e06" 
 							  p-id="4271"/>
 					  </svg>
-					  <span>级别：</span>
+					  <span class="mr-2">级别：</span>
 					  <!-- type["primary", "success", "info", "warning", "danger"] -->
 					  <el-tag
 						:type="work.priority === '紧急' ? 'danger' : 'primary'" 
@@ -280,11 +280,17 @@
   const getStatusType = (status: number) => {
 	switch (status) {
 		case 0:
+			//处待理
 			return 'danger';
 		case 1:
+			//处理中
 			return 'success';
 		case 2:
-			return 'success';
+			//已处理
+			return 'info';
+		case 3:
+			//已终止
+			return 'info';
 		default:
 			return 'primary';
 	}

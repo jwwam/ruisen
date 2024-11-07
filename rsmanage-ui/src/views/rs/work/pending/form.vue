@@ -27,7 +27,7 @@
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="工单状态" prop="status">
-						<el-input v-model="form.status" disabled />
+						<el-input v-model="statusText" disabled />
 					</el-form-item>
 				</el-col>
 
@@ -41,9 +41,7 @@
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="抄送人" prop="copy">
-						<el-select v-model="form.copy" multiple disabled>
-							<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
-						</el-select>
+						<el-input v-model="copyDisplayText" disabled />
 					</el-form-item>
 				</el-col>
 
@@ -332,4 +330,22 @@ const handleMarkStatus = async () => {
 	}
 };
 
+const statusText = computed(() => {
+	const statusMap: { [key: number]: string } = {
+		0: '待处理',
+		1: '处理中',
+		2: '已处理',
+		3: '已终止',
+	};
+	return statusMap[form.status] || form.status;
+});
+const copyDisplayText = computed(() => {
+	if (!form.copy) return '';
+	// 如果 copy 是字符串（后端返回的逗号分隔的 ID），先转换成数组
+	const copyIds = typeof form.copy === 'string' ? form.copy.split(',') : form.copy;
+	return copyIds
+		.map((id) => users.value.find((user) => user.userId === id)?.name || id)
+		.filter(Boolean)
+		.join(', ');
+});
 </script>

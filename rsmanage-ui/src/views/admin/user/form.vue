@@ -83,7 +83,8 @@
 
 <script lang="ts" name="systemUserDialog" setup>
 import { addObj, getObj, putObj, validatePhone, validateUsername } from '/@/api/admin/user';
-import { list as roleList } from '/@/api/admin/role';
+// import { list as roleList } from '/@/api/admin/role';
+import { listWhithoutSadmin as roleList } from '/@/api/admin/role';
 import { list as postList } from '/@/api/admin/post';
 import { deptTree } from '/@/api/admin/dept';
 import { useDict } from '/@/hooks/dict';
