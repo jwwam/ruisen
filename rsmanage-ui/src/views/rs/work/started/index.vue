@@ -3,11 +3,11 @@
 		<div class="layout-padding-auto layout-padding-view">
 			<el-row v-show="showSearch">
 				<el-form :model="state.queryForm" ref="queryRef" :inline="true" @keyup.enter="getDataList">
-					<el-form-item label="提交人" prop="submitterId">
+					<!-- <el-form-item label="提交人" prop="submitterId">
 						<el-select v-model="state.queryForm.submitterId" placeholder="请选择提交人" filterable>
 							<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
 						</el-select>
-					</el-form-item>
+					</el-form-item> -->
 					<el-form-item label="工单分类" prop="category">
 						<el-input v-model="state.queryForm.category" placeholder="请输入工单分类" clearable style="width: 180px" />
 					</el-form-item>
@@ -55,7 +55,6 @@
 			>
 				<el-table-column type="selection" width="40" align="center" />
 				<el-table-column type="index" label="#" width="40" />
-				<el-table-column prop="submitterName" label="提交人" width="100" show-overflow-tooltip />
 				<el-table-column prop="title" label="工单标题" width="200" show-overflow-tooltip />
 				<el-table-column prop="content" label="内容" width="200" show-overflow-tooltip />
 				<el-table-column prop="status" label="状态" show-overflow-tooltip>
@@ -76,19 +75,31 @@
 						<span v-else>-</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="category" label="工单分类" width="100" show-overflow-tooltip />
 				<el-table-column prop="copy" label="抄送人" width="180" show-overflow-tooltip />
-				<el-table-column prop="customerName" label="客户名称" show-overflow-tooltip />
-				<el-table-column prop="partnerCode" label="合作伙伴" show-overflow-tooltip />
+				<el-table-column prop="createdAt" label="创建时间" width="170" show-overflow-tooltip />
 				<el-table-column prop="deadline" label="截止日期" width="100" show-overflow-tooltip />
+				<el-table-column prop="customerName" label="客户名称" width="100" show-overflow-tooltip />
+				<el-table-column prop="partnerCode" label="合作伙伴" width="100" show-overflow-tooltip />
 				<el-table-column prop="priority" label="优先级" show-overflow-tooltip />
+				<!-- 处理时间和处理状态列只在状态为2时显示 -->
+				<el-table-column prop="handleTime" label="处理时间" width="170" show-overflow-tooltip>
+					<template #default="scope">
+						{{ scope.row.handleTime || '-' }}
+					</template>
+				</el-table-column>
+				<el-table-column prop="handleOpinion" label="处理意见" width="120" show-overflow-tooltip>
+					<template #default="scope">
+						{{ scope.row.handleOpinion || '-' }}
+					</template>
+				</el-table-column>
 				<el-table-column label="操作" width="150" fixed="right">
 					<template #default="scope">
 						<el-button type="primary" size="small" link icon="View" @click="view(scope.row)"> 查看 </el-button>
-						<el-button icon="edit-pen" text type="primary" v-auth="'rs_work_edit'" @click="formDialogRef.openDialog(scope.row.workId)"
+						<el-button type="danger" size="small" link icon="CircleClose" @click="handleTerminate(scope.row)">终止</el-button>
+						<!-- <el-button icon="edit-pen" text type="primary" v-auth="'rs_work_edit'" @click="formDialogRef.openDialog(scope.row.workId)"
 							>编辑</el-button
-						>
-						<el-button icon="delete" text type="primary" v-auth="'rs_work_del'" @click="handleDelete([scope.row.workId])">删除</el-button>
+						> -->
+						<!-- <el-button icon="delete" text type="primary" v-auth="'rs_work_del'" @click="handleDelete([scope.row.workId])">删除</el-button> -->
 					</template>
 				</el-table-column>
 			</el-table>
@@ -121,7 +132,7 @@
 
 <script setup lang="ts" name="systemWork">
 import { BasicTableProps, useTable } from '/@/hooks/table';
-import { WorkfetchList, delObjs, getObj } from '/@/api/rs/work';
+import { WorkfetchList, delObjs, getObj, putObj } from '/@/api/rs/work';
 import { useMessage, useMessageBox } from '/@/hooks/message';
 import { useDict } from '/@/hooks/dict';
 import { pageRoleList } from '/@/api/admin/user';
@@ -142,7 +153,6 @@ import { pageRoleList } from '/@/api/admin/user';
 // 		rightDrawerVisible.value = true;
 // 	});
 // };
-
 
 // 引入组件
 const FormDialog = defineAsyncComponent(() => import('./form.vue'));
@@ -255,7 +265,23 @@ const handleFileDownload = async (file: any) => {
 // 查看工单详情
 const view = (row: any) => {
 	// 打开表单对话框,传入只读模式参数
-	formDialogRef.value?.openDialog(row.workId, true); 
+	formDialogRef.value?.openDialog(row.workId, true);
 };
 
+// 添加终止工单方法
+const handleTerminate = async (row: any) => {
+	try {
+		await useMessageBox().confirm('确认要终止该工单吗？');
+		await putObj({
+			...row,
+			status: 3,
+		});
+		useMessage().success('工单已终止');
+		getDataList();
+	} catch (err: any) {
+		if (err?.msg) {
+			useMessage().error(err.msg);
+		}
+	}
+};
 </script>

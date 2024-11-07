@@ -91,4 +91,10 @@ public class WorkEntity extends Model<WorkEntity> {
 
 	@Schema(description = "截止日期")
 	private String deadline;
+
+	@Schema(description = "处理时间")
+	private LocalDateTime handleTime;
+
+	@Schema(description = "处理意见")
+	private String handleOpinion;
 }
