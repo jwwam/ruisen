@@ -45,9 +45,9 @@ public class WorkEntity extends Model<WorkEntity> {
     private String content;
 
 	/**
-	* 工单状态，0:待处理, 1:处理中, 2:已处理
+	* 工单状态，0:待处理, 1:处理中, 2:已处理, 3:已终止
 	*/
-    @Schema(description="工单状态，0:待处理, 1:处理中, 2:已处理")
+    @Schema(description="工单状态，0:待处理, 1:处理中, 2:已处理,3:已终止")
     private Integer status;
 
 	/**
