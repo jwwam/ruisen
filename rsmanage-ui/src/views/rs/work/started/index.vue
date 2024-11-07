@@ -30,10 +30,10 @@
 			<el-row>
 				<div class="mb8" style="width: 100%">
 					<el-button icon="folder-add" type="primary" class="ml10" @click="formDialogRef.openDialog()" v-auth="'rs_work_add'"> 新 增 </el-button>
-					<el-button plain icon="upload-filled" type="primary" class="ml10" @click="excelUploadRef.show()" v-auth="'sys_user_add'"> 导 入 </el-button>
+					<!-- <el-button plain icon="upload-filled" type="primary" class="ml10" @click="excelUploadRef.show()" v-auth="'sys_user_add'"> 导 入 </el-button>
 					<el-button plain :disabled="multiple" icon="Delete" type="primary" v-auth="'rs_work_del'" @click="handleDelete(selectObjs)">
 						删 除
-					</el-button>
+					</el-button> -->
 					<right-toolbar
 						v-model:showSearch="showSearch"
 						:export="'rs_work_export'"
@@ -77,7 +77,11 @@
 				</el-table-column>
 				<el-table-column prop="copy" label="抄送人" width="180" show-overflow-tooltip />
 				<el-table-column prop="createdAt" label="创建时间" width="170" show-overflow-tooltip />
-				<el-table-column prop="deadline" label="截止日期" width="100" show-overflow-tooltip />
+				<el-table-column prop="deadline" label="截止日期" width="100" show-overflow-tooltip>
+					<template #default="scope">
+						{{ scope.row.deadline.substring(0, 10) }}
+					</template>
+				</el-table-column>
 				<el-table-column prop="customerName" label="客户名称" width="100" show-overflow-tooltip />
 				<el-table-column prop="partnerCode" label="合作伙伴" width="100" show-overflow-tooltip />
 				<el-table-column prop="priority" label="优先级" show-overflow-tooltip />
@@ -95,11 +99,15 @@
 				<el-table-column label="操作" width="150" fixed="right">
 					<template #default="scope">
 						<el-button type="primary" size="small" link icon="View" @click="view(scope.row)"> 查看 </el-button>
-						<el-button type="danger" size="small" link icon="CircleClose" @click="handleTerminate(scope.row)">终止</el-button>
-						<!-- <el-button icon="edit-pen" text type="primary" v-auth="'rs_work_edit'" @click="formDialogRef.openDialog(scope.row.workId)"
-							>编辑</el-button
-						> -->
-						<!-- <el-button icon="delete" text type="primary" v-auth="'rs_work_del'" @click="handleDelete([scope.row.workId])">删除</el-button> -->
+						<el-button
+							type="danger"
+							size="small"
+							link
+							icon="CircleClose"
+							@click="handleTerminate(scope.row)"
+							v-if="scope.row.status !== 1 && scope.row.status !== 2 && scope.row.status !== 3"
+							>终止</el-button
+						>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -135,6 +143,7 @@ import { BasicTableProps, useTable } from '/@/hooks/table';
 import { WorkfetchList, delObjs, getObj, putObj } from '/@/api/rs/work';
 import { useMessage, useMessageBox } from '/@/hooks/message';
 import { useDict } from '/@/hooks/dict';
+import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
 import { pageRoleList } from '/@/api/admin/user';
 
 // const rightDrawerVisible = ref(false);
@@ -174,7 +183,9 @@ const selectObjs = ref([]) as any;
 const multiple = ref(true);
 
 const state: BasicTableProps = reactive<BasicTableProps>({
-	queryForm: {},
+	queryForm: {
+		submitterId: '', // 初始化 submitterId
+	},
 	dataList: [], // 用于存储获取到的数据
 });
 
@@ -183,10 +194,9 @@ const { currentChangeHandle, sizeChangeHandle, sortChangeHandle, downBlobFile, t
 const getDataList = () => loadData();
 // 清空搜索条件
 const resetQuery = () => {
-	// 清空搜索条件
 	queryRef.value?.resetFields();
-	// 清空多选
 	selectObjs.value = [];
+	state.queryForm.submitterId = currentUserId.value;
 	getDataList();
 };
 
@@ -199,6 +209,14 @@ const exportExcel = () => {
 const selectionChangHandle = (objs: { workId: string }[]) => {
 	selectObjs.value = objs.map(({ workId }) => workId);
 	multiple.value = !objs.length;
+};
+// 获取当前用户信息
+const currentUserId = ref('');
+const currentUserName = ref('');
+const fetchCurrentUser = async () => {
+	const data = useUserInfo().userInfos;
+	currentUserName.value = data.user.name;
+	currentUserId.value = data.user.userId; // 确保正确设置当前用户ID
 };
 const users = ref<Users[]>([]);
 
@@ -214,23 +232,25 @@ const fetchUsers = async () => {
 const loadData = async () => {
 	state.loading = true;
 	try {
+		if (!state.queryForm.submitterId) {
+			state.queryForm.submitterId = currentUserId.value;
+		}
+
 		await WorkfetchList(state.queryForm).then((res) => {
 			state.dataList = res.data.data;
 			state.pagination = res.data.page;
-			// console.log('111', state.pagination);
 		});
-
-		// state.dataList = response.data; // 假设返回的数据在 response.data 中
-		// console.log('111111', state.dataList);
 	} catch (error) {
 		console.error('Error loading data:', error);
 	} finally {
 		state.loading = false;
 	}
 };
-// 在组件挂载时获取数据
-onMounted(() => {
-	loadData();
+// 在组件挂载时先获取用户信息，再加载数据
+onMounted(async () => {
+	await fetchCurrentUser(); // 先获取当前用户信息
+	state.queryForm.submitterId = currentUserId.value; // 设置查询条件
+	loadData(); // 然后加载数据
 	fetchUsers();
 });
 
@@ -268,13 +288,20 @@ const view = (row: any) => {
 	formDialogRef.value?.openDialog(row.workId, true);
 };
 
-// 添加终止工单方法
+// 修改终止工单方法
 const handleTerminate = async (row: any) => {
+	// 状态检查
+	if (row.status === 1 || row.status === 2) {
+		useMessage().warning('处理中或已处理的工单不能终止');
+		return;
+	}
+
 	try {
 		await useMessageBox().confirm('确认要终止该工单吗？');
+		// 只发送必要的字段进行更新
 		await putObj({
-			...row,
-			status: 3,
+			workId: row.workId, // 工单ID
+			status: 3, // 终止状态
 		});
 		useMessage().success('工单已终止');
 		getDataList();

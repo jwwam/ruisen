@@ -6,6 +6,7 @@ import com.ruisen.rsmanage.admin.api.entity.SysFile;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 @Data
@@ -85,7 +86,7 @@ public class WorkPo {
 	private String priority;
 
 	@Schema(description = "截止日期")
-	private String deadline;
+	private LocalDateTime deadline;
 
 	@Schema(description="客户姓名")
 	private String customerName;

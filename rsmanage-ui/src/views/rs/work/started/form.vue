@@ -10,18 +10,20 @@
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="工单分类" prop="category">
-						<template v-if="!isCustomCategory">
-							<el-select v-model="form.category" placeholder="请选择工单分类" filterable @change="handleCategoryChange" :disabled="readonly">
-								<el-option label="数据缺失" value="数据缺失"></el-option>
-								<el-option label="日报管理" value="日报管理"></el-option>
-								<el-option label="站点审核" value="站点审核"></el-option>
-								<el-option label="新通道邀请" value="新通道邀请"></el-option>
-								<el-option label="自定义" value="自定义"></el-option>
-							</el-select>
-						</template>
-						<template v-else>
-							<el-input v-model="form.category" placeholder="请输入自定义分类" @input="updateTitle" :disabled="readonly" />
-						</template>
+						<el-select
+							v-model="form.category"
+							placeholder="请选择或输入工单分类"
+							filterable
+							allow-create
+							@change="handleCategoryChange"
+							:disabled="readonly"
+						>
+							<el-option label="数据缺失" value="数据缺失"></el-option>
+							<el-option label="日报管理" value="日报管理"></el-option>
+							<el-option label="站点审核" value="站点审核"></el-option>
+							<el-option label="新通道邀请" value="新通道邀请"></el-option>
+							<el-option label="自定义" value="自定义"></el-option>
+						</el-select>
 					</el-form-item>
 				</el-col>
 
@@ -40,7 +42,7 @@
 				<el-col :span="12" class="mb20">
 					<el-form-item label="处理人" prop="assignees">
 						<el-select v-model="form.assignees" placeholder="请选择处理人" filterable :disabled="readonly">
-							<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
+							<el-option v-for="user in filteredUsers" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
 						</el-select>
 					</el-form-item>
 				</el-col>
@@ -52,7 +54,7 @@
 						</template>
 						<template v-else>
 							<el-select v-model="form.copy" multiple placeholder="请选择抄送人" filterable :disabled="readonly">
-								<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
+								<el-option v-for="user in filteredUsers" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
 							</el-select>
 						</template>
 					</el-form-item>
@@ -212,14 +214,17 @@ const onSubmit = async () => {
 	// 处理抄送人
 	const ccString = form.copy.join(',');
 
-	// 格式化 deadline
+	// 格式化 deadline 为 LocalDateTime 格式
 	let formattedDeadline = '';
 	if (form.deadline) {
 		const date = new Date(form.deadline);
 		const year = date.getFullYear();
 		const month = String(date.getMonth() + 1).padStart(2, '0');
 		const day = String(date.getDate()).padStart(2, '0');
-		formattedDeadline = `${year}${month}${day}`;
+		const hours = String(date.getHours()).padStart(2, '0');
+		const minutes = String(date.getMinutes()).padStart(2, '0');
+		const seconds = String(date.getSeconds()).padStart(2, '0');
+		formattedDeadline = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`; // 使用空格分隔
 	}
 
 	try {
@@ -227,8 +232,7 @@ const onSubmit = async () => {
 		const payload = {
 			...form,
 			copy: ccString,
-			deadline: formattedDeadline,
-			// attachments 直接使用原值，为空时设为 null
+			deadline: formattedDeadline, // 使用格式化后的日期
 			attachments: form.attachments || null,
 		};
 
@@ -250,6 +254,8 @@ const getWorkData = (id: string) => {
 	getObj({ workId: id })
 		.then((res: any) => {
 			const workData = res.data[0];
+			workData.customerId = workData.customerId || '-';
+			workData.partnerId = workData.partnerId || '-';
 			Object.assign(form, workData);
 			// 检查是否为自定义分类
 			isCustomCategory.value = !['数据缺失', '日报管理', '站点审核', '新通道邀请'].includes(form.category);
@@ -270,6 +276,7 @@ const currentUserName = ref('');
 const fetchCurrentUser = () => {
 	const data = useUserInfo().userInfos;
 	currentUserName.value = data.user.name;
+	currentUserId.value = data.user.userId; // 确保正确设置当前用户ID
 	// 只在新增时设置提交人信息
 	if (!form.workId) {
 		form.submitterName = currentUserName.value;
@@ -367,5 +374,10 @@ const copyDisplayText = computed(() => {
 		.map((id) => users.value.find((user) => user.userId === id)?.name || id)
 		.filter(Boolean)
 		.join(', ');
+});
+
+// 过滤掉当前用户的用户列表
+const filteredUsers = computed(() => {
+	return users.value.filter((user) => user.userId !== currentUserId.value);
 });
 </script>

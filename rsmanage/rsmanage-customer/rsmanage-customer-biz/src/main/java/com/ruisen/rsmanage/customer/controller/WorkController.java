@@ -74,14 +74,14 @@ public class WorkController {
 	public R getNewWorkPage(@ParameterObject Page page, @ParameterObject WorkEntity work) {
 		int curPage = (int) page.getCurrent();
 		int pageSize = (int) page.getSize();
-		String customerId = StringUtils.stringUtils(work.getSubmitterId());
+		String submitterId = StringUtils.stringUtils(work.getSubmitterId());
 		String category = StringUtils.stringUtils(work.getCategory());
 		String status = StringUtils.stringUtils(work.getStatus());
 		String assignees = StringUtils.stringUtils(work.getAssignees());
 		Map<String,Object> param = new HashMap<>();
 		param.put("curPage",curPage);
 		param.put("pageSize",pageSize);
-		param.put("customerId",customerId);
+		param.put("submitterId",submitterId);
 		param.put("category",category);
 		param.put("status",status);
 		param.put("assignees",assignees);
