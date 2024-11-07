@@ -20,9 +20,9 @@
 	left join rs_partners p on w.partner_id = p.partner_id
 	left join sys_user u on w.submitter_id = u.user_id
 	<where>
-		w.status != '3'
-		<if test="customerId != null and customerId != ''">
-			AND w.customer_id = #{customerId}
+		1=1
+		<if test="submitterId != null and submitterId != ''">
+			AND w.submitter_id = #{submitterId}
 		</if>
 		<if test="category != null and category != ''">
 			AND w.category LIKE CONCAT('%', #{category}, '%')

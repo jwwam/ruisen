@@ -40,7 +40,7 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 		ResponseDto rspMsg = new ResponseDto ();
 		int curPage = (int) param.get("curPage");
 		int pageSize = (int) param.get("pageSize");
-		String customerId = (String) param.get("customerId");
+		String submitterId = (String) param.get("submitterId");
 		String category = (String) param.get("category");
 		String status = (String) param.get("status");
 		String assignees = (String) param.get("assignees");
@@ -48,14 +48,14 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 		if (!StringUtils.isEmpty(curPage) && !StringUtils.isEmpty(pageSize)){
 			try {
 				Page<WorkPo> page = PageHelper.startPage(curPage, pageSize);
-				result = workMapper.qry(customerId,category,status,assignees);
+				result = workMapper.qry(submitterId,category,status,assignees);
 				for (WorkPo workPo : result) {
-					//戒指日期
-					if (workPo.getDeadline() != null && !workPo.getDeadline().isEmpty()){
-						LocalDate date = LocalDate.parse(workPo.getDeadline() , DateTimeFormatter.ofPattern("yyyyMMdd"));
-						String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-						workPo.setDeadline(formattedDate);
-					}
+					//截止日期
+//					if (workPo.getDeadline() != null && !workPo.getDeadline().isEmpty()){
+//						LocalDate date = LocalDate.parse(workPo.getDeadline() , DateTimeFormatter.ofPattern("yyyyMMdd"));
+//						String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+//						workPo.setDeadline(formattedDate);
+//					}
 					//处理人
 					if(workPo.getAssignees() != null && !workPo.getAssignees().isEmpty()){
 						// 通过处理人id获取姓名
@@ -102,7 +102,7 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 				PageHelper.clearPage();
 			}
 		}else {
-			result = workMapper.qry(customerId,category,status,assignees);
+			result = workMapper.qry(submitterId,category,status,assignees);
 
 		}
 		if (result == null || result.size() == 0) {

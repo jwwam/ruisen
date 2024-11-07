@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -90,7 +92,7 @@ public class WorkEntity extends Model<WorkEntity> {
 	private String priority;
 
 	@Schema(description = "截止日期")
-	private String deadline;
+	private LocalDateTime deadline;
 
 	@Schema(description = "处理时间")
 	private LocalDateTime handleTime;

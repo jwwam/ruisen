@@ -13,7 +13,7 @@ import java.util.List;
 
 @Mapper
 public interface WorkMapper extends BaseMapper<WorkEntity> {
-	List<WorkPo> qry(@Param("customerId") String customerId, @Param("category") String category, @Param("status") String status, @Param("assignees") String assignees);
+	List<WorkPo> qry(@Param("submitterId") String submitterId, @Param("category") String category, @Param("status") String status, @Param("assignees") String assignees);
 	/**
 	 * 通过用户ID查询用户名称
 	 * @param userId 用户ID
