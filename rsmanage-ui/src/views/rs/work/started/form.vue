@@ -1,5 +1,5 @@
 <template>
-	<el-dialog :title="form.workId ? '编辑' : '新增'" v-model="visible" :close-on-click-modal="false" draggable>
+	<el-dialog :title="getDialogTitle" v-model="visible" :close-on-click-modal="false" draggable>
 		<el-form ref="dataFormRef" v-if="!isFullScreen" :model="form" :rules="dataRules" formDialogRef label-width="90px" v-loading="loading">
 			<el-row :gutter="24">
 				<el-col :span="12" class="mb20">
@@ -11,7 +11,7 @@
 				<el-col :span="12" class="mb20">
 					<el-form-item label="工单分类" prop="category">
 						<template v-if="!isCustomCategory">
-							<el-select v-model="form.category" placeholder="请选择工单分类" filterable @change="handleCategoryChange">
+							<el-select v-model="form.category" placeholder="请选择工单分类" filterable @change="handleCategoryChange" :disabled="readonly">
 								<el-option label="数据缺失" value="数据缺失"></el-option>
 								<el-option label="日报管理" value="日报管理"></el-option>
 								<el-option label="站点审核" value="站点审核"></el-option>
@@ -20,14 +20,14 @@
 							</el-select>
 						</template>
 						<template v-else>
-							<el-input v-model="form.category" placeholder="请输入自定义分类" @input="updateTitle" />
+							<el-input v-model="form.category" placeholder="请输入自定义分类" @input="updateTitle" :disabled="readonly"/>
 						</template>
 					</el-form-item>
 				</el-col>
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="工单名称" prop="title">
-						<el-input v-model="form.title" :placeholder="`请输入${form.submitterName} + 工单分类`" disabled />
+						<el-input v-model="form.title" placeholder="请输入工单标题" :disabled="readonly" />
 					</el-form-item>
 				</el-col>
 
@@ -39,7 +39,7 @@
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="处理人" prop="assignees">
-						<el-select v-model="form.assignees" placeholder="请选择处理人" filterable>
+						<el-select v-model="form.assignees" placeholder="请选择处理人" filterable :disabled="readonly">
 							<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
 						</el-select>
 					</el-form-item>
@@ -47,7 +47,7 @@
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="抄送人" prop="copy">
-						<el-select v-model="form.copy" multiple placeholder="请选择抄送人" filterable>
+						<el-select v-model="form.copy" multiple placeholder="请选择抄送人" filterable :disabled="readonly">
 							<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
 						</el-select>
 					</el-form-item>
@@ -55,7 +55,7 @@
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="客户名称" prop="customerId">
-						<el-select v-model="form.customerId" placeholder="请选择客户" filterable>
+						<el-select v-model="form.customerId" placeholder="请选择客户" filterable :disabled="readonly">
 							<el-option v-for="customer in customers" :key="customer.customerId" :label="customer.name" :value="customer.customerId"></el-option>
 						</el-select>
 					</el-form-item>
@@ -63,7 +63,7 @@
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="合作伙伴" prop="partnerId">
-						<el-select v-model="form.partnerId" placeholder="请选择合作伙伴" filterable>
+						<el-select v-model="form.partnerId" placeholder="请选择合作伙伴" filterable :disabled="readonly">
 							<el-option v-for="partner in partners" :key="partner.partnerId" :label="partner.partnerCode" :value="partner.partnerId"></el-option>
 						</el-select>
 					</el-form-item>
@@ -71,13 +71,13 @@
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="截止日期" prop="deadline">
-						<el-date-picker v-model="form.deadline" type="date" placeholder="选择截止日期"></el-date-picker>
+						<el-date-picker v-model="form.deadline" type="date" placeholder="选择截止日期" :disabled="readonly"></el-date-picker>
 					</el-form-item>
 				</el-col>
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="优先级" prop="priority">
-						<el-select v-model="form.priority" placeholder="请选择优先级">
+						<el-select v-model="form.priority" placeholder="请选择优先级" :disabled="readonly">
 							<el-option label="紧急" value="紧急"></el-option>
 							<el-option label="一般" value="一般"></el-option>
 						</el-select>
@@ -85,18 +85,18 @@
 				</el-col>
 				<el-col :span="24" class="mb20">
 					<el-form-item label="工单内容" prop="content">
-						<el-input v-model="form.content" type="textarea" :rows="4" placeholder="请输入工单内容"></el-input>
+						<el-input v-model="form.content" type="textarea" :rows="4" placeholder="请输入工单内容" :disabled="readonly"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="24" class="mb20">
 					<el-form-item label="附件上传" prop="attachments">
-						<upload-file v-model="form.attachments"></upload-file>
+						<upload-file v-model="form.attachments" :disabled="readonly"></upload-file>
 					</el-form-item>
 				</el-col>
 			</el-row>
 		</el-form>
 		<template #footer>
-			<span class="dialog-footer">
+			<span class="dialog-footer" v-if="!readonly">
 				<el-button @click="visible = false">取 消</el-button>
 				<el-button type="primary" @click="onSubmit" :disabled="loading">确 认</el-button>
 			</span>
@@ -167,20 +167,14 @@ const dataRules = ref({
 });
 
 // 打开弹窗
-const openDialog = (id: string) => {
+const openDialog = (id: string, isReadonly: boolean = false) => {
 	visible.value = true;
 	form.workId = '';
-
-	// 重置状态
-	isCustomCategory.value = false;
-	form.category = '';
-	form.submitterName = currentUserName.value;
-	form.submitterId = useUserInfo().userInfos.user.userId;
+	readonly.value = isReadonly; // 设置只读状态
 
 	// 重置表单数据
 	nextTick(() => {
 		dataFormRef.value?.resetFields();
-		updateTitle(); // 更新工单标题
 	});
 
 	// 获取work信息
@@ -248,9 +242,9 @@ const getWorkData = (id: string) => {
 };
 
 // 暴露变量
-defineExpose({
-	openDialog,
-});
+// defineExpose({
+// 	openDialog,
+// });
 
 // 获取当前用户信息
 const currentUserId = ref('');
@@ -316,5 +310,20 @@ onMounted(() => {
 	updateTitle(); // 初始化时更新工单名称
 	fetchCustomers();
 	fetchPartners();
+});
+
+const readonly = ref(false);
+
+// 暴露方法
+defineExpose({
+	openDialog
+});
+
+// 添加计算属性来动态显示对话框标题
+const getDialogTitle = computed(() => {
+	if (readonly.value) {
+		return '查看';
+	}
+	return form.workId ? '编辑' : '新增';
 });
 </script>

@@ -84,6 +84,7 @@
 				<el-table-column prop="priority" label="优先级" show-overflow-tooltip />
 				<el-table-column label="操作" width="150" fixed="right">
 					<template #default="scope">
+						<el-button type="primary" size="small" link icon="View" @click="view(scope.row)"> 查看 </el-button>
 						<el-button icon="edit-pen" text type="primary" v-auth="'rs_work_edit'" @click="formDialogRef.openDialog(scope.row.workId)"
 							>编辑</el-button
 						>
@@ -92,6 +93,16 @@
 				</el-table-column>
 			</el-table>
 			<pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" v-bind="state.pagination" />
+			<!-- <el-drawer v-model="rightDrawerVisible" direction="rtl" size="400px">
+				<template #header>
+					<h3>{{ currentData?.name }}</h3>
+				</template>
+				<template #default>
+					<el-card class="box-card">
+						
+					</el-card>
+				</template>
+			</el-drawer> -->
 		</div>
 
 		<!-- 编辑、新增  -->
@@ -110,10 +121,28 @@
 
 <script setup lang="ts" name="systemWork">
 import { BasicTableProps, useTable } from '/@/hooks/table';
-import { WorkfetchList, delObjs } from '/@/api/rs/work';
+import { WorkfetchList, delObjs, getObj } from '/@/api/rs/work';
 import { useMessage, useMessageBox } from '/@/hooks/message';
 import { useDict } from '/@/hooks/dict';
 import { pageRoleList } from '/@/api/admin/user';
+
+// const rightDrawerVisible = ref(false);
+// const currentData = ref();
+// const currentOpenFlowForm = ref();
+
+//  const deal = (row) => {
+// 	//当前选中数据
+// 	currentData.value = row;
+// 	//请求工单详情接口
+// 	getObj({
+// 		workId: row.workId,
+// 	}).then((res) => {
+// 		//数据详情
+// 		currentOpenFlowForm.value = res.data[0];
+// 		rightDrawerVisible.value = true;
+// 	});
+// };
+
 
 // 引入组件
 const FormDialog = defineAsyncComponent(() => import('./form.vue'));
@@ -222,4 +251,11 @@ const handleFileDownload = async (file: any) => {
 		console.error('文件下载失败:', error);
 	}
 };
+
+// 查看工单详情
+const view = (row: any) => {
+	// 打开表单对话框,传入只读模式参数
+	formDialogRef.value?.openDialog(row.workId, true); 
+};
+
 </script>
