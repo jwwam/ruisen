@@ -3,8 +3,8 @@
 		<el-form ref="dataFormRef" :model="form" :rules="dataRules" formDialogRef label-width="140px" v-loading="loading">
 			<el-row :gutter="25">
 				<el-col :span="12" class="mb20">
-					<el-form-item label="客户ID" prop="customerId">
-						<el-select v-model="form.customerId" placeholder="请选择客户ID">
+					<el-form-item label="客户姓名" prop="customerId">
+						<el-select v-model="form.customerId" placeholder="请选择客户">
 							<el-option v-for="customer in customers" :key="customer.customerId" :label="customer.name" :value="customer.customerId" />
 						</el-select>
 					</el-form-item>

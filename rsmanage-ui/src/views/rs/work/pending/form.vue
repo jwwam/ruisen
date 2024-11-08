@@ -47,7 +47,7 @@
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="客户名称" prop="customerId">
-						<el-select v-model="form.customerId" disabled>
+						<el-select v-model="form.customerId" placeholder="请选择客户" filterable disabled>
 							<el-option v-for="customer in customers" :key="customer.customerId" :label="customer.name" :value="customer.customerId"></el-option>
 						</el-select>
 					</el-form-item>
@@ -55,7 +55,7 @@
 
 				<el-col :span="12" class="mb20">
 					<el-form-item label="合作伙伴" prop="partnerId">
-						<el-select v-model="form.partnerId" disabled>
+						<el-select v-model="form.partnerId" placeholder="请选择合作伙伴" filterable disabled>
 							<el-option v-for="partner in partners" :key="partner.partnerId" :label="partner.partnerCode" :value="partner.partnerId"></el-option>
 						</el-select>
 					</el-form-item>
@@ -121,8 +121,8 @@ import { getObj, addObj, putObj, validateExist, getWorkDetails } from '/@/api/rs
 import { rule } from '/@/utils/validate';
 import { pageRoleList } from '/@/api/admin/user';
 import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
-import { fetchList as fetchCustomerList } from '/@/api/rs/customers'; // 引入客户表信息
-import { fetchList as partnerList } from '/@/api/rs/partners'; // 引入合作伙伴表信息
+import { fetchListWithoutRole as fetchCustomerList } from '/@/api/rs/customers'; // 引入客户表信息
+import { fetchListWithoutRole as fetchPartnerList } from '/@/api/rs/partners'; // 引入合作伙伴表信息
 
 const emit = defineEmits(['refresh']);
 
@@ -256,7 +256,7 @@ const fetchCustomers = async () => {
 };
 const fetchPartners = async () => {
 	try {
-		const response = await partnerList();
+		const response = await fetchPartnerList();
 		partners.value = response.data.records as Partners[]; // 假设返回的数据结构中客户列表在`records`字段中
 	} catch (error) {
 		console.error('Failed to fetch partners:', error);
