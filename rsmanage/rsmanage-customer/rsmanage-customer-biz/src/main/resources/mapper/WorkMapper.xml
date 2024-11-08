@@ -16,9 +16,8 @@
         <result property="copy" column="copy"/>
   </resultMap>
 	<select id="qry" resultType="com.ruisen.rsmanage.customer.Po.WorkPo">
-		SELECT w.* ,cu.name as customerName,p.partner_code as partnerCode FROM rs_work_form w
-		,rs_customers cu,rs_partners p
-		WHERE w.customer_id = cu.customer_id AND w.partner_id = p.partner_id
+		SELECT *  FROM rs_work_form
+		WHERE 1=1
 		<if test="param.submitterId != null and param.submitterId != ''">
 			AND submitter_id = #{param.submitterId}
 		</if>
@@ -49,16 +48,28 @@
 		SELECT * FROM sys_file where file_name = #{fileName}
 	</select>
 
+	<!-- 通过客户ID查询客户名称 -->
+	<select id="getCustomersId" resultType="String">
+		SELECT NAME
+		FROM rs_customers
+		WHERE customer_id = #{customerId}
+	</select>
+
+	<!-- 通过合作伙伴ID查询合作伙伴标识 -->
+	<select id="getPartnersId" resultType="String">
+		SELECT partner_code
+		FROM rs_partners
+		WHERE partner_id = #{partnerdId}
+	</select>
+
 	<!-- 通过workID查询工单详情 -->
 	<select id="qryDetails" resultType="com.ruisen.rsmanage.customer.Po.WorkPo">
-		SELECT w.*, u.name as submitterName, cu.name as customerName, p.partner_code as partnerCode
+		SELECT w.*, u.name as submitterName
 		FROM rs_work_form w,
 			 sys_user u,
 			 rs_customers cu,
 			 rs_partners p
 		where w.submitter_id = u.user_id
-		  AND w.customer_id = cu.customer_id
-		  AND w.partner_id = p.partner_id
 		  AND w.work_id = #{workId};
 	</select>
 

@@ -53,6 +53,18 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 						String assigneesStr = workMapper.getUserNameById(Long.valueOf((workPo.getAssignees())));
 						workPo.setAssignees(assigneesStr);
 					}
+					//客户名称
+					if(workPo.getCustomerId() != null && !workPo.getCustomerId().equals(null)){
+						// 通过客户id获取姓名
+						String customerName = workMapper.getCustomersId(Long.valueOf((workPo.getCustomerId())));
+						workPo.setCustomerName(customerName);
+					}
+					//合作伙伴标识
+					if(workPo.getPartnerId() != null && !workPo.getPartnerId().equals(null)){
+						// 通过合作伙伴id获取姓名
+						String PartnerId = workMapper.getPartnersId(Long.valueOf((workPo.getPartnerId())));
+						workPo.setPartnerCode(PartnerId);
+					}
 					//抄送人
 					if(workPo.getCopy() != null && !workPo.getCopy().isEmpty()){
 						String ccStr = workPo.getCopy();
@@ -113,6 +125,14 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 		Integer workId = work.getWorkId();
 		List<WorkPo> result;
 		result = workMapper.qryDetails(workId);
+		for (WorkPo workPo : result) {
+			//客户名称
+			if(workPo.getCustomerId() != null && !workPo.getCustomerId().equals(null)){
+				// 通过客户id获取姓名
+				String customerName = workMapper.getCustomersId(Long.valueOf((workPo.getCustomerId())));
+				workPo.setCustomerName(customerName);
+			}
+		}
 		return R.ok(result);
 	}
 }
