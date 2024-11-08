@@ -32,7 +32,7 @@ export default {
 									cx="850" 
 									cy="200" 
 									r="150" 
-									:fill="state.pendingNum === 0 ? 'gray' : 'red'" 
+									:fill="state.queryForm.pendingNum === 0 ? 'gray' : 'red'" 
 								/>
 								<text 
 									x="800" 
@@ -41,7 +41,7 @@ export default {
 									fill="white" 
 									font-weight="bold"
 								>
-									{{ state.pendingNum }}
+									{{ state.queryForm.pendingNum }}
 								</text>
 							</svg>
 						</router-link>
@@ -78,7 +78,7 @@ export default {
 									cx="850" 
 									cy="200" 
 									r="150" 
-									:fill="state.copyNum === 0 ? 'gray' : 'red'" 
+									:fill="state.queryForm.copyNum === 0 ? 'gray' : 'red'" 
 								/>
 								<text 
 									x="800" 
@@ -87,7 +87,7 @@ export default {
 									fill="white" 
 									font-weight="bold"
 								>
-									{{ state.copyNum }}
+									{{ state.queryForm.copyNum }}
 								</text>
 							</svg>
 						</router-link>
@@ -105,18 +105,49 @@ export default {
 </template>
 
 <script setup lang="ts" name="flowData">
-import { fetchList } from '/@/api/rs/work';
+import { fetchList, getWorkDataCount } from '/@/api/rs/work';
+import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
+import {BasicTableProps, useTable} from '/@/hooks/table';
 
-const state = reactive({
-	pendingNum: 0,
-	copyNum: 0,
+  // 获取当前用户信息
+const currentUserId = ref('');
+const currentUserName = ref('');
+const fetchCurrentUser = async () => {
+	const data = useUserInfo().userInfos;
+	currentUserName.value = data.user.name;
+	currentUserId.value = data.user.userId; // 确保正确设置当前用户ID
+};
+
+const state: BasicTableProps = reactive<BasicTableProps>({
+	queryForm: {
+		assignees: "",
+		pendingNum: 0,
+		copyNum: 0,
+	},
+	dataList: [], // 用于存储获取到的数据
 });
+
+// 定义获取数据的函数
+const loadData = async () => {
+	state.queryForm.assignees = currentUserId.value;
+	state.queryForm.submitterId = currentUserId.value;
+	state.queryForm.copy = currentUserId.value;
+	try {
+		const res = await getWorkDataCount(state.queryForm);
+		if (res && res.data) {
+			state.queryForm.pendingNum = res.data.pendingNum || 0;
+			state.queryForm.copyNum = res.data.copyNum || 0;
+			state.queryForm.completedNum = res.data.completedNum || 0;
+		}
+	} catch (error) {
+		console.error('Error loading work count data:', error);
+	}
+};
 
 onMounted(async () => {
 	try {
-		const { data } = await fetchList();
-		state.pendingNum = Number.parseInt(data?.pendingNum || 0);
-		state.copyNum = Number.parseInt(data?.copyNum || 0);
+		await fetchCurrentUser(); // 先获取当前用户信息
+		await loadData(); // 调用loadData函数
 	} catch (error) {
 		// 避免没有启动 flow模块 vue 组件渲染 warning
 	}
