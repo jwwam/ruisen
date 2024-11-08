@@ -234,6 +234,7 @@ const loadData = async () => {
 	try {
 		if (!state.queryForm.submitterId) {
 			state.queryForm.submitterId = currentUserId.value;
+			// state.queryForm.status = 0;
 		}
 
 		await WorkfetchList(state.queryForm).then((res) => {
@@ -249,7 +250,6 @@ const loadData = async () => {
 // 在组件挂载时先获取用户信息，再加载数据
 onMounted(async () => {
 	await fetchCurrentUser(); // 先获取当前用户信息
-	state.queryForm.submitterId = currentUserId.value; // 设置查询条件
 	loadData(); // 然后加载数据
 	fetchUsers();
 });

@@ -20,6 +20,14 @@ export function WorkfetchList(query?: Object) {
 	});
 }
 
+export function getWorkDataCount(query?: Object) {
+	return request({
+		url: '/rs/work/getWorkDataCount',
+		method: 'get',
+		params: query,
+	});
+}
+
 /**
  * 添加一个新对象。
  * @param {Object} [obj] - 要添加的对象。

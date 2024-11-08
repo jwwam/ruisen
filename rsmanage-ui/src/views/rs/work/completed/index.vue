@@ -226,15 +226,12 @@ const loadData = async () => {
 	try {
 		if (!state.queryForm.submitterId) {
 			state.queryForm.submitterId = currentUserId.value;
+			state.queryForm.status = 2;
 		}
 		await WorkfetchList(state.queryForm).then((res) => {
 			state.dataList = res.data.data;
 			state.pagination = res.data.page;
-			// console.log('111', state.pagination);
 		});
-
-		// state.dataList = response.data; // 假设返回的数据在 response.data 中
-		// console.log('111111', state.dataList);
 	} catch (error) {
 		console.error('Error loading data:', error);
 	} finally {
@@ -244,7 +241,6 @@ const loadData = async () => {
 // 在组件挂载时先获取用户信息，再加载数据
 onMounted(async () => {
 	await fetchCurrentUser(); // 先获取当前用户信息
-	state.queryForm.submitterId = currentUserId.value; // 设置查询条件
 	loadData(); // 然后加载数据
 	fetchUsers();
 });

@@ -9,7 +9,7 @@
                 <pane size="50">
                   <current-user/>
                 </pane>
-                <pane size="50">
+                <pane size="50" v-if="!isAdmin">
                   <flow-data/>
                 </pane>
               </splitpanes>
@@ -36,10 +36,16 @@
 
 <script setup lang="ts" name="home">
 import { split } from 'postcss/lib/list';
+import { computed } from 'vue'
+import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
 
 const CurrentUser = defineAsyncComponent(() => import('./current-user.vue'));
 const Favorite = defineAsyncComponent(() => import('./favorite.vue'));
 const Schedule = defineAsyncComponent(() => import('./schedule.vue'));
 // const SysLog = defineAsyncComponent(() => import('./sys-log.vue'));
 const flowData = defineAsyncComponent(() => import('./flow-data.vue'));
+const isAdmin = computed(() => {
+  console.log(useUserInfo().userInfos);
+  return useUserInfo().userInfos.roles[0] === '1';
+});
 </script>

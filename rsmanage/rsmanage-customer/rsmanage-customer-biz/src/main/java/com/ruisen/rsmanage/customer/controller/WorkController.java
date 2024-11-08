@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Arrays;
 
 /**
  * 工单表
@@ -90,6 +91,47 @@ public class WorkController {
 		param.put("copy",copy);
 		
 		return R.ok(workService.qry(param));
+	}
+
+	/**
+	 * 统计查询
+	 * @param work 工单表
+	 * @return
+	 */
+	@Operation(summary = "统计查询", description = "统计查询")
+	@GetMapping("/getWorkDataCount")
+	@HasPermission("rs_work_view")
+	public R getWorkDataCount(@ParameterObject WorkEntity work) {
+		Map<String, Integer> countMap = new HashMap<>();
+		
+		// 统计待办事项(状态为0和1)
+		if (work.getAssignees() != null) {
+			LambdaQueryWrapper<WorkEntity> todoQuery = Wrappers.<WorkEntity>lambdaQuery()
+				.eq(WorkEntity::getAssignees, work.getAssignees())
+				.in(WorkEntity::getStatus, Arrays.asList(0, 1));
+			int todoCount = (int) workService.count(todoQuery);
+			countMap.put("pendingNum", todoCount);
+		}
+
+		// 统计已办事项(状态为2)
+		if (work.getSubmitterId() != null) {
+			LambdaQueryWrapper<WorkEntity> doneQuery = Wrappers.<WorkEntity>lambdaQuery()
+				.eq(WorkEntity::getSubmitterId, work.getSubmitterId())
+				.eq(WorkEntity::getStatus, 2);
+			int doneCount = (int) workService.count(doneQuery);
+			countMap.put("completedNum", doneCount);
+		}
+
+		// 统计抄送事项(状态为0和1)
+		if (work.getCopy() != null) {
+			LambdaQueryWrapper<WorkEntity> copyQuery = Wrappers.<WorkEntity>lambdaQuery()
+				.like(WorkEntity::getCopy, work.getCopy())
+				.in(WorkEntity::getStatus, Arrays.asList(0, 1));
+			int copyCount = (int) workService.count(copyQuery);
+			countMap.put("copyNum", copyCount);
+		}
+
+		return R.ok(countMap);
 	}
 
 

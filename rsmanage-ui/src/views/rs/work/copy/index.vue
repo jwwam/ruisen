@@ -244,7 +244,6 @@ const loadData = async () => {
 // 在组件挂载时先获取用户信息，再加载数据
 onMounted(async () => {
 	await fetchCurrentUser(); // 先获取当前用户信息
-	state.queryForm.copy = currentUserId.value; // 设置查询条件
 	loadData(); // 然后加载数据
 	fetchUsers();
 });
