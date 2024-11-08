@@ -91,7 +91,6 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 							String fileName = url.substring(url.lastIndexOf("/") + 1);
 							List<SysFile> AttachmentList = workMapper.getFileDetail(fileName);
 							allAttachments.addAll(AttachmentList);
-							System.out.println("文件名: " + fileName);
 						}
 						workPo.setAttachmentsList(allAttachments);
 					}

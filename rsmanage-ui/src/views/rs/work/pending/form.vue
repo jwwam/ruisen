@@ -297,6 +297,13 @@ defineExpose({
 	openDialog,
 });
 
+// 添加日期格式化函数
+const formatToLocalDateTime = (date: Date): string => {
+	const pad = (num: number) => num.toString().padStart(2, '0');
+
+	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+};
+
 // 标记状态
 const handleMarkStatus = async () => {
 	try {
@@ -318,6 +325,7 @@ const handleMarkStatus = async () => {
 			workId: form.workId,
 			status: targetStatus,
 			handleOpinion: form.handleOpinion,
+			handleTime: form.status === 1 ? formatToLocalDateTime(new Date()) : undefined, // 格式化为 LocalDateTime
 		});
 
 		loading.value = false;
