@@ -82,10 +82,10 @@
 				</el-col>
 				<el-col :span="24" class="mb20" v-if="form.status !== 0 && form.status !== 3">
 					<el-form-item label="处理意见" prop="handleOpinion">
-						<el-input 
-							v-model="form.handleOpinion" 
-							type="textarea" 
-							:rows="4" 
+						<el-input
+							v-model="form.handleOpinion"
+							type="textarea"
+							:rows="4"
 							:disabled="form.status === 2"
 							:placeholder="form.status === 1 ? '请输入处理意见' : ''"
 						/>
@@ -106,12 +106,7 @@
 		<template #footer>
 			<span class="dialog-footer">
 				<el-button @click="visible = false">关 闭</el-button>
-				<el-button 
-					v-if="form.status === 0 || form.status === 1"
-					type="primary" 
-					@click="handleMarkStatus" 
-					:loading="loading"
-				>
+				<el-button v-if="form.status === 0 || form.status === 1" type="primary" @click="handleMarkStatus" :loading="loading">
 					{{ form.status === 0 ? '标记为处理中' : '标记为已处理' }}
 				</el-button>
 			</span>
@@ -122,7 +117,7 @@
 <script setup lang="ts" name="WorkDialog">
 import { useDict } from '/@/hooks/dict';
 import { useMessage } from '/@/hooks/message';
-import { getObj, addObj, putObj, validateExist } from '/@/api/rs/work';
+import { getObj, addObj, putObj, validateExist, getWorkDetails } from '/@/api/rs/work';
 import { rule } from '/@/utils/validate';
 import { pageRoleList } from '/@/api/admin/user';
 import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
@@ -167,7 +162,7 @@ const form = reactive({
 	deadline: '',
 	priority: '',
 	customCategory: '',
-	handleOpinion: '',//处理意见
+	handleOpinion: '', //处理意见
 });
 
 // 定义校验规则
@@ -180,9 +175,9 @@ const dataRules = ref({
 	deadline: [{ required: true, message: '截止日期不能为空', trigger: 'blur' }],
 	priority: [{ required: true, message: '优先级不能为空', trigger: 'blur' }],
 	handleOpinion: [
-		{ 
-			required: true, 
-			message: '处理意见不能为空', 
+		{
+			required: true,
+			message: '处理意见不能为空',
 			trigger: 'blur',
 			validator: (rule: any, value: any, callback: any) => {
 				if (form.status === 1 && (!value || value.trim() === '')) {
@@ -190,9 +185,9 @@ const dataRules = ref({
 				} else {
 					callback();
 				}
-			}
-		}
-	]
+			},
+		},
+	],
 });
 
 const formDisabled = ref(true);
@@ -213,12 +208,12 @@ const openDialog = (id: string) => {
 	}
 };
 
-// 初始化表单数据
+// 初始化表单
 const getWorkData = (id: string) => {
 	loading.value = true;
-	getObj({ workId: id })
+	getWorkDetails({ workId: id })
 		.then((res: any) => {
-			const workData = res.data[0];
+			const workData = res.data.data[0];
 			workData.customerId = workData.customerId || '-';
 			workData.partnerId = workData.partnerId || '-';
 			Object.assign(form, workData);
@@ -297,7 +292,7 @@ onMounted(() => {
 
 // 暴露方法
 defineExpose({
-	openDialog
+	openDialog,
 });
 
 // 标记状态
@@ -305,24 +300,24 @@ const handleMarkStatus = async () => {
 	try {
 		loading.value = true;
 		let targetStatus;
-		
-		if(form.status === 0) {
-			targetStatus = Number(work_status.value.find(item => item.label === '处理中')?.value);
-		} else if(form.status === 1) {
+
+		if (form.status === 0) {
+			targetStatus = Number(work_status.value.find((item) => item.label === '处理中')?.value);
+		} else if (form.status === 1) {
 			const valid = await dataFormRef.value.validateField('handleOpinion');
 			if (!valid) {
 				loading.value = false;
 				return;
 			}
-			targetStatus = Number(work_status.value.find(item => item.label === '已处理')?.value);
+			targetStatus = Number(work_status.value.find((item) => item.label === '已处理')?.value);
 		}
 
 		await putObj({
 			workId: form.workId,
 			status: targetStatus,
-			handleOpinion: form.handleOpinion
+			handleOpinion: form.handleOpinion,
 		});
-		
+
 		loading.value = false;
 		visible.value = false;
 		emit('refresh');

@@ -99,4 +99,8 @@ public class WorkEntity extends Model<WorkEntity> {
 
 	@Schema(description = "处理意见")
 	private String handleOpinion;
+
+	@TableField(exist = false)
+	@Schema(description="提交人姓名")
+	private String submitterName;
 }

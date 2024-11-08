@@ -74,7 +74,7 @@ public class WorkPo {
 	private Integer customerId;
 
 	@Schema(description = "合作伙伴ID")
-	private String partnerId;
+	private Integer partnerId;
 
 	@Schema(description = "抄送人")
 	private String copy;
@@ -94,7 +94,7 @@ public class WorkPo {
 	@Schema(description="合作伙伴标识")
 	private String partnerCode;
 
-	@Schema(description="提交人")
+	@Schema(description="提交人姓名")
 	private String submitterName;
 
 	@Schema(description = "处理时间")
