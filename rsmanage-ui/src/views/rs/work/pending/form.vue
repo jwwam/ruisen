@@ -48,7 +48,7 @@
 				<el-col :span="12" class="mb20">
 					<el-form-item label="客户名称" prop="customerId">
 						<el-select v-model="form.customerId" disabled>
-							<el-option v-for="customer in customers" :key="customer.customerId" :label="customer.name" :value="customer.customerId"></el-option>
+							<el-option :label="form.customerName" :value="form.customerId"> </el-option>
 						</el-select>
 					</el-form-item>
 				</el-col>
@@ -56,7 +56,7 @@
 				<el-col :span="12" class="mb20">
 					<el-form-item label="合作伙伴" prop="partnerId">
 						<el-select v-model="form.partnerId" disabled>
-							<el-option v-for="partner in partners" :key="partner.partnerId" :label="partner.partnerCode" :value="partner.partnerId"></el-option>
+							<el-option :label="form.partnerCode" :value="form.partnerId"> </el-option>
 						</el-select>
 					</el-form-item>
 				</el-col>
@@ -93,9 +93,11 @@
 				</el-col>
 				<el-col :span="24" class="mb20">
 					<el-form-item label="附件：" prop="attachments">
-						<div v-if="form.attachments">
-							<div v-for="(file, index) in form.attachments.split(',')" :key="index">
-								{{ file.trim() }}
+						<div v-if="form.attachmentsList && form.attachmentsList.length">
+							<div v-for="file in form.attachmentsList" :key="file.id" class="file-item">
+								<el-link type="primary" @click="handleFileDownload(file)">
+									{{ file.original }}
+								</el-link>
 							</div>
 						</div>
 						<div v-else>无附件</div>
@@ -123,6 +125,7 @@ import { pageRoleList } from '/@/api/admin/user';
 import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
 import { fetchList as fetchCustomerList } from '/@/api/rs/customers'; // 引入客户表信息
 import { fetchList as partnerList } from '/@/api/rs/partners'; // 引入合作伙伴表信息
+import { useTable } from '/@/hooks/table';
 
 const emit = defineEmits(['refresh']);
 
@@ -158,7 +161,9 @@ const form = reactive({
 	assignees: '',
 	copy: [] as string[],
 	customerId: '',
+	customerName: '',
 	partnerId: '',
+	partnerCode: '',
 	deadline: '',
 	priority: '',
 	customCategory: '',
@@ -214,11 +219,8 @@ const getWorkData = (id: string) => {
 	getWorkDetails({ workId: id })
 		.then((res: any) => {
 			const workData = res.data.data[0];
-			workData.customerId = workData.customerId || '-';
-			workData.partnerId = workData.partnerId || '-';
+			console.log('workData:', workData);
 			Object.assign(form, workData);
-			// 检查是否为自定义分类
-			isCustomCategory.value = !['数据缺失', '日报管理', '站点审核', '新通道邀请'].includes(form.category);
 		})
 		.finally(() => {
 			loading.value = false;
@@ -345,4 +347,27 @@ const copyDisplayText = computed(() => {
 		.filter(Boolean)
 		.join(', ');
 });
+
+// 获取文件名
+const getFileName = (url: string) => {
+	return url.substring(url.lastIndexOf('/') + 1);
+};
+
+// 获取 table 相关方法
+const { downBlobFile } = useTable({
+	// 可以传入基础配置，如果没有特殊需求可以传空对象
+	queryForm: {},
+	dataList: [],
+});
+
+// 添加下载方法
+const handleFileDownload = async (file: any) => {
+	try {
+		const url = `/admin/sys-file/${file.bucketName}/${file.fileName}`;
+		const query = {};
+		await downBlobFile(url, query, file.original);
+	} catch (error) {
+		console.error('文件下载失败:', error);
+	}
+};
 </script>

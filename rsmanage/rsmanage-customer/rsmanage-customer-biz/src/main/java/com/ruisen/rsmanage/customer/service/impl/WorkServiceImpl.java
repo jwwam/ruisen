@@ -132,6 +132,24 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 				String customerName = workMapper.getCustomersId(Long.valueOf((workPo.getCustomerId())));
 				workPo.setCustomerName(customerName);
 			}
+			//合作伙伴标识
+			if(workPo.getPartnerId() != null && !workPo.getPartnerId().equals(null)){
+				// 通过合作伙伴id获取姓名
+				String PartnerId = workMapper.getPartnersId(Long.valueOf((workPo.getPartnerId())));
+				workPo.setPartnerCode(PartnerId);
+			}
+			if(workPo.getAttachments() != null && !workPo.getAttachments().isEmpty()) {
+				List<SysFile> allAttachments = new ArrayList<>();
+				String Attachments = workPo.getAttachments().toString();
+				String[] urlArray = Attachments.split(",");
+				for (String url : urlArray) {
+					// 获取文件名（包含扩展名）
+					String fileName = url.substring(url.lastIndexOf("/") + 1);
+					List<SysFile> AttachmentList = workMapper.getFileDetail(fileName);
+					allAttachments.addAll(AttachmentList);
+				}
+				workPo.setAttachmentsList(allAttachments);
+			}
 		}
 		return R.ok(result);
 	}
