@@ -119,7 +119,7 @@
 <script setup lang="ts" name="WorkDialog">
 import { useDict } from '/@/hooks/dict';
 import { useMessage } from '/@/hooks/message';
-import { getObj, addObj, putObj, validateExist } from '/@/api/rs/work';
+import { getObj, addObj, putObj, validateExist, getWorkDetails } from '/@/api/rs/work';
 import { rule } from '/@/utils/validate';
 import { pageRoleList } from '/@/api/admin/user';
 import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
@@ -251,9 +251,9 @@ const onSubmit = async () => {
 // 初始化表单数据
 const getWorkData = (id: string) => {
 	loading.value = true;
-	getObj({ workId: id })
+	getWorkDetails({ workId: id })
 		.then((res: any) => {
-			const workData = res.data[0];
+			const workData = res.data.data[0];
 			workData.customerId = workData.customerId || '-';
 			workData.partnerId = workData.partnerId || '-';
 			Object.assign(form, workData);

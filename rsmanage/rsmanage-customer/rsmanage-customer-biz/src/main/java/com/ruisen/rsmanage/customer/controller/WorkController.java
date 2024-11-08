@@ -142,11 +142,23 @@ public class WorkController {
      * @return R  对象列表
      */
     @Operation(summary = "通过条件查询" , description = "通过条件查询对象" )
-    @GetMapping("/details" )
+    @GetMapping("/qryDetails" )
     @HasPermission("rs_work_view")
-    public R getDetails(@ParameterObject WorkEntity work) {
-        return R.ok(workService.list(Wrappers.query(work)));
+    public R getWorkDetails(@ParameterObject WorkEntity work) {
+        return R.ok(workService.qryDetails(work));
     }
+
+	/**
+	 * 通过条件查询工单表
+	 * @param work 查询条件
+	 * @return R  对象列表
+	 */
+	@Operation(summary = "通过条件查询" , description = "通过条件查询对象" )
+	@GetMapping("/details" )
+	@HasPermission("rs_work_view")
+	public R getDetails(@ParameterObject WorkEntity work) {
+		return R.ok(workService.list(Wrappers.query(work)));
+	}
 
     /**
      * 新增工单表

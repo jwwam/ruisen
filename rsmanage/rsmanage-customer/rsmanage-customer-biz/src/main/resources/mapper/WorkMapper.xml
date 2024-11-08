@@ -16,8 +16,9 @@
         <result property="copy" column="copy"/>
   </resultMap>
 	<select id="qry" resultType="com.ruisen.rsmanage.customer.Po.WorkPo">
-		SELECT * FROM rs_work_form 
-		WHERE 1=1
+		SELECT w.* ,cu.name as customerName,p.partner_code as partnerCode FROM rs_work_form w
+		,rs_customers cu,rs_partners p
+		WHERE w.customer_id = cu.customer_id AND w.partner_id = p.partner_id
 		<if test="param.submitterId != null and param.submitterId != ''">
 			AND submitter_id = #{param.submitterId}
 		</if>
@@ -33,6 +34,7 @@
 		<if test="param.copy != null and param.copy != ''">
 			AND FIND_IN_SET(#{param.copy}, copy)
 		</if>
+		ORDER BY created_at DESC
 	</select>
 
 	<!-- 通过用户ID查询用户名称 -->
@@ -45,6 +47,19 @@
 	<!-- 通过用户ID查询用户名称 -->
 	<select id="getFileDetail" resultType="com.ruisen.rsmanage.admin.api.entity.SysFile">
 		SELECT * FROM sys_file where file_name = #{fileName}
+	</select>
+
+	<!-- 通过workID查询工单详情 -->
+	<select id="qryDetails" resultType="com.ruisen.rsmanage.customer.Po.WorkPo">
+		SELECT w.*, u.name as submitterName, cu.name as customerName, p.partner_code as partnerCode
+		FROM rs_work_form w,
+			 sys_user u,
+			 rs_customers cu,
+			 rs_partners p
+		where w.submitter_id = u.user_id
+		  AND w.customer_id = cu.customer_id
+		  AND w.partner_id = p.partner_id
+		  AND w.work_id = #{workId};
 	</select>
 
 </mapper>

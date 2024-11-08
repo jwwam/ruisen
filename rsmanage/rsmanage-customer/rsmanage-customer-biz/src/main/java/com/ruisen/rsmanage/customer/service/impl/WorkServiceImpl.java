@@ -5,6 +5,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ruisen.rsmanage.admin.api.entity.SysFile;
+import com.ruisen.rsmanage.common.core.util.R;
 import com.ruisen.rsmanage.customer.Po.PageDto;
 import com.ruisen.rsmanage.customer.Po.ResponseDto;
 import com.ruisen.rsmanage.customer.Po.WorkPo;
@@ -40,22 +41,12 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 		ResponseDto rspMsg = new ResponseDto ();
 		int curPage = (int) param.get("curPage");
 		int pageSize = (int) param.get("pageSize");
-		String submitterId = (String) param.get("submitterId");
-		String category = (String) param.get("category");
-		String status = (String) param.get("status");
-		String assignees = (String) param.get("assignees");
 		List<WorkPo> result;
 		if (!StringUtils.isEmpty(curPage) && !StringUtils.isEmpty(pageSize)){
 			try {
 				Page<WorkPo> page = PageHelper.startPage(curPage, pageSize);
 				result = workMapper.qry(param);
 				for (WorkPo workPo : result) {
-					//截止日期
-//					if (workPo.getDeadline() != null && !workPo.getDeadline().isEmpty()){
-//						LocalDate date = LocalDate.parse(workPo.getDeadline() , DateTimeFormatter.ofPattern("yyyyMMdd"));
-//						String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-//						workPo.setDeadline(formattedDate);
-//					}
 					//处理人
 					if(workPo.getAssignees() != null && !workPo.getAssignees().isEmpty()){
 						// 通过处理人id获取姓名
@@ -115,5 +106,13 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 		System.out.println(rspMsg);
 		log.info("查询客户与合作伙伴关系结束",rspMsg);
 		return rspMsg;
+	}
+
+	@Override
+	public R<List<WorkPo>> qryDetails(WorkEntity work) {
+		Integer workId = work.getWorkId();
+		List<WorkPo> result;
+		result = workMapper.qryDetails(workId);
+		return R.ok(result);
 	}
 }

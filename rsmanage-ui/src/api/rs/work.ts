@@ -53,6 +53,18 @@ export function getObj(obj?: Object) {
 		params: obj,
 	});
 }
+/**
+ * 根据工单id获取工单详情。
+ * @param {Object} [obj] - 查询参数。
+ * @returns {Promise} 请求的 Promise 对象数组。
+ */
+export function getWorkDetails(obj?: Object) {
+	return request({
+		url: '/rs/work/qryDetails',
+		method: 'get',
+		params: obj,
+	});
+}
 
 /**
  * 根据 ID 删除对象。

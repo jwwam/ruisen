@@ -23,5 +23,7 @@ public interface WorkMapper extends BaseMapper<WorkEntity> {
 
 	List<SysFile> getFileDetail(@Param("fileName") String fileName);
 
+	List<WorkPo> qryDetails(@Param("workId") int workId);
+
 }
 
