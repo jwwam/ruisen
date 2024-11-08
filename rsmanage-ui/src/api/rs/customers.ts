@@ -14,6 +14,19 @@ export function fetchList(query?: Object) {
 }
 
 /**
+ * 根据分页查询参数获取列表数据。
+ * @param {Object} [query] - 查询参数。
+ * @returns {Promise} 请求的 Promise 分页对象。
+ */
+export function fetchListWithoutRole(query?: Object) {
+  return request({
+    url: '/rs/customers/fetchListWithoutRole',
+    method: 'get',
+    params: query
+  })
+}
+
+/**
  * 添加一个新对象。
  * @param {Object} [obj] - 要添加的对象。
  * @returns {Promise} 请求的 Promise 对象 （true/false）。

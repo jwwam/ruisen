@@ -60,6 +60,24 @@ public class CustomersController {
         return R.ok(customersService.page(page, wrapper));
     }
 
+    /**
+     * 分页查询
+     * @param page 分页对象
+     * @param customers 客户信息表
+     * @return
+     */
+    @Operation(summary = "分页查询" , description = "分页查询" )
+    @GetMapping("/fetchListWithoutRole" )
+    public R fetchListWithoutRole(@ParameterObject Page page, @ParameterObject CustomersEntity customers) {
+        LambdaQueryWrapper<CustomersEntity> wrapper = Wrappers.lambdaQuery();
+		wrapper.like(StrUtil.isNotBlank(customers.getName()),CustomersEntity::getName,customers.getName());
+		wrapper.like(StrUtil.isNotBlank(customers.getLinkman()),CustomersEntity::getLinkman,customers.getLinkman());
+		wrapper.eq(StrUtil.isNotBlank(customers.getEmail()),CustomersEntity::getEmail,customers.getEmail());
+		wrapper.eq(StrUtil.isNotBlank(customers.getPhoneNumber()),CustomersEntity::getPhoneNumber,customers.getPhoneNumber());
+		wrapper.eq(StrUtil.isNotBlank(customers.getSalesRepId()),CustomersEntity::getSalesRepId,customers.getSalesRepId());
+        return R.ok(customersService.page(page, wrapper));
+    }
+
 
     /**
      * 通过条件查询客户信息表

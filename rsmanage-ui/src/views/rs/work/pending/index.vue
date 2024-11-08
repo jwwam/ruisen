@@ -264,7 +264,6 @@ const fetchCurrentUser = async () => {
   // 在组件挂载时获取数据
   onMounted(async () => {
 	await fetchCurrentUser(); // 先获取当前用户信息
-	state.queryForm.assignees = currentUserId.value; // 设置查询条件
 	loadData(); // 然后加载数据
 	fetchUsers();
 });

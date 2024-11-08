@@ -65,6 +65,26 @@ public class PartnersController {
         return R.ok(partnersService.page(page, wrapper));
     }
 
+    /**
+     * 分页查询
+     * @param page 分页对象
+     * @param partners 合作伙伴信息表
+     * @return
+     */
+    @Operation(summary = "分页查询" , description = "分页查询" )
+    @GetMapping("/fetchListWithoutRole" )
+    public R fetchListWithoutRole(@ParameterObject Page page, @ParameterObject PartnersEntity partners) {
+        LambdaQueryWrapper<PartnersEntity> wrapper = Wrappers.lambdaQuery();
+		wrapper.like(StrUtil.isNotBlank(partners.getPartnerName()),PartnersEntity::getPartnerName,partners.getPartnerName());
+		wrapper.eq(StrUtil.isNotBlank(partners.getPartnerCode()),PartnersEntity::getPartnerCode,partners.getPartnerCode());
+		wrapper.eq(Objects.nonNull(partners.getRevenueShare()),PartnersEntity::getRevenueShare,partners.getRevenueShare());
+		wrapper.eq(Objects.nonNull(partners.getStartDate()),PartnersEntity::getStartDate,partners.getStartDate());
+		wrapper.eq(Objects.nonNull(partners.getEndDate()),PartnersEntity::getEndDate,partners.getEndDate());
+		wrapper.eq(Objects.nonNull(partners.getValidDays()),PartnersEntity::getValidDays,partners.getValidDays());
+		wrapper.eq(Objects.nonNull(partners.getValidMonths()),PartnersEntity::getValidMonths,partners.getValidMonths());
+        return R.ok(partnersService.page(page, wrapper));
+    }
+
 
     /**
      * 通过条件查询合作伙伴信息表
