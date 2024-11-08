@@ -58,7 +58,7 @@ public class WorkController {
 		wrapper.like(Objects.nonNull(work.getSubmitterId()),WorkEntity::getSubmitterId,work.getSubmitterId());
 		wrapper.eq(StrUtil.isNotBlank(work.getTitle()),WorkEntity::getTitle,work.getTitle());
 		wrapper.eq(Objects.nonNull(work.getStatus()),WorkEntity::getStatus,work.getStatus());
-//		wrapper.like(StrUtil.isNotBlank(work.getAssignees()),WorkEntity::getAssignees,work.getAssignees());
+		wrapper.like(StrUtil.isNotBlank(work.getAssignees()),WorkEntity::getAssignees,work.getAssignees());
         return R.ok(workService.page(page, wrapper));
     }
 
@@ -78,6 +78,8 @@ public class WorkController {
 		String category = StringUtils.stringUtils(work.getCategory());
 		String status = StringUtils.stringUtils(work.getStatus());
 		String assignees = StringUtils.stringUtils(work.getAssignees());
+		String copy = StringUtils.stringUtils(work.getCopy());
+		
 		Map<String,Object> param = new HashMap<>();
 		param.put("curPage",curPage);
 		param.put("pageSize",pageSize);
@@ -85,6 +87,8 @@ public class WorkController {
 		param.put("category",category);
 		param.put("status",status);
 		param.put("assignees",assignees);
+		param.put("copy",copy);
+		
 		return R.ok(workService.qry(param));
 	}
 

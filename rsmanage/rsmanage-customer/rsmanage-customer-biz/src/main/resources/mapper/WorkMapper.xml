@@ -13,28 +13,26 @@
         <result property="attachments" column="attachments"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
+        <result property="copy" column="copy"/>
   </resultMap>
 	<select id="qry" resultType="com.ruisen.rsmanage.customer.Po.WorkPo">
-	select w.* ,cu.name as customerName,p.partner_code as partnerCode,u.name as submitterName
-	from rs_work_form w left join rs_customers cu on w.customer_id = cu.customer_id
-	left join rs_partners p on w.partner_id = p.partner_id
-	left join sys_user u on w.submitter_id = u.user_id
-	<where>
-		1=1
-		<if test="submitterId != null and submitterId != ''">
-			AND w.submitter_id = #{submitterId}
+		SELECT * FROM rs_work_form 
+		WHERE 1=1
+		<if test="param.submitterId != null and param.submitterId != ''">
+			AND submitter_id = #{param.submitterId}
 		</if>
-		<if test="category != null and category != ''">
-			AND w.category LIKE CONCAT('%', #{category}, '%')
+		<if test="param.category != null and param.category != ''">
+			AND category = #{param.category}
 		</if>
-		<if test="status!= null and status!= ''">
-			AND w.status = #{status}
+		<if test="param.status != null and param.status != ''">
+			AND status = #{param.status}
 		</if>
-		<if test="assignees!= null and assignees!= ''">
-			AND w.assignees = #{assignees}
+		<if test="param.assignees != null and param.assignees != ''">
+			AND assignees = #{param.assignees}
 		</if>
-	</where>
-	order by created_at DESC
+		<if test="param.copy != null and param.copy != ''">
+			AND FIND_IN_SET(#{param.copy}, copy)
+		</if>
 	</select>
 
 	<!-- 通过用户ID查询用户名称 -->

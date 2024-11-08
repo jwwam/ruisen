@@ -218,8 +218,10 @@ const getWorkData = (id: string) => {
 	loading.value = true;
 	getObj({ workId: id })
 		.then((res: any) => {
-			Object.assign(form, res.data[0]);
-			// console.log("form:" , form);
+			const workData = res.data[0];
+			workData.customerId = workData.customerId || '-';
+			workData.partnerId = workData.partnerId || '-';
+			Object.assign(form, workData);
 			// 检查是否为自定义分类
 			isCustomCategory.value = !['数据缺失', '日报管理', '站点审核', '新通道邀请'].includes(form.category);
 		})

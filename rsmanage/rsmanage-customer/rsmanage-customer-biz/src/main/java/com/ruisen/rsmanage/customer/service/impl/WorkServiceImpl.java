@@ -48,7 +48,7 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 		if (!StringUtils.isEmpty(curPage) && !StringUtils.isEmpty(pageSize)){
 			try {
 				Page<WorkPo> page = PageHelper.startPage(curPage, pageSize);
-				result = workMapper.qry(submitterId,category,status,assignees);
+				result = workMapper.qry(param);
 				for (WorkPo workPo : result) {
 					//截止日期
 //					if (workPo.getDeadline() != null && !workPo.getDeadline().isEmpty()){
@@ -102,7 +102,7 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
 				PageHelper.clearPage();
 			}
 		}else {
-			result = workMapper.qry(submitterId,category,status,assignees);
+			result = workMapper.qry(param);
 
 		}
 		if (result == null || result.size() == 0) {

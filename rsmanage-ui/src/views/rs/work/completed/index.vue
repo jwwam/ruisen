@@ -136,6 +136,7 @@ import { WorkfetchList, delObjs, getObj, putObj } from '/@/api/rs/work';
 import { useMessage, useMessageBox } from '/@/hooks/message';
 import { useDict } from '/@/hooks/dict';
 import { pageRoleList } from '/@/api/admin/user';
+import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
 
 // const rightDrawerVisible = ref(false);
 // const currentData = ref();
@@ -200,6 +201,15 @@ const selectionChangHandle = (objs: { workId: string }[]) => {
 	selectObjs.value = objs.map(({ workId }) => workId);
 	multiple.value = !objs.length;
 };
+
+// 获取当前用户信息
+const currentUserId = ref('');
+const currentUserName = ref('');
+const fetchCurrentUser = async () => {
+	const data = useUserInfo().userInfos;
+	currentUserName.value = data.user.name;
+	currentUserId.value = data.user.userId; // 确保正确设置当前用户ID
+};
 const users = ref<Users[]>([]);
 
 const fetchUsers = async () => {
@@ -214,6 +224,9 @@ const fetchUsers = async () => {
 const loadData = async () => {
 	state.loading = true;
 	try {
+		if (!state.queryForm.submitterId) {
+			state.queryForm.submitterId = currentUserId.value;
+		}
 		await WorkfetchList(state.queryForm).then((res) => {
 			state.dataList = res.data.data;
 			state.pagination = res.data.page;
@@ -228,9 +241,11 @@ const loadData = async () => {
 		state.loading = false;
 	}
 };
-// 在组件挂载时获取数据
-onMounted(() => {
-	loadData();
+// 在组件挂载时先获取用户信息，再加载数据
+onMounted(async () => {
+	await fetchCurrentUser(); // 先获取当前用户信息
+	state.queryForm.submitterId = currentUserId.value; // 设置查询条件
+	loadData(); // 然后加载数据
 	fetchUsers();
 });
 

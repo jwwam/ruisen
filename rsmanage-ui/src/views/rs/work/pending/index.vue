@@ -174,6 +174,7 @@
   import {useI18n} from 'vue-i18n';
   import {useDict} from '/@/hooks/dict';
   import { pageRoleList } from '/@/api/admin/user';
+  import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
   
   // 引入组件
   const FormDialog = defineAsyncComponent(() => import('./form.vue'));
@@ -188,7 +189,6 @@
   const formDialogRef = ref();
   const individuationRef = ref();
   const excelUploadRef = ref();
-  const tenantMenuRef = ref();
   // 搜索变量
   const queryRef = ref();
   const showSearch = ref(true);
@@ -219,6 +219,15 @@
 	downBlobFile('/rs/work/export', Object.assign(state.queryForm, {ids: selectObjs}), 'work.xlsx');
   };
 
+
+  // 获取当前用户信息
+const currentUserId = ref('');
+const currentUserName = ref('');
+const fetchCurrentUser = async () => {
+	const data = useUserInfo().userInfos;
+	currentUserName.value = data.user.name;
+	currentUserId.value = data.user.userId; // 确保正确设置当前用户ID
+};
   const users = ref<Users[]>([]);
 
   const fetchUsers = async () => {
@@ -233,6 +242,9 @@
     // 定义获取数据的函数
   const loadData = async () => {
 	state.loading = true;
+	if (!state.queryForm.assignees) {
+			state.queryForm.assignees = currentUserId.value;
+		}
 	try {
 		await WorkfetchList(state.queryForm).then((res) => {
 			state.dataList = res.data.data;
@@ -250,10 +262,12 @@
   };
   
   // 在组件挂载时获取数据
-  onMounted(() => {
-	loadData();
+  onMounted(async () => {
+	await fetchCurrentUser(); // 先获取当前用户信息
+	state.queryForm.assignees = currentUserId.value; // 设置查询条件
+	loadData(); // 然后加载数据
 	fetchUsers();
-  });
+});
 
   // 删除操作
   const handleDelete = async (ids: string[]) => {
