@@ -21,6 +21,10 @@ public interface WorkMapper extends BaseMapper<WorkEntity> {
 	 */
 	String getUserNameById(Long userId);
 
+	String getCustomersId(Long customerId);
+
+	String getPartnersId(Long partnerdId);
+
 	List<SysFile> getFileDetail(@Param("fileName") String fileName);
 
 	List<WorkPo> qryDetails(@Param("workId") int workId);
