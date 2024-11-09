@@ -33,7 +33,7 @@
 		<if test="param.copy != null and param.copy != ''">
 			AND FIND_IN_SET(#{param.copy}, copy)
 		</if>
-		ORDER BY created_at DESC
+		ORDER BY deadline ASC
 	</select>
 
 	<!-- 通过用户ID查询用户名称 -->
