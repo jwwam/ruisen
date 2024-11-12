@@ -1,4 +1,4 @@
-FROM registry.cn-hangzhou.aliyuncs.com/dockerhub_mirror/nginx
+FROM nginx:latest
 
 COPY ./dist /data
 

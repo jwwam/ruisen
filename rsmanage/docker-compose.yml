@@ -5,7 +5,7 @@ services:
       context: ./db
     environment:
       MYSQL_ROOT_HOST: "%"
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root1234
     restart: always
     container_name: rsmanage-mysql
     image: rsmanage-mysql
@@ -15,7 +15,7 @@ services:
       - spring_cloud_default
 
   rsmanage-redis:
-    image: registry.cn-hangzhou.aliyuncs.com/dockerhub_mirror/redis
+    image: redis:latest
     ports:
       - 36379:6379
     restart: always
@@ -66,6 +66,16 @@ services:
     container_name: rsmanage-upms
     hostname: rsmanage-upms
     image: rsmanage-upms
+    networks:
+      - spring_cloud_default
+
+  rsmanage-customer:
+    build:
+      context: ./rsmanage-customer/rsmanage-customer-biz
+    restart: always
+    container_name: rsmanage-customer
+    hostname: rsmanage-customer
+    image: rsmanage-customer
     networks:
       - spring_cloud_default
 

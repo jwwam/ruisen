@@ -53,8 +53,11 @@
             @queryTable="getDataList"></right-toolbar>
         </div>
       </el-row>
-      <el-table :data="state.dataList" v-loading="state.loading" border 
-        :cell-style="tableStyle.cellStyle" :header-cell-style="tableStyle.headerCellStyle"
+      <el-table 
+        :data="state.dataList" 
+        v-loading="state.loading" border 
+        :cell-style="tableStyle.cellStyle" 
+        :header-cell-style="tableStyle.headerCellStyle"
 				@selection-change="selectionChangHandle"
         @sort-change="sortChangeHandle">
         <el-table-column type="selection" width="40" align="center" />

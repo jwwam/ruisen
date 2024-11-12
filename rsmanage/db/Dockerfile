@@ -1,6 +1,6 @@
-FROM registry.cn-hangzhou.aliyuncs.com/dockerhub_mirror/mysql-server:8.0.32
+FROM mysql:8.0.32
 
-MAINTAINER lengleng(wangiegie@gmail.com)
+LABEL maintainer="zhangyingqi <zhulier1124@gmail.com>"
 
 ENV TZ=Asia/Shanghai
 

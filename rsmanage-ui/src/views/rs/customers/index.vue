@@ -43,11 +43,10 @@
 					></right-toolbar>
 				</div>
 			</el-row>
+			<!-- size="small" :scroll="{ x: 1000 }" -->
 			<el-table
 				:data="state.dataList"
-				:scroll="{ x: 1000 }"
-				v-loading="state.loading"
-				size="small"
+				v-loading="state.loading" border  
 				:cell-style="tableStyle.cellStyle"
 				:header-cell-style="tableStyle.headerCellStyle"
 				@selection-change="selectionChangHandle"

@@ -103,3 +103,19 @@ npm install && npm run build:docker && cd docker && docker compose up -d
    </details>
 
 2. 欢迎提交 [issue](https://gitee.com/log4j/pig/issues)，请写清楚遇到问题的原因、开发环境、复显步骤。
+
+
+在 Docker Compose 创建的网络中，容器之间的通信使用容器内部端口（在这个例子中是 3306），并且可以直接使用容器名称或 hostname 作为主机名。
+例如：
+如果其他服务（比如 rsmanage-auth）需要连接 MySQL，应该使用：
+主机名：rsmanage-mysql
+端口：3306
+连接地址示例：jdbc:mysql://rsmanage-mysql:3306/database_name
+这是因为：
+Docker Compose 会自动创建一个名为 spring_cloud_default 的网络（在你的配置文件底部定义）
+所有服务都被加入到这个网络中（通过 networks: - spring_cloud_default 配置）
+在这个网络内部，容器可以通过容器名称或 hostname 直接相互访问
+使用的是容器内部端口，而不是映射到主机的端口
+所以：
+33306 端口只用于从主机（外部）访问 MySQL
+3306 端口用于容器网络内部的服务之间的通信

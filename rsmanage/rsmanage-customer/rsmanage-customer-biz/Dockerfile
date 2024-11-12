@@ -1,10 +1,8 @@
-FROM registry.cn-hangzhou.aliyuncs.com/dockerhub_mirror/java:21-anolis
+FROM openjdk:21-slim
 
-RUN mkdir -p /customer
+WORKDIR /rsmanage-customer-biz
 
-WORKDIR /customer
-
-ARG JAR_FILE=target/customer-biz.jar
+ARG JAR_FILE=target/rsmanage-customer-biz.jar
 
 COPY ${JAR_FILE} app.jar
 
