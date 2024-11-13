@@ -15,7 +15,9 @@ import com.ruisen.rsmanage.customer.service.ContractService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import com.ruisen.rsmanage.common.security.annotation.HasPermission;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,6 +35,7 @@ import java.util.Objects;
  * @author rsmanage
  * @date 2024-11-13 13:31:03
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/contract" )
@@ -41,6 +45,10 @@ public class ContractController {
 
     private final  ContractService contractService;
 
+	@GetMapping("/sequenceNo")
+	public R<String> getNextSequence(@RequestParam String signedDate) {
+		return R.ok(contractService.getNextSequence(signedDate));
+	}
     /**
      * 分页查询
      * @param page 分页对象
