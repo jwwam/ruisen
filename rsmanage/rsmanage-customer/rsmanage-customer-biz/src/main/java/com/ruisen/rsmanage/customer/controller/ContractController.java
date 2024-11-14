@@ -24,9 +24,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import utils.StringUtils;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -67,7 +70,28 @@ public class ContractController {
         return R.ok(contractService.page(page, wrapper));
     }
 
+	@Operation(summary = "分页查询" , description = "分页查询" )
+	@GetMapping("/newPage" )
+	@HasPermission("rs_contract_view")
+	public R getContractNewPage(@ParameterObject Page page, @ParameterObject ContractEntity contract) {
+		int curPage = (int) page.getCurrent();
+		int pageSize = (int) page.getSize();
+		String customerId = StringUtils.stringUtils(contract.getCustomerId());
+		String ContractName = StringUtils.stringUtils(contract.getContractName());
+		String ContractNumber = StringUtils.stringUtils(contract.getContractNumber());
+		String IsActive = StringUtils.stringUtils(contract.getIsActive());
+		String SignedDate = StringUtils.stringUtils(contract.getSignedDate());
+		Map<String,Object> param = new HashMap<>();
+		param.put("curPage",curPage);
+		param.put("pageSize",pageSize);
+		param.put("customerId",customerId);
+		param.put("ContractName",ContractName);
+		param.put("ContractNumber",ContractNumber);
+		param.put("IsActive",IsActive);
+		param.put("SignedDate",SignedDate);
 
+		return R.ok(contractService.qry(param));
+	}
     /**
      * 通过条件查询合同管理表
      * @param contract 查询条件

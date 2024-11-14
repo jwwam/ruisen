@@ -1,12 +1,15 @@
-package com.ruisen.rsmanage.customer.entity;
+package com.ruisen.rsmanage.customer.Po;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.ruisen.rsmanage.admin.api.entity.SysFile;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 合同管理表
@@ -15,11 +18,7 @@ import java.time.LocalDateTime;
  * @date 2024-11-13 13:31:03
  */
 @Data
-@TableName("rs_contracts")
-@EqualsAndHashCode(callSuper = true)
-@Schema(description = "合同管理表")
-public class ContractEntity extends Model<ContractEntity> {
-
+public class ContractPo extends Model<ContractPo> {
 
 	/**
 	* 合同记录唯一标识
@@ -99,6 +98,16 @@ public class ContractEntity extends Model<ContractEntity> {
 	*/
     @Schema(description="合同文件")
     private String fileUrl;
+	/**
+	 * 附件列表
+	 */
+	@Schema(description="附件路径列表")
+	private List<SysFile> attachmentsList;
+	/**
+	 * 客户姓名
+	 */
+	@Schema(description="客户姓名")
+	private String customerName;
 
 	/**
 	 * 合同创建人
