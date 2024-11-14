@@ -126,7 +126,7 @@ import { fetchNewList, delObjs } from '/@/api/rs/contract';
 import { useMessage, useMessageBox } from '/@/hooks/message';
 import { useDict } from '/@/hooks/dict';
 import { fetchListWithoutRole as fetchCustomerList } from '/@/api/rs/customers';
-import dayjs from 'dayjs';
+import { dayjs } from 'element-plus';
 import { useUserInfo } from '/@/stores/userInfo';
 
 const FormDialog = defineAsyncComponent(() => import('./form.vue'));

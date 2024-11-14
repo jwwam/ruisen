@@ -1,110 +1,129 @@
 <template>
-	<el-dialog title="查看" v-model="visible" :close-on-click-modal="false" draggable>
-		<el-form ref="dataFormRef" :model="form" :rules="dataRules" label-width="90px" v-loading="loading">
-			<el-row :gutter="24">
-				<el-col :span="12" class="mb20">
-					<el-form-item label="提交人" prop="submitterName">
-						<el-input v-model="form.submitterName" disabled />
-					</el-form-item>
-				</el-col>
+	<el-dialog title="查看" v-model="visible" :close-on-click-modal="false" draggable width="90%">
+		<el-row>
+			<el-col :span="17" style="padding-right: 20px; border-right: 1px solid #dcdfe6;">
+				<el-form ref="dataFormRef" :model="form" :rules="dataRules" label-width="90px" v-loading="loading">
+					<el-row :gutter="24">
+						<el-col :span="12" class="mb20">
+							<el-form-item label="提交人" prop="submitterName">
+								<el-input v-model="form.submitterName" disabled />
+							</el-form-item>
+						</el-col>
 
-				<el-col :span="12" class="mb20">
-					<el-form-item label="工单分类" prop="category">
-						<el-select v-model="form.category" disabled>
-							<el-option label="数据缺失" value="数据缺失"></el-option>
-							<el-option label="日报管理" value="日报管理"></el-option>
-							<el-option label="站点审核" value="站点审核"></el-option>
-							<el-option label="新通道邀请" value="新通道邀请"></el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
+						<el-col :span="12" class="mb20">
+							<el-form-item label="工单分类" prop="category">
+								<el-select v-model="form.category" disabled>
+									<el-option label="数据缺失" value="数据缺失"></el-option>
+									<el-option label="日报管理" value="日报管理"></el-option>
+									<el-option label="站点审核" value="站点审核"></el-option>
+									<el-option label="新通道邀请" value="新通道邀请"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
 
-				<el-col :span="12" class="mb20">
-					<el-form-item label="工单名称" prop="title">
-						<el-input v-model="form.title" disabled />
-					</el-form-item>
-				</el-col>
+						<el-col :span="12" class="mb20">
+							<el-form-item label="工单名称" prop="title">
+								<el-input v-model="form.title" disabled />
+							</el-form-item>
+						</el-col>
 
-				<el-col :span="12" class="mb20">
-					<el-form-item label="工单状态" prop="status">
-						<el-input v-model="statusText" disabled />
-					</el-form-item>
-				</el-col>
+						<el-col :span="12" class="mb20">
+							<el-form-item label="工单状态" prop="status">
+								<el-input v-model="statusText" disabled />
+							</el-form-item>
+						</el-col>
 
-				<el-col :span="12" class="mb20">
-					<el-form-item label="处理人" prop="assignees">
-						<el-select v-model="form.assignees" disabled>
-							<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
+						<el-col :span="12" class="mb20">
+							<el-form-item label="处理人" prop="assignees">
+								<el-select v-model="form.assignees" disabled>
+									<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
 
-				<el-col :span="12" class="mb20">
-					<el-form-item label="抄送人" prop="copy">
-						<el-input v-model="copyDisplayText" disabled />
-					</el-form-item>
-				</el-col>
+						<el-col :span="12" class="mb20">
+							<el-form-item label="抄送人" prop="copy">
+								<el-input v-model="copyDisplayText" disabled />
+							</el-form-item>
+						</el-col>
 
-				<el-col :span="12" class="mb20">
-					<el-form-item label="客户名称" prop="customerId">
-						<el-select v-model="form.customerId" disabled>
-							<el-option :label="form.customerName" :value="form.customerId"> </el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
+						<el-col :span="12" class="mb20">
+							<el-form-item label="客户名称" prop="customerId">
+								<el-select v-model="form.customerId" disabled>
+									<el-option :label="form.customerName" :value="form.customerId"> </el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
 
-				<el-col :span="12" class="mb20">
-					<el-form-item label="合作伙伴" prop="partnerId">
-						<el-select v-model="form.partnerId" disabled>
-							<el-option :label="form.partnerCode" :value="form.partnerId"> </el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
+						<el-col :span="12" class="mb20">
+							<el-form-item label="合作伙伴" prop="partnerId">
+								<el-select v-model="form.partnerId" disabled>
+									<el-option :label="form.partnerCode" :value="form.partnerId"> </el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
 
-				<el-col :span="12" class="mb20">
-					<el-form-item label="截止日期" prop="deadline">
-						<el-date-picker v-model="form.deadline" type="date" disabled />
-					</el-form-item>
-				</el-col>
+						<el-col :span="12" class="mb20">
+							<el-form-item label="截止日期" prop="deadline">
+								<el-date-picker v-model="form.deadline" type="date" disabled />
+							</el-form-item>
+						</el-col>
 
-				<el-col :span="12" class="mb20">
-					<el-form-item label="优先级" prop="priority">
-						<el-select v-model="form.priority" disabled>
-							<el-option label="紧急" value="紧急"></el-option>
-							<el-option label="一般" value="一般"></el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col :span="24" class="mb20">
-					<el-form-item label="工单内容" prop="content">
-						<el-input v-model="form.content" type="textarea" :rows="4" disabled />
-					</el-form-item>
-				</el-col>
-				<el-col :span="24" class="mb20" v-if="form.status !== 0 && form.status !== 3">
-					<el-form-item label="处理意见" prop="handleOpinion">
-						<el-input
-							v-model="form.handleOpinion"
-							type="textarea"
-							:rows="4"
-							:disabled="form.status === 2"
-							:placeholder="form.status === 1 ? '请输入处理意见' : ''"
-						/>
-					</el-form-item>
-				</el-col>
-				<el-col :span="24" class="mb20">
-					<el-form-item label="附件：" prop="attachments">
-						<div v-if="form.attachmentsList && form.attachmentsList.length">
-							<div v-for="file in form.attachmentsList" :key="file.id" class="file-item">
-								<el-link type="primary" @click="handleFileDownload(file)">
-									{{ file.original }}
-								</el-link>
+						<el-col :span="12" class="mb20">
+							<el-form-item label="优先级" prop="priority">
+								<el-select v-model="form.priority" disabled>
+									<el-option label="紧急" value="紧急"></el-option>
+									<el-option label="一般" value="一般"></el-option>
+								</el-select>
+							</el-form-item>
+						</el-col>
+						<el-col :span="24" class="mb20">
+							<el-form-item label="工单内容" prop="content">
+								<el-input v-model="form.content" type="textarea" :rows="4" disabled />
+							</el-form-item>
+						</el-col>
+						<el-col :span="24" class="mb20" v-if="form.status !== 0 && form.status !== 3">
+							<el-form-item label="处理意见" prop="handleOpinion">
+								<el-input
+									v-model="form.handleOpinion"
+									type="textarea"
+									:rows="4"
+									:disabled="form.status === 2"
+									:placeholder="form.status === 1 ? '请输入处理意见' : ''"
+								/>
+							</el-form-item>
+						</el-col>
+						<el-col :span="24" class="mb20">
+							<el-form-item label="附件：" prop="attachments">
+								<div v-if="form.attachmentsList && form.attachmentsList.length">
+									<div v-for="file in form.attachmentsList" :key="file.id" class="file-item">
+										<el-link type="primary" @click="handleFileDownload(file)">
+											{{ file.original }}
+										</el-link>
+									</div>
+								</div>
+								<div v-else>无附件</div>
+							</el-form-item>
+						</el-col>
+					</el-row>
+				</el-form>
+			</el-col>
+
+			<el-col :span="7" style="padding-left: 20px;">
+				<div class="right-panel">
+					<h3 class="panel-title">工单信息</h3>
+					<div class="timeline">
+						<div class="timeline-item" v-for="(item, index) in workLogs" :key="index">
+							<div class="timeline-dot"></div>
+							<div class="timeline-content">
+								<div class="log-title">{{ item.title }}</div>
+								<div class="log-time">{{ item.time }}</div>
 							</div>
 						</div>
-						<div v-else>无附件</div>
-					</el-form-item>
-				</el-col>
-			</el-row>
-		</el-form>
+					</div>
+				</div>
+			</el-col>
+		</el-row>
 		<template #footer>
 			<span class="dialog-footer">
 				<el-button @click="visible = false">关 闭</el-button>
@@ -378,4 +397,93 @@ const handleFileDownload = async (file: any) => {
 		console.error('文件下载失败:', error);
 	}
 };
+
+// 工单日志数据
+const workLogs = ref([
+	{
+		title: '登录成功 - 113.91.43.*',
+		time: '2024-11-14 21:48:43'
+	},
+	{
+		title: '登录成功 - 106.117.116.*',
+		time: '2024-11-14 21:48:25'
+	},
+	{
+		title: '登录成功 - 106.117.116.*',
+		time: '2024-11-14 21:43:31'
+	},
+	{
+		title: '登录成功 - 223.104.72.*',
+		time: '2024-11-14 21:38:07'
+	}
+]);
 </script>
+
+<style scoped>
+.right-panel {
+	height: 100%;
+	position: relative;
+}
+
+.panel-title {
+	font-size: 16px;
+	font-weight: bold;
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #ebeef5;
+}
+
+.timeline {
+	position: relative;
+	padding-left: 20px;
+}
+
+.timeline::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 8px;
+	bottom: 8px;
+	width: 2px;
+	background-color: #e4e7ed;
+}
+
+.timeline-item {
+	position: relative;
+	margin-bottom: 25px;
+	min-height: 20px;
+}
+
+.timeline-dot {
+	position: absolute;
+	left: -22px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background-color: #fff;
+	border: 2px solid #409eff;
+}
+
+.timeline-content {
+	padding-left: 10px;
+	min-height: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.log-title {
+	font-size: 14px;
+	color: #303133;
+	margin-bottom: 4px;
+	line-height: 1.4;
+}
+
+.log-time {
+	font-size: 12px;
+	color: #909399;
+	line-height: 1.4;
+}
+</style>
