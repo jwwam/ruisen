@@ -129,7 +129,7 @@ const dataForm = reactive({
 const dataRules = ref({
 	// 用户名校验，不能为空 、长度 5-20、不能和已有数据重复
 	username: [
-		{validator: rule.overLength, trigger: 'blur'},
+		{ validator: rule.overLength, trigger: 'blur' },
 		{ required: true, message: '用户名不能为空', trigger: 'blur' },
 		{ min: 5, max: 20, message: '用户名称长度必须介于 5 和 20 之间', trigger: 'blur' },
 		{
@@ -140,7 +140,7 @@ const dataRules = ref({
 		},
 	],
 	password: [
-		{validator: rule.overLength, trigger: 'blur'},
+		{ validator: rule.overLength, trigger: 'blur' },
 		{ required: true, message: '密码不能为空', trigger: 'blur' },
 		{
 			min: 6,
@@ -152,7 +152,7 @@ const dataRules = ref({
 	// 姓名校验，不能为空、只能是中文
 	name: [
 		{ required: true, message: '姓名不能为空', trigger: 'blur' },
-		{validator: rule.overLength, trigger: 'blur'},
+		{ validator: rule.overLength, trigger: 'blur' },
 		{ validator: rule.chinese, trigger: 'blur' },
 	],
 	deptId: [{ required: true, message: '部门不能为空', trigger: 'blur' }],
@@ -161,7 +161,7 @@ const dataRules = ref({
 	// 手机号校验，不能为空、新增的时不能重复校验
 	phone: [
 		{ required: true, message: '手机号不能为空', trigger: 'blur' },
-		{validator: rule.overLength, trigger: 'blur'},
+		{ validator: rule.overLength, trigger: 'blur' },
 		{ validator: rule.validatePhone, trigger: 'blur' },
 		{
 			validator: (rule: any, value: any, callback: any) => {
@@ -170,9 +170,12 @@ const dataRules = ref({
 			trigger: 'blur',
 		},
 	],
-	email: [{validator: rule.overLength, trigger: 'blur'},{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }],
+	email: [
+		{ validator: rule.overLength, trigger: 'blur' },
+		{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] },
+	],
 	lockFlag: [{ required: true, message: '状态不能为空', trigger: 'blur' }],
-  nickname: [{validator: rule.overLength, trigger: 'blur'}],
+	nickname: [{ validator: rule.overLength, trigger: 'blur' }],
 });
 
 // 打开弹窗
@@ -190,7 +193,7 @@ const openDialog = async (id: string) => {
 	getPostData();
 	getRoleData();
 
-    // 修改获取用户信息
+	// 修改获取用户信息
 	if (id) {
 		dataForm.userId = id;
 		await getUserData(id);
@@ -260,8 +263,10 @@ const getDeptData = () => {
 	// 获取部门数据
 	deptTree().then((res) => {
 		deptData.value = res.data;
-		// 默认选择第一个
-		dataForm.deptId = res.data[0].id;
+		// 仅在新增时设置默认值
+		if (!dataForm.userId) {
+			dataForm.deptId = res.data[0].id;
+		}
 	});
 };
 
@@ -269,16 +274,21 @@ const getDeptData = () => {
 const getPostData = () => {
 	postList().then((res) => {
 		postData.value = res.data;
-		// 默认选择第一个
-		dataForm.post = [res.data[0].postId];
+		// 仅在新增时设置默认值
+		if (!dataForm.userId) {
+			dataForm.post = [res.data[0].postId];
+		}
 	});
 };
+
 // 角色数据
 const getRoleData = () => {
 	roleList().then((res) => {
 		roleData.value = res.data;
-		// 默认选择第一个
-		dataForm.role = [res.data[0].roleId];
+		// 仅在新增时设置默认值
+		if (!dataForm.userId) {
+			dataForm.role = [res.data[0].roleId];
+		}
 	});
 };
 
