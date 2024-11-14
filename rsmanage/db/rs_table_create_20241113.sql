@@ -1,4 +1,5 @@
-use rsmanage
+use rsmanage;
+
 CREATE TABLE rs_contract_sequence (
     id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
     sequence_date DATE NOT NULL COMMENT '序列号日期',
