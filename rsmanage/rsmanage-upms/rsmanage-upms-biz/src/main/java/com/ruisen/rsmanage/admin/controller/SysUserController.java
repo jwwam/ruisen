@@ -173,6 +173,18 @@ public class SysUserController {
 		return R.ok(userService.getUsersNoAdminPage(page, userDTO));
 	}
 
+	/**
+	 * 查询商务人员列表（过滤管理员
+	 * @param page 参数集
+	 * @param userDTO 查询参数列表
+	 * @return 用户集合
+	 */
+	@GetMapping("/pageSalesRep")
+	public R getSalesRolePage(@ParameterObject Page page,@ParameterObject UserDTO userDTO) {
+		return R.ok(userService.getSalesRolePage(page, userDTO));
+	}
+
+
 
 	/**
 	 * 修改个人信息

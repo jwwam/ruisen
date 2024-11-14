@@ -16,6 +16,14 @@ export const pageRoleList = (params?: Object) => {
 		params,
 	});
 };
+//商务人员列表（过滤管理员）
+export const pageSalesRepList = (params?: Object) => {
+	return request({
+		url: '/admin/user/pageSalesRep',
+		method: 'get',
+		params,
+	});
+};
 
 export const addObj = (obj: Object) => {
 	return request({

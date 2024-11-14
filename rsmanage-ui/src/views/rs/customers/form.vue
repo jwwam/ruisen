@@ -68,7 +68,7 @@ import { useDict } from '/@/hooks/dict';
 import { useMessage } from '/@/hooks/message';
 import { getObj, addObj, putObj, validateExist } from '/@/api/rs/customers';
 import { rule } from '/@/utils/validate';
-import { pageRoleList } from '/@/api/admin/user';
+import { pageSalesRepList } from '/@/api/admin/user';
 const emit = defineEmits(['refresh']);
 
 // 定义变量内容
@@ -99,7 +99,13 @@ const form = reactive({
 // 定义校验规则
 const dataRules = ref({
 	name: [{ required: true, message: '客户名称不能为空', trigger: 'blur' }],
-	email: [{ validator: rule.email, trigger: 'blur' }],
+	linkman: [{ required: true, message: '联系人不能为空', trigger: 'blur' }],
+	email: [
+		{ required: true, message: '客户邮箱不能为空', trigger: 'blur' },
+		{ validator: rule.email, trigger: 'blur' },
+	],
+	phoneNumber: [{ required: true, message: '客户电话不能为空', trigger: 'blur' }],
+	companyName: [{ required: true, message: '客户主体不能为空', trigger: 'blur' }],
 	salesRepId: [{ required: true, message: '商务id不能为空', trigger: 'blur' }],
 });
 
@@ -127,6 +133,14 @@ const onSubmit = async () => {
 
 	try {
 		loading.value = true;
+		// 检查三个财务字段是否都为空
+		if (!form.financeContactUser && !form.financeEmail && !form.financePhone) {
+			// 如果都为空，则复用联系人信息
+			form.financeContactUser = form.linkman;
+			form.financeEmail = form.email;
+			form.financePhone = form.phoneNumber;
+		}
+
 		form.customerId ? await putObj(form) : await addObj(form);
 		useMessage().success(form.customerId ? '修改成功' : '添加成功');
 		visible.value = false;
@@ -160,7 +174,7 @@ const users = ref<Users[]>([]);
 
 const fetchUsers = async () => {
 	try {
-		const response = await pageRoleList();
+		const response = await pageSalesRepList();
 		users.value = response.data.records; // 假设返回的数据结构中用户列表在`records`字段中
 	} catch (error) {
 		console.error('Failed to fetch users:', error);
