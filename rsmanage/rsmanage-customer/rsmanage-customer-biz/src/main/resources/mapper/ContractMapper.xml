@@ -17,4 +17,27 @@
         <result property="createdAt" column="created_at"/>
         <result property="fileUrl" column="file_url"/>
   </resultMap>
+	<select id="qry" resultType="com.ruisen.rsmanage.customer.Po.ContractPo">
+		select co.* ,cu.name as customerName from rs_contracts co
+		left join rs_customers cu on co.customer_id = cu.customer_id
+		<where>
+			1 = 1
+			<if test="customerId != null and customerId != ''">
+				AND co.customer_id = #{customerId}
+			</if>
+			<if test="ContractName != null and ContractName != ''">
+				AND co.contract_name LIKE CONCAT('%', #{ContractName}, '%')
+			</if>
+			<if test="ContractNumber!= null and ContractNumber!= ''">
+				AND co.contract_number LIKE CONCAT('%', #{ContractNumber}, '%')
+			</if>
+			<if test="IsActive!= null and IsActive!= ''">
+				AND co.is_active = #{IsActive}
+			</if>
+			<if test="SignedDate!= null and SignedDate!= ''">
+				AND co.signed_date = #{SignedDate}
+			</if>
+		</where>
+		ORDER BY co.created_at DESC
+	</select>
 </mapper>
