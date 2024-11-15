@@ -125,6 +125,7 @@ import { pageRoleList } from '/@/api/admin/user';
 import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
 import { fetchListWithoutRole as fetchCustomerList } from '/@/api/rs/customers'; // 引入客户表信息
 import { fetchListWithoutRole as fetchPartnerList } from '/@/api/rs/partners'; // 引入合作伙伴表信息
+import { addObj as addWorkLog } from '/@/api/rs/workLog'; // 引入工单日志
 
 const emit = defineEmits(['refresh']);
 
@@ -236,7 +237,30 @@ const onSubmit = async () => {
 			attachments: form.attachments || null,
 		};
 
-		form.workId ? await putObj(payload) : await addObj(payload);
+		if (form.workId) {
+			await putObj(payload);
+			// 添加工单日志
+			await addWorkLog({
+				workId: form.workId,
+				operation: 'UPDATE_STATUS',
+				performedBy: currentUserId.value,
+				details: `将工单状态更新为${statusText}`
+			});
+		} else {
+			const response = await addObj(payload);
+			if (response.code === 0 && response.data) { // 检查响应状态和数据
+				// 添加工单日志
+				await addWorkLog({
+					workId: response.data.workId, // 使用返回实体中的workId
+					operation: 'CREATE', 
+					performedBy: currentUserId.value,
+					details: '创建新工单'
+				});
+			} else {
+				throw new Error(response.msg || '创建工单失败');
+			}
+		}
+
 		useMessage().success(form.workId ? '修改成功' : '添加成功');
 		visible.value = false;
 		emit('refresh');

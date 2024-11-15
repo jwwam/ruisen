@@ -170,7 +170,11 @@ public class WorkController {
     @PostMapping
     @HasPermission("rs_work_add")
     public R save(@RequestBody WorkEntity work) {
-        return R.ok(workService.save(work));
+        boolean saved = workService.save(work);
+        if(saved) {
+            return R.ok(work);  // 返回保存后的实体(包含自增ID)
+        }
+        return R.failed("保存失败");
     }
 
     /**

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruisen.rsmanage.customer.mapper.WorkLogMapper">
+
+  <resultMap id="workLogMap" type="com.ruisen.rsmanage.customer.entity.WorkLogEntity">
+        <id property="logId" column="log_id"/>
+        <id property="workId" column="work_id"/>
+        <result property="operation" column="operation"/>
+        <result property="performedBy" column="performed_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="details" column="details"/>
+  </resultMap>
+
+  <select id="qryWorkLogs" resultType="com.ruisen.rsmanage.customer.Po.WorkLogPo">
+        SELECT 
+            l.*,
+            w.*,
+            u.name as performed_by_name,
+            u.username as performed_by_username,
+            u.avatar as performed_by_avatar
+        FROM rs_work_log l
+        LEFT JOIN rs_work_form w ON l.work_id = w.work_id
+        LEFT JOIN sys_user u ON l.performed_by = u.user_id
+        WHERE 1=1
+        <if test="param.workId != null">
+            AND l.work_id = #{param.workId}
+        </if>
+        <if test="param.operation != null and param.operation != ''">
+            AND l.operation = #{param.operation}
+        </if>
+        <if test="param.performedBy != null">
+            AND l.performed_by = #{param.performedBy}
+        </if>
+        <if test="param.createdAt != null">
+            AND DATE(l.created_at) = DATE(#{param.createdAt})
+        </if>
+        ORDER BY l.created_at DESC
+    </select>
+</mapper>

@@ -1,7 +1,7 @@
 <template>
 	<el-dialog title="查看" v-model="visible" :close-on-click-modal="false" draggable width="90%">
 		<el-row>
-			<el-col :span="17" style="padding-right: 20px; border-right: 1px solid #dcdfe6;">
+			<el-col :span="15" style="padding-right: 20px; border-right: 1px solid #dcdfe6;">
 				<el-form ref="dataFormRef" :model="form" :rules="dataRules" label-width="90px" v-loading="loading">
 					<el-row :gutter="24">
 						<el-col :span="12" class="mb20">
@@ -109,19 +109,19 @@
 				</el-form>
 			</el-col>
 
-			<el-col :span="7" style="padding-left: 20px;">
-				<div class="right-panel">
-					<h3 class="panel-title">工单信息</h3>
-					<div class="timeline">
-						<div class="timeline-item" v-for="(item, index) in workLogs" :key="index">
-							<div class="timeline-dot"></div>
-							<div class="timeline-content">
-								<div class="log-title">{{ item.title }}</div>
-								<div class="log-time">{{ item.time }}</div>
-							</div>
-						</div>
-					</div>
-				</div>
+			<el-col :span="9" style="padding-left: 20px;">
+				<work-logs 
+					:logs="workLogs" 
+					:limit="displayLimit"
+					:work-id="form.workId"
+					:current-user="{
+						userId: currentUserId,
+						name: currentUserName
+					}"
+					@view-more="handleViewMore"
+					@refresh="fetchWorkLogs(form.workId)"
+					empty-text="暂无操作日志"
+				/>
 			</el-col>
 		</el-row>
 		<template #footer>
@@ -133,6 +133,27 @@
 			</span>
 		</template>
 	</el-dialog>
+
+	<!--右侧抽屉-->
+	<el-drawer v-model="rightDrawerVisible" direction="rtl" size="400px">
+		<template #header>
+			<h3>工单记录 - 操作日志</h3>
+		</template>
+		<template #default>
+			<work-logs 
+				:logs="workLogs" 
+				:limit="workLogs.length" 
+				@view-more="handleViewMore"
+				empty-text="暂无操作日志"
+			/>
+		</template>
+		<!-- <template #footer>
+			<div style="flex: auto">
+				<el-button size="large" type="danger" @click="refuseTask">拒绝</el-button>
+				<el-button size="large" type="primary" @click="submitTask">提交</el-button>
+			</div>
+		</template> -->
+	</el-drawer>
 </template>
 
 <script setup lang="ts" name="WorkDialog">
@@ -144,10 +165,13 @@ import { pageRoleList } from '/@/api/admin/user';
 import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
 import { fetchListWithoutRole as fetchCustomerList } from '/@/api/rs/customers'; // 引入客户表信息
 import { fetchListWithoutRole as fetchPartnerList } from '/@/api/rs/partners'; // 引入合作伙伴表信息
+import { getWorkLogs, addObj as addWorkLog } from '/@/api/rs/workLog'; // 引入工单日志
 import { useTable } from '/@/hooks/table';
+import WorkLogs from '../components/WorkLogs.vue';
 
 const emit = defineEmits(['refresh']);
-
+// 定义右侧抽屉
+const rightDrawerVisible = ref(false);
 // 定义变量内容
 const dataFormRef = ref();
 const visible = ref(false);
@@ -217,39 +241,70 @@ const dataRules = ref({
 const formDisabled = ref(true);
 
 // 打开弹窗
-const openDialog = (id: string) => {
+const openDialog = async (id: string) => {
 	visible.value = true;
-	form.workId = '';
-	formDisabled.value = true;
+	
 	// 重置表单数据
+	form.workId = '';
+	Object.assign(form, {
+		workId: '',
+		submitterId: '',
+		submitterName: '',
+		title: '',
+		category: '',
+		content: '',
+		status: 0,
+		assignees: '',
+		copy: [],
+		customerId: '',
+		customerName: '',
+		partnerId: '',
+		partnerCode: '',
+		deadline: '',
+		priority: '',
+		customCategory: '',
+		handleOpinion: '',
+		attachmentsList: []
+	});
+	
+	// 重置工单日志
+	workLogs.value = [];
+	
+	// 重置表单验证
 	nextTick(() => {
 		dataFormRef.value?.resetFields();
 	});
+
 	// 获取work信息
 	if (id) {
 		form.workId = id;
-		getWorkData(id);
+		await getWorkData(id);
 	}
 };
 
 // 初始化表单
-const getWorkData = (id: string) => {
+const getWorkData = async (id: string) => {
 	loading.value = true;
-	getWorkDetails({ workId: id })
-		.then((res: any) => {
-			const workData = res.data.data[0];
-			Object.assign(form, workData);
-		})
-		.finally(() => {
-			loading.value = false;
-		});
+	try {
+		const res = await getWorkDetails({ workId: id });
+		const workData = res.data.data[0];
+		Object.assign(form, workData);
+		// 获取工单日志数据
+		await fetchWorkLogs(id);
+	} catch (error) {
+		console.error('获取工单详情失败:', error);
+	} finally {
+		loading.value = false;
+	}
 };
 
 // 获取当前用户信息
 const currentUserName = ref('');
+const currentUserId = ref('');
 const fetchCurrentUser = () => {
 	const data = useUserInfo().userInfos;
 	currentUserName.value = data.user.name;
+	currentUserId.value = data.user.userId;
 	form.submitterName = currentUserName.value;
 	form.submitterId = data.user.userId;
 };
@@ -327,9 +382,11 @@ const handleMarkStatus = async () => {
 	try {
 		loading.value = true;
 		let targetStatus;
+		let statusText;
 
 		if (form.status === 0) {
 			targetStatus = Number(work_status.value.find((item) => item.label === '处理中')?.value);
+			statusText = '处理中';
 		} else if (form.status === 1) {
 			const valid = await dataFormRef.value.validateField('handleOpinion');
 			if (!valid) {
@@ -337,13 +394,23 @@ const handleMarkStatus = async () => {
 				return;
 			}
 			targetStatus = Number(work_status.value.find((item) => item.label === '已处理')?.value);
+			statusText = '已处理';
 		}
 
+		// 更新工单状态
 		await putObj({
 			workId: form.workId,
 			status: targetStatus,
 			handleOpinion: form.handleOpinion,
-			handleTime: form.status === 1 ? formatToLocalDateTime(new Date()) : undefined, // 格式化为 LocalDateTime
+			handleTime: form.status === 1 ? formatToLocalDateTime(new Date()) : undefined,
+		});
+
+		// 添加工单操作日志
+		await addWorkLog({
+			workId: form.workId,
+			operation: 'UPDATE_STATUS',
+			performedBy: currentUserId.value,
+			details: `将工单状态更新为${statusText}${form.handleOpinion ? '，处理意见：' + form.handleOpinion : ''}`
 		});
 
 		loading.value = false;
@@ -360,7 +427,7 @@ const statusText = computed(() => {
 		0: '待处理',
 		1: '处理中',
 		2: '已处理',
-		3: '已终止',
+		3: '终止',
 	};
 	return statusMap[form.status] || form.status;
 });
@@ -387,7 +454,7 @@ const { downBlobFile } = useTable({
 	dataList: [],
 });
 
-// 添加下载方法
+// 添加下载法
 const handleFileDownload = async (file: any) => {
 	try {
 		const url = `/admin/sys-file/${file.bucketName}/${file.fileName}`;
@@ -399,91 +466,92 @@ const handleFileDownload = async (file: any) => {
 };
 
 // 工单日志数据
-const workLogs = ref([
-	{
-		title: '登录成功 - 113.91.43.*',
-		time: '2024-11-14 21:48:43'
-	},
-	{
-		title: '登录成功 - 106.117.116.*',
-		time: '2024-11-14 21:48:25'
-	},
-	{
-		title: '登录成功 - 106.117.116.*',
-		time: '2024-11-14 21:43:31'
-	},
-	{
-		title: '登录成功 - 223.104.72.*',
-		time: '2024-11-14 21:38:07'
+const workLogs = ref<WorkLog[]>([]);
+
+// 获取工单日志数据
+const fetchWorkLogs = async (workId: string) => {
+	try {
+		const res = await getWorkLogs({ 
+			workId,
+			pageSize: 999 // 获取全部数据
+		});
+		
+		if(res.data && res.data.data) {
+			// 将 WorkLogPo 转换为前端展示需要的格式
+			workLogs.value = res.data.data.map((log: WorkLogPo) => {
+				let title = '';
+				
+				// 根据操作类型生成对应的标题
+				switch(log.operation) {
+					case 'CREATE':
+						title = `${log.performedByName}【${getRoleName(log)}】 - ${log.details}`;
+						break;
+					case 'UPDATE_STATUS':
+						title = `${log.performedByName}【${getRoleName(log)}】 - ${log.details}`;
+						break;
+					case 'ADD_COMMENT':
+						title = `${log.performedByName}【${getRoleName(log)}】 - 添加了一条信息"${log.details}"`;
+						break;
+					default:
+						title = `${log.performedByName} - ${log.details}`;
+				}
+
+				return {
+					title,
+					time: formatDateTime(log.createdAt),
+					performedByAvatar: log.performedByAvatar,
+					performedByName: log.performedByName,
+				};
+			});
+		}
+	} catch (error) {
+		console.error('获取工单日志失败:', error);
 	}
-]);
+};
+
+const getRoleName = (log: WorkLogPo) => {
+	// 如果log.performedBy与工单提交人ID匹配
+	if (log.performedBy === form.submitterId) {
+		return '提交人';
+	}
+	
+	// 如果log.performedBy与工单处理人ID匹配
+	if (log.performedBy === form.assignees) {
+		return '处理人';
+	}
+	
+	// 如果工单有抄送人，检查log.performedBy是否在抄送人列表中
+	if (form.copy) {
+		// 将抄送人字符串转换为数组
+		const copyIds = typeof form.copy === 'string' ? form.copy.split(',') : form.copy;
+		
+		// 检查performedBy是否在抄送人ID列表中
+		if (copyIds.includes(String(log.performedBy))) {
+			return '抄送人';
+		}
+	}
+	
+	return ''; // 如果都不匹配，返回空字符串
+};
+
+// 格式化日期时间
+const formatDateTime = (dateStr: string) => {
+	if(!dateStr) return '';
+	const date = new Date(dateStr);
+	return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+};
+
+// 显示的日志条数限制
+const displayLimit = ref(4);
+
+// 查看更多处理函数
+const handleViewMore = () => {
+	rightDrawerVisible.value = true;
+	// 这里可以根据需求实现：
+	// 1. 展开显示所有记录
+	// 2. 跳转到详细日志页面
+	// 3. 加载更多记录等
+	console.log('查看更多被点击');
+};
 </script>
 
-<style scoped>
-.right-panel {
-	height: 100%;
-	position: relative;
-}
-
-.panel-title {
-	font-size: 16px;
-	font-weight: bold;
-	margin-bottom: 20px;
-	padding-bottom: 10px;
-	border-bottom: 1px solid #ebeef5;
-}
-
-.timeline {
-	position: relative;
-	padding-left: 20px;
-}
-
-.timeline::before {
-	content: '';
-	position: absolute;
-	left: 0;
-	top: 8px;
-	bottom: 8px;
-	width: 2px;
-	background-color: #e4e7ed;
-}
-
-.timeline-item {
-	position: relative;
-	margin-bottom: 25px;
-	min-height: 20px;
-}
-
-.timeline-dot {
-	position: absolute;
-	left: -22px;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background-color: #fff;
-	border: 2px solid #409eff;
-}
-
-.timeline-content {
-	padding-left: 10px;
-	min-height: 20px;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-}
-
-.log-title {
-	font-size: 14px;
-	color: #303133;
-	margin-bottom: 4px;
-	line-height: 1.4;
-}
-
-.log-time {
-	font-size: 12px;
-	color: #909399;
-	line-height: 1.4;
-}
-</style>

@@ -145,6 +145,7 @@ import { useMessage, useMessageBox } from '/@/hooks/message';
 import { useDict } from '/@/hooks/dict';
 import { useUserInfo } from '/@/stores/userInfo'; // 引入用户信息
 import { pageRoleList } from '/@/api/admin/user';
+import { addObj as addWorkLog } from '/@/api/rs/workLog'; // 引入工单日志
 
 // const rightDrawerVisible = ref(false);
 // const currentData = ref();
@@ -303,6 +304,15 @@ const handleTerminate = async (row: any) => {
 			workId: row.workId, // 工单ID
 			status: 3, // 终止状态
 		});
+
+		// 添加工单操作日志
+		await addWorkLog({
+			workId: row.workId,
+			operation: 'UPDATE_STATUS',
+			performedBy: currentUserId.value,
+			details: '将工单状态更新为已终止'
+		});
+
 		useMessage().success('工单已终止');
 		getDataList();
 	} catch (err: any) {
