@@ -46,7 +46,8 @@
 			<!-- size="small" :scroll="{ x: 1000 }" -->
 			<el-table
 				:data="state.dataList"
-				v-loading="state.loading" border  
+				v-loading="state.loading"
+				border
 				:cell-style="tableStyle.cellStyle"
 				:header-cell-style="tableStyle.headerCellStyle"
 				@selection-change="selectionChangHandle"
@@ -94,7 +95,7 @@ import { BasicTableProps, useTable } from '/@/hooks/table';
 import { fetchList, delObjs } from '/@/api/rs/customers';
 import { useMessage, useMessageBox } from '/@/hooks/message';
 import { useDict } from '/@/hooks/dict';
-import { pageRoleList } from '/@/api/admin/user';
+import { pageSalesRepList } from '/@/api/admin/user';
 
 // 引入组件
 const FormDialog = defineAsyncComponent(() => import('./form.vue'));
@@ -163,7 +164,7 @@ const users = ref<Users[]>([]);
 
 const fetchUsers = async () => {
 	try {
-		const response = await pageRoleList();
+		const response = await pageSalesRepList();
 		users.value = response.data.records; // 假设返回的数据结构中用户列表在`records`字段中
 	} catch (error) {
 		console.error('Failed to fetch users:', error);

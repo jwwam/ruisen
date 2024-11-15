@@ -227,4 +227,33 @@
 		</where>
 		ORDER BY u.create_time DESC
 	</select>
+
+	<select id="getSalesRolePage" resultMap="baseResultMap">
+		SELECT
+		u.user_id,
+		u.username,
+		u.password,
+		u.salt,
+		u.phone,
+		u.avatar,
+		u.wx_openid,
+		u.qq_openid,
+		u.dept_id,
+		u.create_by,
+		u.create_time ucreate_time,
+		u.update_time uupdate_time,
+		u.del_flag,
+		u.lock_flag,
+		u.nickname,
+		u.name,
+		u.email
+		FROM
+		sys_user u
+		LEFT JOIN sys_user_role r ON r.user_id = u.user_id
+		LEFT JOIN sys_user_post p ON p.user_id = u.user_id
+		<where>
+			r.role_id != '1' and r.role_id != '3' AND p.post_id = '1846131561913593858'
+		</where>
+		ORDER BY u.create_time DESC
+	</select>
 </mapper>

@@ -57,6 +57,8 @@ public interface SysUserService extends IService<SysUser> {
 	 * @return
 	 */
 	IPage getUsersNoAdminPage(Page page,UserDTO userDTO);
+
+	IPage getSalesRolePage(Page page,UserDTO userDTO);
 	/**
 	 * 删除用户
 	 * @param ids 用户
