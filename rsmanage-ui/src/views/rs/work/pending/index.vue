@@ -8,9 +8,9 @@
 						<el-option v-for="user in users" :key="user.userId" :label="user.name" :value="user.userId"></el-option>
 					</el-select>
 				</el-form-item> -->
-				<el-form-item label="工单分类" prop="category">
+				<!-- <el-form-item label="工单分类" prop="category">
 					<el-input v-model="state.queryForm.category" placeholder="请输入工单分类" clearable style="width: 180px" />
-				</el-form-item>
+				</el-form-item> -->
 				<el-form-item label="工单状态" prop="status">
 					<el-select v-model="state.queryForm.status" placeholder="请选择工单状态" filterable>
 						<el-option :label="item.label" :value="item.value" v-for="(item, index) in work_status" :key="index"></el-option>

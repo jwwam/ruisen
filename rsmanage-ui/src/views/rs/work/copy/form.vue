@@ -1,7 +1,7 @@
 <template>
 	<el-dialog title="查看" v-model="visible" :close-on-click-modal="false" draggable width="90%">
 		<el-row>
-			<el-col :span="17" style="padding-right: 20px; border-right: 1px solid #dcdfe6;">
+			<el-col :span="15" style="padding-right: 20px; border-right: 1px solid #dcdfe6;">
 				<el-form ref="dataFormRef" :model="form" :rules="dataRules" label-width="90px" v-loading="loading">
 					<el-row :gutter="24">
 						<el-col :span="12" class="mb20">
@@ -109,7 +109,7 @@
 				</el-form>
 			</el-col>
 
-			<el-col :span="7" style="padding-left: 20px;">
+			<el-col :span="9" style="padding-left: 20px;">
 				<work-logs 
 					:logs="workLogs" 
 					:limit="displayLimit"
@@ -120,6 +120,7 @@
 					}"
 					@view-more="handleViewMore"
 					@refresh="fetchWorkLogs(form.workId)"
+					empty-text="暂无操作日志"
 				/>
 			</el-col>
 		</el-row>
@@ -143,6 +144,7 @@
 				:logs="workLogs" 
 				:limit="workLogs.length" 
 				@view-more="handleViewMore"
+				empty-text="暂无操作日志"
 			/>
 		</template>
 		<!-- <template #footer>

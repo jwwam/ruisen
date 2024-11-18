@@ -4,7 +4,7 @@
 		<el-upload
 			ref="uploadRef"
 			:limit="1"
-			accept=".xlsx, .xls"
+			accept=".xlsx, .xls, .csv"
 			:headers="headers"
 			:action="baseURL + other.adaptationUrl(url)"
 			:disabled="state.upload.isUploading"
@@ -21,7 +21,7 @@
 			</div>
 			<template #tip>
 				<div class="el-upload__tip text-center">
-					<span>{{ $t('excel.fileFormat') }}</span>
+					<span>{{ $t('excel.fileFormat') }} (.xlsx, .xls, .csv)</span>
 					<el-link type="primary" :underline="false" style="font-size: 12px; vertical-align: baseline" @click="downExcelTemp" v-if="tempUrl"
 						>{{ $t('excel.downloadTemplate') }}
 					</el-link>
@@ -35,12 +35,62 @@
 	</el-dialog>
 
 	<!--校验失败错误数据-->
-	<el-dialog :title="$t('excel.validationFailureData')" v-model="state.errorVisible">
-		<el-table :data="state.errorData">
+	<el-dialog 
+		:title="$t('excel.validationFailureData')" 
+		v-model="state.errorVisible"
+		width="80%"
+		:close-on-click-modal="false"
+	>
+		<!-- 添加统计信息展示 -->
+		<div class="error-summary" style="margin-bottom: 15px;">
+			<el-alert
+				:title="`导入异常统计：共 ${state.errorData.length} 条异常数据，${state.errorTypes.size} 种错误类型`"
+				type="warning"
+				show-icon
+				:closable="false"
+			>
+				<div class="error-types" style="margin-top: 8px;">
+					<el-tag 
+						v-for="type in Array.from(state.errorTypes)"
+						:key="type"
+						type="danger"
+						style="margin-right: 8px; margin-bottom: 4px;"
+					>
+						{{ type }}
+					</el-tag>
+				</div>
+			</el-alert>
+		</div>
+
+		<el-table :data="state.errorData" height="800">
 			<el-table-column property="lineNum" :label="$t('excel.lineNumbers')" width="100"></el-table-column>
-			<el-table-column property="errors" :label="$t('excel.misDescription')" show-overflow-tooltip>
+			<el-table-column property="errors" :label="$t('excel.misDescription')" min-width="300">
 				<template v-slot="scope">
-					<el-tag type="danger" v-for="error in scope.row.errors" :key="error">{{ error }}</el-tag>
+					<el-tag 
+						v-for="error in scope.row.errors" 
+						:key="error" 
+						type="danger" 
+						style="margin-right: 8px; margin-bottom: 4px;"
+					>
+						{{ error }}
+					</el-tag>
+				</template>
+			</el-table-column>
+			<el-table-column property="rowData" label="原始数据" min-width="500">
+				<template v-slot="scope">
+					<div class="row-data-scroll">
+						<template v-if="scope.row.rowData">
+							<el-tag 
+								v-for="(value, key) in scope.row.rowData" 
+								:key="key"
+								size="small"
+								style="margin-right: 8px; white-space: nowrap;"
+							>
+								{{ key }}: {{ value }}
+							</el-tag>
+						</template>
+						<span v-else>{{ $t('common.noData') }}</span>
+					</div>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -51,6 +101,7 @@
 import { useMessage } from '/@/hooks/message';
 import other from '/@/utils/other';
 import { Session } from '/@/utils/storage';
+import { ElLoading } from 'element-plus';
 
 const emit = defineEmits(['sizeChange', 'refreshDataList']);
 const prop = defineProps({
@@ -70,6 +121,7 @@ const uploadRef = ref();
 const state = reactive({
 	errorVisible: false,
 	errorData: [],
+	errorTypes: new Set(),
 	dialog: {
 		title: '',
 		isShowDialog: false,
@@ -98,6 +150,9 @@ const handleFileUploadProgress = () => {
  * 上传失败事件处理
  */
 const handleFileError = () => {
+	// 关闭加载提示
+	ElLoading.service().close();
+	
 	useMessage().error('上传失败,数据格式不合法!');
 	state.upload.open = false;
 };
@@ -107,20 +162,36 @@ const handleFileError = () => {
  * @param {any} response - 上传成功的响应结果
  */
 const handleFileSuccess = (response: any) => {
+	// 关闭加载提示
+	ElLoading.service().close();
+	
 	state.upload.isUploading = false;
-	state.upload.open = false;
 	uploadRef.value.clearFiles();
 
 	// 校验失败
 	if (response.code === 1) {
-		useMessage().error('导入失败，以下数据不合法');
-		state.errorVisible = true;
+		// 统计错误类型
+		state.errorTypes.clear();
+		response.data.forEach((item: any) => {
+			item.errors.forEach((error: string) => {
+				state.errorTypes.add(error);
+			});
+		});
+		
+		// 先设置错误数据
 		state.errorData = response.data;
-		uploadRef.value.clearFiles();
+		state.errorVisible = true;
+		
+		// 延迟关闭上传弹框，确保错误弹框显示后再关闭
+		setTimeout(() => {
+			state.upload.open = false;
+		}, 100);
+
 		// 刷新表格
 		emit?.('refreshDataList');
 	} else {
-		useMessage().success(response.msg ? response.msg : '导入成功');
+		state.upload.open = false;
+		useMessage().success(response.msg ? response.msg : '导入成功：'+response.data);
 		// 刷新表格
 		emit?.('refreshDataList');
 	}
@@ -130,6 +201,12 @@ const handleFileSuccess = (response: any) => {
  * 提交表单，触发上传
  */
 const submitFileForm = () => {
+	// 显示加载提示
+	const loading = ElLoading.service({
+		lock: true,
+		text: '正在校验数据，请稍候...',
+		background: 'rgba(0, 0, 0, 0.7)'
+	});
 	uploadRef.value.submit();
 };
 
@@ -157,4 +234,24 @@ defineExpose({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.row-data-scroll {
+	overflow-x: auto;
+	white-space: nowrap;
+	padding: 8px 0;
+}
+
+/* 自定义滚动条样式 */
+.row-data-scroll::-webkit-scrollbar {
+	height: 6px;
+}
+
+.row-data-scroll::-webkit-scrollbar-thumb {
+	background-color: #909399;
+	border-radius: 3px;
+}
+
+.row-data-scroll::-webkit-scrollbar-track {
+	background-color: #f5f7fa;
+}
+</style>
