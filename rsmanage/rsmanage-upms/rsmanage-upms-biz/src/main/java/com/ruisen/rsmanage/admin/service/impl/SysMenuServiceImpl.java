@@ -112,7 +112,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 			.selectList(Wrappers.<SysMenu>lambdaQuery()
 				.like(StrUtil.isNotBlank(menuName), SysMenu::getName, menuName)
 				.eq(StrUtil.isNotBlank(type), SysMenu::getMenuType, type)
-				.notIn(SysMenu::getMenuId, Arrays.asList(9000L, 2000L, 4000L, 1200L))
+				.notIn(SysMenu::getMenuId, Arrays.asList(9000L, 4000L, 1200L))
 				.orderByAsc(SysMenu::getSortOrder))
 			.stream()
 			.map(getNodeFunction())

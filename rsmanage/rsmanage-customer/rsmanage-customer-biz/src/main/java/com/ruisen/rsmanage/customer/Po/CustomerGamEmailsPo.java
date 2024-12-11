@@ -22,7 +22,7 @@ public class CustomerGamEmailsPo {
 	 * 合作关系唯一标识
 	 */
 	@Schema(description="合作关系唯一标识")
-	private Integer relationId;
+	private Integer emailId;
 	/**
 	* 客户ID
 	*/

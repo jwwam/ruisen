@@ -1,10 +1,10 @@
 <template>
-	<el-dialog :title="form.emailId ? '编辑' : '新增'" v-model="visible" :close-on-click-modal="false" draggable>
+	<el-dialog :title="form.emailId ? '编辑' : '新增'" v-model="visible" :close-on-click-modal="false" draggable @open="onDialogOpen">
 		<el-form ref="dataFormRef" :model="form" :rules="dataRules" formDialogRef label-width="100px" v-loading="loading">
 			<el-row :gutter="24">
 				<el-col :span="12" class="mb20">
-					<el-form-item label="客户姓名" prop="customerId">
-						<el-select v-model="form.customerId" placeholder="" filterable>
+					<el-form-item label="客户姓名" prop="customerId" required>
+						<el-select v-model="form.customerId" placeholder="请选择客户姓名" filterable>
 							<el-option v-for="customer in customers" :key="customer.customerId" :label="customer.name" :value="customer.customerId" />
 						</el-select>
 					</el-form-item>
@@ -76,25 +76,67 @@ const form = reactive({
 
 // 定义校验规则
 const dataRules = ref({
+	customerId: [{ required: true, message: '请选择客户姓名', trigger: 'change' }],
 	email: [{ validator: rule.email, trigger: 'blur' }],
 });
 
-// 打开弹窗
-const openDialog = (id: string) => {
-	visible.value = true;
-	form.emailId = '';
+// 添加对话框打开事件处理函数
+const onDialogOpen = () => {
+	const isEditMode = !!form.emailId;
+};
 
+// 修改 openDialog 函数
+const openDialog = async (id?: string) => {
 	// 重置表单数据
-	nextTick(() => {
-		dataFormRef.value?.resetFields();
-	});
+	form.emailId = '';
+	form.customerId = '';
+	form.email = '';
+	form.networkCode = '';
+	form.partnerCode = '';
 
-	// 获取customerGamEmails信息
+	visible.value = true;
+	await nextTick();
+
 	if (id) {
 		form.emailId = id;
-		getCustomerGamEmailsData(id);
+		try {
+			loading.value = true;
+			const res = await getObj({ emailId: id });
+			if (res && res.data && Array.isArray(res.data) && res.data.length > 0) {
+				const data = res.data[0];
+				form.emailId = data.emailId;
+				form.customerId = data.customerId;
+				form.email = data.email;
+				form.networkCode = data.networkCode;
+				form.partnerCode = data.partnerCode;
+			}
+		} catch (error) {
+			useMessage().error('获取数据失败');
+		} finally {
+			loading.value = false;
+		}
+	} else {
+		if (dataFormRef.value) {
+			dataFormRef.value.resetFields();
+		}
 	}
 };
+
+// 监听 visible 变化
+watch(visible, (newVal) => {
+	if (!newVal) {
+		// 当对话框关闭时，重置表单
+		form.emailId = '';
+		form.customerId = '';
+		form.email = '';
+		form.networkCode = '';
+		form.partnerCode = '';
+		// 重置表单验证
+		if (dataFormRef.value) {
+			dataFormRef.value.resetFields();
+		}
+	}
+});
 
 // 提交
 const onSubmit = async () => {
@@ -114,17 +156,24 @@ const onSubmit = async () => {
 	}
 };
 
-// 初始化表单数据
-const getCustomerGamEmailsData = (id: string) => {
-	// 获取数据
+// 修改 getCustomerGamEmailsData 函数，确保数据正确设置
+const getCustomerGamEmailsData = async (id: string) => {
 	loading.value = true;
-	getObj({ emailId: id })
-		.then((res: any) => {
-			Object.assign(form, res.data[0]);
-		})
-		.finally(() => {
-			loading.value = false;
-		});
+	try {
+		const res = await getObj({ emailId: id });
+		if (!res || !res.data) {
+			return;
+		}
+		form.emailId = res.data.emailId;
+		form.customerId = res.data.customerId;
+		form.email = res.data.email;
+		form.networkCode = res.data.networkCode;
+		form.partnerCode = res.data.partnerCode;
+	} catch (error) {
+		throw error;
+	} finally {
+		loading.value = false;
+	}
 };
 const customers = ref<Customer[]>([]); // 使用定义的类型
 const partners = ref<Partners[]>([]);

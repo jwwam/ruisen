@@ -23,9 +23,7 @@
 			</el-row>
 			<el-row>
 				<div class="mb8" style="width: 100%">
-					<el-button icon="folder-add" type="primary" class="ml10" @click="formDialogRef.openDialog()" v-auth="'rs_customerGamEmails_add'">
-						新 增
-					</el-button>
+					<el-button icon="folder-add" type="primary" class="ml10" @click="handleAdd" v-auth="'rs_customerGamEmails_add'"> 新 增 </el-button>
 					<el-button plain icon="upload-filled" type="primary" class="ml10" @click="excelUploadRef.show()" v-auth="'sys_user_add'"> 导 入 </el-button>
 					<el-button plain :disabled="multiple" icon="Delete" type="primary" v-auth="'rs_customerGamEmails_del'" @click="handleDelete(selectObjs)">
 						删 除
@@ -57,9 +55,7 @@
 				<el-table-column prop="partnerCode" label="合作伙伴标识" show-overflow-tooltip />
 				<el-table-column label="操作" width="150">
 					<template #default="scope">
-						<el-button icon="edit-pen" text type="primary" v-auth="'rs_customerGamEmails_edit'" @click="formDialogRef.openDialog(scope.row.emailId)"
-							>编辑</el-button
-						>
+						<el-button icon="edit-pen" text type="primary" v-auth="'rs_customerGamEmails_edit'" @click="handleEdit(scope.row)">编辑</el-button>
 						<el-button icon="delete" text type="primary" v-auth="'rs_customerGamEmails_del'" @click="handleDelete([scope.row.emailId])"
 							>删除</el-button
 						>
@@ -152,14 +148,9 @@ const handleDelete = async (ids: string[]) => {
 const loadData = async () => {
 	state.loading = true;
 	try {
-		await fetchNewList(state.queryForm).then((res) => {
-			state.dataList = res.data.data;
-			state.pagination = res.data.page;
-			// console.log('111', state.pagination);
-		});
-
-		// state.dataList = response.data; // 假设返回的数据在 response.data 中
-		// console.log('111111', state.dataList);
+		const response = await fetchNewList(state.queryForm);
+		state.dataList = response.data.data;
+		state.pagination = response.data.page;
 	} catch (error) {
 		console.error('Error loading data:', error);
 	} finally {
@@ -170,4 +161,25 @@ const loadData = async () => {
 onMounted(() => {
 	loadData();
 });
+
+const handleEdit = (row: any) => {
+	if (!row || !row.emailId) {
+		useMessage().error('编辑数据异常');
+		return;
+	}
+
+	if (!formDialogRef.value) {
+		return;
+	}
+
+	formDialogRef.value.openDialog(row.emailId.toString());
+};
+
+// 添加新增处理函数
+const handleAdd = () => {
+	if (!formDialogRef.value) {
+		return;
+	}
+	formDialogRef.value.openDialog();
+};
 </script>

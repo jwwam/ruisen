@@ -11,7 +11,6 @@ import com.ruisen.rsmanage.common.log.annotation.SysLog;
 import com.pig4cloud.plugin.excel.annotation.ResponseExcel;
 import com.pig4cloud.plugin.excel.annotation.RequestExcel;
 import com.ruisen.rsmanage.customer.entity.CustomerGamEmailsEntity;
-import com.ruisen.rsmanage.customer.entity.CustomerPartnerEntity;
 import com.ruisen.rsmanage.customer.service.CustomerGamEmailsService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
