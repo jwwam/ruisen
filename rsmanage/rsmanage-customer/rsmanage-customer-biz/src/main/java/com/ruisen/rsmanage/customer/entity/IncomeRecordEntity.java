@@ -166,6 +166,10 @@ public class IncomeRecordEntity extends Model<IncomeRecordEntity> {
 	@ExcelIgnore
 	@TableField(exist = false)
 	private String originalMatchRate;
+	
+	@ExcelIgnore
+	@TableField(exist = false)
+	private String[] dateRange;
 
 	// 添加便捷方法获取日期值
 	public LocalDate getDate() {

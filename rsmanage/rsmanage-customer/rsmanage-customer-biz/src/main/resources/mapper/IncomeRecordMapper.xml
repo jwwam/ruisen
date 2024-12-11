@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruisen.rsmanage.customer.mapper.IncomeRecordMapper">
+
+    <!-- 获取点击率趋势数据 -->
+    <select id="selectCtrTrend" resultType="java.util.Map">
+        SELECT 
+            date,
+            AVG(ctr) as ctr
+        FROM rs_income_records
+        <where>
+            <if test="dateRange != null and dateRange.length == 2">
+                AND date BETWEEN #{dateRange[0]} AND #{dateRange[1]}
+            </if>
+            <if test="site != null and site != ''">
+                AND site = #{site}
+            </if>
+        </where>
+        GROUP BY date
+        ORDER BY date
+    </select>
+
+    <!-- 获取站点点击率对比数据 -->
+    <select id="selectSiteCtrRatio" resultType="java.util.Map">
+        SELECT 
+            site,
+            AVG(ctr) as ctr
+        FROM rs_income_records
+        <where>
+            <if test="dateRange != null and dateRange.length == 2">
+                AND date BETWEEN #{dateRange[0]} AND #{dateRange[1]}
+            </if>
+        </where>
+        GROUP BY site
+        ORDER BY ctr DESC
+    </select>
+
+    <!-- 获取国家点击量TOP10数据 -->
+    <select id="selectCountryClicksTop10" resultType="java.util.Map">
+        SELECT 
+            country,
+            SUM(clicks) as clicks
+        FROM rs_income_records
+        <where>
+            <if test="dateRange != null and dateRange.length == 2">
+                AND date BETWEEN #{dateRange[0]} AND #{dateRange[1]}
+            </if>
+            <if test="site != null and site != ''">
+                AND site = #{site}
+            </if>
+        </where>
+        GROUP BY country
+        ORDER BY clicks DESC
+        LIMIT 10
+    </select>
+
+    <!-- 获取收入趋势数据 -->
+    <select id="selectIncomeTrend" resultType="java.util.Map">
+        SELECT 
+            date,
+            site,
+            SUM(revenue) as revenue
+        FROM rs_income_records
+        <where>
+            <if test="dateRange != null and dateRange.length == 2">
+                AND date BETWEEN #{dateRange[0]} AND #{dateRange[1]}
+            </if>
+            <if test="site != null and site != ''">
+                AND site = #{site}
+            </if>
+        </where>
+        GROUP BY date, site
+        ORDER BY date
+    </select>
+
+    <!-- 获取站点收入占比数据 -->
+    <select id="selectSiteIncomeRatio" resultType="java.util.Map">
+        SELECT 
+            site,
+            SUM(revenue) as revenue
+        FROM rs_income_records
+        <where>
+            <if test="dateRange != null and dateRange.length == 2">
+                AND date BETWEEN #{dateRange[0]} AND #{dateRange[1]}
+            </if>
+        </where>
+        GROUP BY site
+        ORDER BY revenue DESC
+    </select>
+
+    <!-- 获取收入汇总数据 -->
+    <select id="selectIncomeOverview" resultType="java.util.Map">
+        SELECT 
+            SUM(revenue) as total_income,
+            SUM(impressions) as total_impressions,
+            COUNT(DISTINCT site) as site_count
+        FROM rs_income_records
+        <where>
+            <if test="date != null">
+                AND date = #{date}
+            </if>
+            <if test="site != null and site != ''">
+                AND site = #{site}
+            </if>
+        </where>
+    </select>
+
+</mapper>
