@@ -17,4 +17,42 @@
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
   </resultMap>
+
+	<select id="qry" resultType="com.ruisen.rsmanage.customer.Po.SitePo">
+		select si.* ,cu.name as customerName, ga.email as email from rs_site si
+		left join rs_customers cu on si.customer_id = cu.customer_id
+		left join rs_customer_gam_emails ga on si.gam_email_id = ga.email_id
+		<where>
+			1 = 1
+			<if test="doMain != null and doMain != ''">
+				AND si.domain LIKE CONCAT('%', #{doMain}, '%')
+			</if>
+			<if test="customerId != null and customerId != ''">
+				AND si.customer_id = #{customerId}
+			</if>
+			<if test="status!= null and status!= ''">
+				AND si.status = #{status}
+			</if>
+			<if test="hasLink!= null and hasLink!= ''">
+				AND si.has_link = #{hasLink}
+			</if>
+		</where>
+		order by created_at DESC
+	</select>
+
+	<!-- 通过客户ID查询客户名称 -->
+	<select id="getCustomersId" resultType="String">
+		SELECT NAME
+		FROM rs_customers
+		WHERE customer_id = #{customerId}
+	</select>
+
+
+	<!-- 通过合作伙伴ID查询合作伙伴标识 -->
+	<select id="getPartnersId" resultType="String">
+		SELECT partner_code
+		FROM rs_partners
+		WHERE partner_id = #{partnerdId}
+	</select>
+
 </mapper>

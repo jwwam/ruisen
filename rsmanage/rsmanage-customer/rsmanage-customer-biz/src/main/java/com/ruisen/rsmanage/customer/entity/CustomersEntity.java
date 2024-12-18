@@ -78,4 +78,7 @@ public class CustomersEntity extends Model<CustomersEntity> {
 	@Schema(description="财务人员电话")
 	private String financePhone;
 
+	@Schema(description="我方客户标志")
+	private Integer isOurCustomer;
+
 }

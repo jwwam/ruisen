@@ -52,6 +52,14 @@
 						<el-input v-model="form.financePhone" placeholder="请输入客户财务人员电话" />
 					</el-form-item>
 				</el-col>
+				<el-col :span="12" class="mb20">
+					<el-form-item label="我方客户" prop="isOurCustomer">
+						<el-radio-group v-model="form.isOurCustomer">
+							<el-radio :label="1">是</el-radio>
+							<el-radio :label="0">否</el-radio>
+						</el-radio-group>
+					</el-form-item>
+				</el-col>
 			</el-row>
 		</el-form>
 		<template #footer>
@@ -91,6 +99,7 @@ const form = reactive({
 	phoneNumber: '',
 	salesRepId: '',
 	companyName: '',
+	isOurCustomer: 0,
 	financeContactUser: '',
 	financeEmail: '',
 	financePhone: '',
@@ -107,6 +116,7 @@ const dataRules = ref({
 	phoneNumber: [{ required: true, message: '客户电话不能为空', trigger: 'blur' }],
 	companyName: [{ required: true, message: '客户主体不能为空', trigger: 'blur' }],
 	salesRepId: [{ required: true, message: '商务id不能为空', trigger: 'blur' }],
+	isOurCustomer: [{ required: true, message: '请选择是否为我方客户', trigger: 'change' }],
 });
 
 // 打开弹窗

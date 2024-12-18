@@ -1,10 +1,11 @@
-package com.ruisen.rsmanage.customer.entity;
+package com.ruisen.rsmanage.customer.Po;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
 import java.time.LocalDateTime;
 
 /**
@@ -14,10 +15,7 @@ import java.time.LocalDateTime;
  * @date 2024-12-12 00:49:22
  */
 @Data
-@TableName("rs_site")
-@EqualsAndHashCode(callSuper = true)
-@Schema(description = "站点管理表")
-public class SiteEntity extends Model<SiteEntity> {
+public class SitePo extends Model<SitePo> {
 
 
 	/**
@@ -92,4 +90,28 @@ public class SiteEntity extends Model<SiteEntity> {
 	*/
     @Schema(description="更新时间")
     private LocalDateTime updatedAt;
+
+	/**
+	 * 客户姓名
+	 */
+	@Schema(description="客户姓名")
+	private String customerName;
+
+	/**
+	 * 合作伙伴标识
+	 */
+	@Schema(description="合作伙伴姓名")
+	private String partnerCode;
+
+	/**
+	 * 客户GAM邮箱
+	 */
+	@Schema(description="客户GAM邮箱")
+	private String email;
+
+	/**
+	 * 借用账号客户姓名
+	 */
+	@Schema(description="借用账号客户姓名")
+	private String borrowedCustomerName;
 }

@@ -85,6 +85,33 @@ const onDialogOpen = () => {
 	const isEditMode = !!form.emailId;
 };
 
+// 修改 getCustomerGamEmailsData 函数
+const getCustomerGamEmailsData = async (id: string) => {
+	loading.value = true;
+	try {
+		// 先获取客户列表和合作伙伴列表
+		await Promise.all([fetchCustomers(), fetchPartners()]);
+
+		const res = await getObj({ emailId: id });
+		if (!res || !res.data) {
+			return;
+		}
+
+		const data = Array.isArray(res.data) ? res.data[0] : res.data;
+
+		// 设置表单数据
+		form.emailId = data.emailId;
+		form.customerId = data.customerId;
+		form.email = data.email;
+		form.networkCode = data.networkCode;
+		form.partnerCode = data.partnerCode;
+	} catch (error) {
+		useMessage().error('获取数据失败');
+	} finally {
+		loading.value = false;
+	}
+};
+
 // 修改 openDialog 函数
 const openDialog = async (id?: string) => {
 	// 重置表单数据
@@ -98,23 +125,7 @@ const openDialog = async (id?: string) => {
 	await nextTick();
 
 	if (id) {
-		form.emailId = id;
-		try {
-			loading.value = true;
-			const res = await getObj({ emailId: id });
-			if (res && res.data && Array.isArray(res.data) && res.data.length > 0) {
-				const data = res.data[0];
-				form.emailId = data.emailId;
-				form.customerId = data.customerId;
-				form.email = data.email;
-				form.networkCode = data.networkCode;
-				form.partnerCode = data.partnerCode;
-			}
-		} catch (error) {
-			useMessage().error('获取数据失败');
-		} finally {
-			loading.value = false;
-		}
+		await getCustomerGamEmailsData(id);
 	} else {
 		if (dataFormRef.value) {
 			dataFormRef.value.resetFields();
@@ -156,25 +167,6 @@ const onSubmit = async () => {
 	}
 };
 
-// 修改 getCustomerGamEmailsData 函数，确保数据正确设置
-const getCustomerGamEmailsData = async (id: string) => {
-	loading.value = true;
-	try {
-		const res = await getObj({ emailId: id });
-		if (!res || !res.data) {
-			return;
-		}
-		form.emailId = res.data.emailId;
-		form.customerId = res.data.customerId;
-		form.email = res.data.email;
-		form.networkCode = res.data.networkCode;
-		form.partnerCode = res.data.partnerCode;
-	} catch (error) {
-		throw error;
-	} finally {
-		loading.value = false;
-	}
-};
 const customers = ref<Customer[]>([]); // 使用定义的类型
 const partners = ref<Partners[]>([]);
 const fetchCustomers = async () => {

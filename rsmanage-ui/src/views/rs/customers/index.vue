@@ -56,6 +56,13 @@
 				<el-table-column type="selection" width="40" align="center" />
 				<el-table-column type="index" label="#" width="40" />
 				<el-table-column prop="name" label="客户名称" show-overflow-tooltip />
+				<el-table-column prop="isOurCustomer" label="是否我方客户" width="120" align="center">
+					<template #default="scope">
+						<el-tag :type="scope.row.isOurCustomer ? 'success' : 'info'">
+							{{ scope.row.isOurCustomer ? '是' : '否' }}
+						</el-tag>
+					</template>
+				</el-table-column>
 				<el-table-column prop="linkman" label="联系人" show-overflow-tooltip />
 				<el-table-column prop="email" label="客户电子邮件" show-overflow-tooltip />
 				<el-table-column prop="phoneNumber" label="客户电话号码" show-overflow-tooltip />

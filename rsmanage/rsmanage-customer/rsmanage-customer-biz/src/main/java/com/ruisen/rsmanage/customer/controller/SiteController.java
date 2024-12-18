@@ -22,8 +22,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import utils.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -61,7 +64,31 @@ public class SiteController {
         return R.ok(siteService.page(page, wrapper));
     }
 
-
+	/**
+	 * 分页查询
+	 * @param page 分页对象
+	 * @param site 客户与合作伙伴的合作关系表
+	 * @return
+	 */
+	@Operation(summary = "分页查询" , description = "分页查询" )
+	@GetMapping("/newPage" )
+	@HasPermission("rs_site_view")
+	public R getNewCustomerPartnerPage(@ParameterObject Page page, @ParameterObject SiteEntity site) {
+		int curPage = (int) page.getCurrent();
+		int pageSize = (int) page.getSize();
+		String doMain = StringUtils.stringUtils(site.getDomain());
+		String customerId = StringUtils.stringUtils(site.getCustomerId());
+		String status = StringUtils.stringUtils(site.getStatus());
+		String hasLink = StringUtils.stringUtils(site.getHasLink());
+		Map<String,Object> param = new HashMap<>();
+		param.put("curPage",curPage);
+		param.put("pageSize",pageSize);
+		param.put("doMain",doMain);
+		param.put("customerId",customerId);
+		param.put("status",status);
+		param.put("hasLink",hasLink);
+		return R.ok(siteService.qry(param));
+	}
     /**
      * 通过条件查询站点管理表
      * @param site 查询条件

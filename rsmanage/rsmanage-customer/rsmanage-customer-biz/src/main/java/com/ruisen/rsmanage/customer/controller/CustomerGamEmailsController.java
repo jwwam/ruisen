@@ -75,7 +75,6 @@ public class CustomerGamEmailsController {
 	public R getNewCustomerPartnerPage(@ParameterObject Page page, @ParameterObject CustomerGamEmailsEntity customerGamEmails) {
 		int curPage = (int) page.getCurrent();
 		int pageSize = (int) page.getSize();
-//		String customerId = StringUtils.stringUtils(customerGamEmails.getCustomerId());
 		String email = StringUtils.stringUtils(customerGamEmails.getEmail());
 		String networkCode = StringUtils.stringUtils(customerGamEmails.getNetworkCode());
 		String partnerCode = StringUtils.stringUtils(customerGamEmails.getPartnerCode());
@@ -83,15 +82,27 @@ public class CustomerGamEmailsController {
 		Map<String,Object> param = new HashMap<>();
 		param.put("curPage",curPage);
 		param.put("pageSize",pageSize);
-//		param.put("customerId",customerId);
 		param.put("email",email);
 		param.put("customerName",customerName);
 		param.put("networkCode",networkCode);
 		param.put("partnerCode",partnerCode);
 		return R.ok(customerGamEmailsService.qry(param));
-
 	}
-    /**
+	/**
+	 * 分页查询
+	 * @param page 分页对象
+	 * @param customerGamEmails 客户信息表
+	 * @return
+	 */
+	@Operation(summary = "分页查询" , description = "分页查询" )
+	@GetMapping("/fetchListWithoutRole" )
+	public R fetchListWithoutRole(@ParameterObject Page page, @ParameterObject CustomerGamEmailsEntity customerGamEmails) {
+		LambdaQueryWrapper<CustomerGamEmailsEntity> wrapper = Wrappers.lambdaQuery();
+		wrapper.like(Objects.nonNull(customerGamEmails.getCustomerId()),CustomerGamEmailsEntity::getCustomerId,customerGamEmails.getCustomerId());
+		return R.ok(customerGamEmailsService.page(page, wrapper));
+	}
+
+	/**
      * 通过条件查询客户GAM邮箱管理表
      * @param customerGamEmails 查询条件
      * @return R  对象列表
