@@ -43,7 +43,12 @@
 					<el-form-item label="借用账号客户" prop="borrowedCustomerId">
 						<el-select v-model="form.borrowedCustomerId" placeholder="请选择借用账号客户" filterable :loading="loading">
 							<el-option label="请选择" value="" />
-							<el-option v-for="customer in customers" :key="customer.customerId" :label="customer.name" :value="String(customer.customerId)" />
+							<el-option
+								v-for="customer in customers.filter((c) => c.isOurCustomer === 1)"
+								:key="customer.customerId"
+								:label="customer.name"
+								:value="String(customer.customerId)"
+							/>
 						</el-select>
 					</el-form-item>
 				</el-col>
@@ -119,6 +124,7 @@ const statusText = computed(() => {
 interface Customer {
 	customerId: string;
 	name: string;
+	isOurCustomer: number;
 }
 interface Partners {
 	partnerId: string;
@@ -149,6 +155,7 @@ const dataRules = ref({
 	isBorrowedAccount: [{ required: true, message: '是否借用账号 0-否 1-是 不能为空', trigger: 'blur' }],
 	customerId: [{ required: true, message: '请选择客户', trigger: 'change' }],
 	partnerIds: [{ required: true, message: '请选择上游合作伙伴', trigger: 'change' }],
+	gamEmailId: [{ required: true, message: '请选择客户GAM邮箱', trigger: 'change' }],
 });
 
 // 打开弹窗
@@ -271,7 +278,7 @@ const customers = ref<Customer[]>([]); // 使用定义的类型
 const fetchCustomers = async () => {
 	try {
 		const response = await fetchCustomerList();
-		customers.value = response.data.records as Customer[]; // 假设返回的数据结构中客户列表在`records`字���中
+		customers.value = response.data.records as Customer[]; // 假设返回的数据结构中客户列表在`records`字段中
 	} catch (error) {
 		console.error('Failed to fetch customers:', error);
 	}
@@ -321,7 +328,7 @@ watch(
 	}
 );
 
-// 修改监听器逻辑
+// 修改监���器逻辑
 watch([() => form.isBorrowedAccount, () => form.borrowedCustomerId, () => form.customerId], async ([newIsBorrowed, newBorrowedId, newCustomerId]) => {
 	// 清空邮箱选择
 	form.gamEmailId = '';
