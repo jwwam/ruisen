@@ -15,25 +15,18 @@
  * Author: lengleng (wangiegie@gmail.com)
  */
 
-package com.ruisen.rsmanage.daemon.quartz.service.impl;
+package com.ruisen.rsmanage.daemon.quartz.service;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ruisen.rsmanage.daemon.quartz.entity.SysJob;
-import com.ruisen.rsmanage.daemon.quartz.mapper.SysJobMapper;
-import com.ruisen.rsmanage.daemon.quartz.service.SysJobService;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruisen.rsmanage.daemon.quartz.entity.SysJobLog;
+import com.ruisen.rsmanage.daemon.quartz.entity.SysJobSqlLog;
 
 /**
- * 定时任务调度表
+ * 定时任务Sql执行日志表
  *
  * @author frwcloud
- * @date 2019-01-27 10:04:42
+ * @date 2019-01-27 13:40:20
  */
-@Slf4j
-@Service
-@AllArgsConstructor
-public class  SysJobServiceImpl extends ServiceImpl<SysJobMapper, SysJob> implements SysJobService {
+public interface SysJobSqlLogService extends IService<SysJobSqlLog> {
 
 }

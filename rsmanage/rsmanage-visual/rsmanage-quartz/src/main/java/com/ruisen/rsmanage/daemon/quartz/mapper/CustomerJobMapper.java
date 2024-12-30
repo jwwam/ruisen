@@ -15,25 +15,35 @@
  * Author: lengleng (wangiegie@gmail.com)
  */
 
-package com.ruisen.rsmanage.daemon.quartz.service.impl;
+package com.ruisen.rsmanage.daemon.quartz.mapper;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruisen.rsmanage.daemon.quartz.entity.SysJob;
-import com.ruisen.rsmanage.daemon.quartz.mapper.SysJobMapper;
-import com.ruisen.rsmanage.daemon.quartz.service.SysJobService;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import com.ruisen.rsmanage.daemon.quartz.entity.SysJobLog;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
-/**
- * 定时任务调度表
- *
- * @author frwcloud
- * @date 2019-01-27 10:04:42
- */
-@Slf4j
-@Service
-@AllArgsConstructor
-public class  SysJobServiceImpl extends ServiceImpl<SysJobMapper, SysJob> implements SysJobService {
+import java.util.List;
+import java.util.Map;
 
+
+@Mapper
+public interface CustomerJobMapper extends BaseMapper<SysJobLog> {
+	/**
+	 * 查询用户名
+	 * @param userId 用户id
+	 * @return 查询结果
+	 */
+	@Select("SELECT username FROM sys_user WHERE user_id = #{userId}")
+	String qryUsername(@Param("userId") Long userId);
+
+
+	/**
+	 * 执行自定义SQL
+	 * @param sql SQL语句
+	 * @return 查询结果
+	 */
+	@Select("${sql}")
+	List<Map<String, Object>> executeCustomSql(@Param("sql") String sql);
 }

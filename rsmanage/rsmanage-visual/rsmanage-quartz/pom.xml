@@ -74,7 +74,24 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>com.ruisen</groupId>
+			<artifactId>rsmanage-customer-biz</artifactId>
+			<version>3.8.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.ruisen</groupId>
+			<artifactId>rsmanage-codegen</artifactId>
+			<version>3.8.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.pig4cloud.plugin</groupId>
+			<artifactId>websocket-spring-boot-starter</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+	</dependencies>
 
     <profiles>
         <profile>

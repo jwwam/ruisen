@@ -62,14 +62,17 @@
 			</template>
 		</el-dropdown>
 		<Search ref="searchRef" />
-		<global-websocket uri="/admin/ws/info" v-if="websocketEnable" @rollback="rollback" />
+		<GlobalWebsocket 
+			v-if="websocketEnable" 
+			@message="handleWebSocketMessage"
+		/>
 		<personal-drawer ref="personalDrawerRef"></personal-drawer>
 	</div>
 </template>
 
 <script setup lang="ts" name="layoutBreadcrumbUser">
 import { logout } from '/@/api/login';
-import { ElMessageBox, ElMessage } from 'element-plus';
+import { ElMessageBox, ElMessage, ElNotification } from 'element-plus';
 import screenfull from 'screenfull';
 import { useI18n } from 'vue-i18n';
 import { useUserInfo } from '/@/stores/userInfo';
@@ -98,16 +101,20 @@ const newsRef = ref();
 const personalDrawerRef = ref();
 
 interface State {
-	[key: string]: boolean | string;
+	[key: string]: boolean | string | any[] | any;
 	isScreenfull: boolean;
 	disabledI18n: string;
 	disabledSize: string;
+	messageQueue: any[];
+	currentMessage: any;
 }
 
 const state = reactive<State>({
 	isScreenfull: false,
 	disabledI18n: 'zh-cn',
 	disabledSize: 'large',
+	messageQueue: [],
+	currentMessage: null,
 });
 
 // 是否开启websocket
@@ -210,18 +217,80 @@ const initI18nOrSize = (value: string, attr: string) => {
 
 // 获取到消息
 const rollback = (msg: string) => {
-	useMsg().setMsg({ label: 'websocket消息', value: msg, time: formatAxis(new Date()) });
+	const msgObj = typeof msg === 'string' ? JSON.parse(msg) : msg;
+	const executionTime = msgObj.executionTime || formatAxis(new Date());
+	
+	useMsg().setMsg({ 
+		label: 'websocket消息', 
+		value: msg,
+		time: executionTime 
+	});
 };
 
 const isDot = computed(() => {
 	return useMsg().getAllMsg().length > 0;
 });
 
+// 处理WebSocket消息
+const handleWebSocketMessage = (message: any) => {
+	try {
+		const msgObj = typeof message === 'string' ? JSON.parse(message) : message;
+		
+		// 获取执行时间并转换格式
+		let executionTime = '';
+		if (msgObj.executionTime) {
+			executionTime = msgObj.executionTime.replace(/\//g, '-');
+		}
+		
+		const msgWithExecutionTime = {
+			...msgObj,
+			time: executionTime || formatAxis(new Date()),
+			timestamp: executionTime ? new Date(executionTime).getTime() : new Date().getTime()
+		};
+		
+		// 处理消息历史
+		useMsg().handleWebSocketMsg(msgWithExecutionTime);
+	} catch (error) {
+		console.error('处理WebSocket消息失败:', error);
+	}
+};
+
+// 显示下一条消息
+const showNextMessage = () => {
+	try {
+		if (state.messageQueue?.length > 0) {
+			const message = state.messageQueue.shift();
+			// 只使用通知栏显示消息,不使用 ElNotification
+			state.currentMessage = {
+				title: message.title,
+				content: message.content,
+				type: message.type || 'info'
+			};
+			
+			// 设置消息自动消失
+			setTimeout(() => {
+				closeNotice();
+			}, 5000);
+		}
+	} catch (error) {
+		console.error('显示消息通知失败:', error);
+	}
+};
+
+// 关闭当前通知
+const closeNotice = () => {
+	state.currentMessage = null;
+	// 检查是否还有待显示的消息
+	setTimeout(() => {
+		showNextMessage();
+	}, 300);
+};
+
 // 页面加载时
 onMounted(() => {
 	if (Local.get('themeConfig')) {
 		initI18nOrSize('globalComponentSize', 'disabledSize');
-		initI18nOrSize('globalI18n', 'disabledI18n');
+			initI18nOrSize('globalI18n', 'disabledI18n');
 	}
 });
 </script>

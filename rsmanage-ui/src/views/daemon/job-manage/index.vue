@@ -53,7 +53,7 @@
 				<el-table-column align="center" type="selection" width="40" />
 				<el-table-column :label="t('job.index')" fixed="left" type="index" width="60" />
 				<el-table-column :label="t('job.jobName')" fixed="left" prop="jobName" show-overflow-tooltip width="120" />
-				<el-table-column :label="t('job.jobGroup')" prop="jobGroup" show-overflow-tooltip width="120" />
+				<!-- <el-table-column :label="t('job.jobGroup')" prop="jobGroup" show-overflow-tooltip width="120" /> -->
 				<el-table-column :label="t('job.jobStatus')" prop="jobStatus" show-overflow-tooltip width="120">
 					<template #default="scope">
 						<dict-tag :options="job_status" :value="scope.row.jobStatus"></dict-tag>
@@ -65,19 +65,23 @@
 					</template>
 				</el-table-column>
 
-				<el-table-column :label="t('job.startTime')" prop="startTime" show-overflow-tooltip width="120" />
-
-				<el-table-column :label="t('job.previousTime')" prop="previousTime" show-overflow-tooltip width="120" />
-				<el-table-column :label="t('job.nextTime')" prop="nextTime" show-overflow-tooltip width="120" />
-				<el-table-column :label="t('job.jobType')" prop="jobType" show-overflow-tooltip width="120">
+				<el-table-column :label="t('job.notify')" prop="notify" show-overflow-tooltip width="120">
+					<template #default="scope">
+						{{ formatNotifyUsers(scope.row.notify) }}
+					</template>
+				</el-table-column>
+				<!-- <el-table-column :label="t('job.jobType')" prop="jobType" show-overflow-tooltip width="120">
 					<template #default="scope">
 						<dict-tag :options="job_type" :value="scope.row.jobType"></dict-tag>
 					</template>
-				</el-table-column>
-				<el-table-column :label="t('job.executePath')" prop="executePath" show-overflow-tooltip width="120" />
-				<el-table-column :label="t('job.className')" prop="className" show-overflow-tooltip width="120" />
-				<el-table-column :label="t('job.methodName')" prop="methodName" show-overflow-tooltip width="120" />
+				</el-table-column> -->
+				<!-- <el-table-column :label="t('job.executePath')" prop="executePath" show-overflow-tooltip width="120" /> -->
+				<!-- <el-table-column :label="t('job.className')" prop="className" show-overflow-tooltip width="120" /> -->
 				<el-table-column :label="t('job.methodParamsValue')" prop="methodParamsValue" show-overflow-tooltip width="120" />
+				<el-table-column :label="t('job.startTime')" prop="startTime" show-overflow-tooltip width="120" />
+				<el-table-column :label="t('job.previousTime')" prop="previousTime" show-overflow-tooltip width="120" />
+				<el-table-column :label="t('job.nextTime')" prop="nextTime" show-overflow-tooltip width="120" />
+				<!-- <el-table-column :label="t('job.methodName')" prop="methodName" show-overflow-tooltip width="120" /> -->
 				<el-table-column :label="t('job.cronExpression')" prop="cronExpression" show-overflow-tooltip width="120" />
 				<el-table-column :label="t('job.misfirePolicy')" prop="misfirePolicy" show-overflow-tooltip width="200">
 					<template #default="scope">
@@ -125,7 +129,7 @@ import { delObj, fetchList, runJobRa, shutDownJobRa, startJobRa } from '/@/api/d
 import { useMessage, useMessageBox } from '/@/hooks/message';
 import { useDict } from '/@/hooks/dict';
 import { useI18n } from 'vue-i18n';
-
+import { pageSalesRepList } from '/@/api/admin/user';
 // 引入组件
 const FormDialog = defineAsyncComponent(() => import('./form.vue'));
 const JobLog = defineAsyncComponent(() => import('./job-log.vue'));
@@ -281,4 +285,32 @@ const handleDelete = async (row) => {
 		useMessage().error('删除失败');
 	}
 };
+
+// 添加用户列表状态
+const userList = ref([]);
+
+// 获取用户列表
+const getUserList = async () => {
+	try {
+		const res = await pageSalesRepList();
+		userList.value = res.data.records;
+	} catch (error) {
+		console.error('获取用户列表失败:', error);
+	}
+};
+
+// 格式化告警对象显示
+const formatNotifyUsers = (notify: string) => {
+	if (!notify) return '';
+	const userIds = notify.split(',');
+	return userIds
+		.map((id) => userList.value.find((user) => user.userId === id)?.name)
+		.filter(Boolean)
+		.join(', ');
+};
+
+// 在组件挂载时获取用户列表
+onMounted(() => {
+	getUserList();
+});
 </script>

@@ -3,6 +3,7 @@
 		<div class="notice-bar-warp" :style="{ color, fontSize: `${size}px` }">
 			<i v-if="leftIcon" class="notice-bar-warp-left-icon" :class="leftIcon"></i>
 			<div class="notice-bar-warp-text-box" ref="noticeBarWarpRef">
+				<div class="notice-bar-title" v-if="title">{{ title }}</div>
 				<div class="notice-bar-warp-text" ref="noticeBarTextRef" v-if="!scrollable">{{ text }}</div>
 				<div class="notice-bar-warp-slot" v-else><slot /></div>
 			</div>
@@ -16,6 +17,11 @@ import { reactive, ref, onMounted, nextTick } from 'vue';
 
 // 定义父组件传过来的值
 const props = defineProps({
+	// 通知标题
+	title: {
+		type: String,
+		default: () => '',
+	},
 	// 通知栏模式，可选值为 closeable link
 	mode: {
 		type: String,
@@ -147,45 +153,32 @@ onMounted(() => {
 .notice-bar {
 	padding: 0 15px;
 	width: 100%;
-	border-radius: 4px;
+	border-radius: 0;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+	transition: all 0.3s;
+	
 	.notice-bar-warp {
+		max-width: 1200px;
+		margin: 0 auto;
 		display: flex;
 		align-items: center;
 		width: 100%;
 		height: inherit;
+		
 		.notice-bar-warp-text-box {
 			flex: 1;
-			height: inherit;
-			display: flex;
-			align-items: center;
-			overflow: hidden;
-			position: relative;
+			padding: 0 15px;
+			
 			.notice-bar-warp-text {
-				white-space: nowrap;
-				position: absolute;
-				left: 0;
-			}
-			.notice-bar-warp-slot {
-				width: 100%;
-				white-space: nowrap;
-				:deep(.el-carousel__item) {
-					display: flex;
-					align-items: center;
-				}
-			}
-		}
-		.notice-bar-warp-left-icon {
-			width: 24px;
-			font-size: inherit !important;
-		}
-		.notice-bar-warp-right-icon {
-			width: 24px;
-			text-align: right;
-			font-size: inherit !important;
-			&:hover {
-				cursor: pointer;
+				font-weight: 500;
 			}
 		}
 	}
+}
+
+.notice-bar-title {
+	font-weight: bold;
+	margin-bottom: 4px;
+	font-size: 16px;
 }
 </style>

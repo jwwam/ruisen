@@ -43,36 +43,25 @@ public class SpringBeanTaskInvok implements ITaskInvok {
 		Object target;
 		Method method;
 		Object returnValue;
-		// 通过Spring上下文去找 也有可能找不到
+		
 		target = SpringContextHolder.getBean(sysJob.getClassName());
 		try {
-			if (StrUtil.isNotEmpty(sysJob.getMethodParamsValue())) {
-				method = target.getClass().getDeclaredMethod(sysJob.getMethodName(), String.class);
-				ReflectionUtils.makeAccessible(method);
-				returnValue = method.invoke(target, sysJob.getMethodParamsValue());
-			}
-			else {
-				method = target.getClass().getDeclaredMethod(sysJob.getMethodName());
-				ReflectionUtils.makeAccessible(method);
-				returnValue = method.invoke(target);
-			}
-			if (StrUtil.isEmpty(returnValue.toString())
-					|| RsmanageQuartzEnum.JOB_LOG_STATUS_FAIL.getType().equals(returnValue.toString())) {
+			// 直接传递整个 SysJob 对象
+			method = target.getClass().getDeclaredMethod(sysJob.getMethodName(), SysJob.class);
+			ReflectionUtils.makeAccessible(method);
+			returnValue = method.invoke(target, sysJob);
+			
+			if (StrUtil.isEmpty(returnValue.toString()) 
+				|| RsmanageQuartzEnum.JOB_LOG_STATUS_FAIL.getType().equals(returnValue.toString())) {
 				log.error("定时任务springBeanTaskInvok异常,执行任务：{}", sysJob.getClassName());
 				throw new TaskException("定时任务springBeanTaskInvok业务执行失败,任务：" + sysJob.getClassName());
 			}
-		}
-		catch (NoSuchMethodException e) {
+		} catch (NoSuchMethodException e) {
 			log.error("定时任务spring bean反射异常方法未找到,执行任务：{}", sysJob.getClassName());
 			throw new TaskException("定时任务spring bean反射异常方法未找到,执行任务：" + sysJob.getClassName());
-		}
-		catch (IllegalAccessException e) {
-			log.error("定时任务spring bean反射异常,执行任务：{}", sysJob.getClassName());
-			throw new TaskException("定时任务spring bean反射异常,执行任务：" + sysJob.getClassName());
-		}
-		catch (InvocationTargetException e) {
-			log.error("定时任务spring bean反射执行异常,执行任务：{}", sysJob.getClassName());
-			throw new TaskException("定时任务spring bean反射执行异常,执行任务：" + sysJob.getClassName());
+		} catch (Exception e) {
+			log.error("定时任务执行异常: {}", e.getMessage());
+			throw new TaskException(e.getMessage());
 		}
 	}
 

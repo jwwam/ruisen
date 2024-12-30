@@ -159,4 +159,53 @@ public class SysJob extends Model<SysJob> {
 	 */
 	private String remark;
 
+	/**
+	 * 告警对象
+	 */
+	private String notify;
+
+	/**
+	 * 数据源
+	 */
+	@TableField("data_source")
+	private String dataSource;
+	/**
+	 * 表名
+	 */
+	@TableField("table_name")
+	private String tableName;
+	/**
+	 * 字段名
+	 */
+	@TableField("field_name")
+	private String fieldName;
+	/**
+	 * 执行规则
+	 */
+	@TableField("execute_rule")
+	private String executeRule;
+	/**
+	 * SQL预览
+	 */
+	@TableField("sql_preview")
+	private String sqlPreview;
+
+	/**
+	 * 是否按日期过滤
+	 */
+	@TableField("filter_by_date")
+	private Boolean filterByDate;
+
+	/**
+	 * 日期字段名
+	 */
+	@TableField("date_field")
+	private String dateField;
+
+	/**
+	 * 配置模式
+	 */
+	@TableField("config_mode")
+	private String configMode;
+
 }
