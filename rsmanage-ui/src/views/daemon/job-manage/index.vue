@@ -270,7 +270,14 @@ const handleDelete = async (row) => {
 		return;
 	}
 
-	const { jobId, jobName } = row;
+	const { jobId, jobName, jobStatus } = row;
+	
+	// 增加状态检查
+	if (jobStatus === '2') { // 假设 '2' 为运行中状态
+		useMessage().error('运行中的任务不能删除，请先暂停任务');
+		return;
+	}
+
 	try {
 		await useMessageBox().confirm(`${t('common.delConfirmText')}(任务名称:${jobName})`);
 	} catch {
@@ -278,9 +285,13 @@ const handleDelete = async (row) => {
 	}
 
 	try {
-		await delObj(jobId);
-		getDataList();
-		useMessage().success(t('common.delSuccessText'));
+		const res = await delObj(jobId);
+		if (res.code === 0) {
+			getDataList();
+			useMessage().success(t('common.delSuccessText'));
+		} else {
+			useMessage().error(res.msg || '删除失败');
+		}
 	} catch (error: any) {
 		useMessage().error('删除失败');
 	}
