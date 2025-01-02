@@ -38,11 +38,11 @@
 					<el-col :span="12" class="mb20">
 						<el-form-item :label="t('job.fieldName')" prop="fieldName">
 							<el-select v-model="form.fieldName" :placeholder="t('job.inputFieldNameTip')" filterable>
-								<el-option 
-									v-for="field in fieldList" 
-									:key="field.name" 
+								<el-option
+									v-for="field in fieldList"
+									:key="field.name"
 									:label="field.comment ? `${field.name} (${field.comment})` : field.name"
-									:value="field.name" 
+									:value="field.name"
 								/>
 							</el-select>
 						</el-form-item>
@@ -384,7 +384,8 @@ const onSubmit = async () => {
 			jobId: form.jobId,
 			jobName: form.jobName,
 			jobType: '2',
-			executePath: "",
+			executePath: '',
+			jobStatus: form.jobId ? form.jobStatus : '1', // 编辑时保留原值，新增时默认为'1'
 			className: form.className, // 添加 className
 			methodName: form.methodName, // 添加 methodName
 			jobGroup: 'DEFAULT', // 添加默认的任务组
